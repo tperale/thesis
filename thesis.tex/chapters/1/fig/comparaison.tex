@@ -1,0 +1,25 @@
+\begin{figure}[H] % TODO More info on axis
+\centering
+\begin{tikzpicture}
+    \draw[->,thick] (-0.1,0)--(12,0) node[right]{Range};
+    \draw[->,thick] (0,-0.1)--(0,8) node[above]{Data Rate};
+    
+    \node[draw] at (8,1.5) (lora) {LoRa};
+    \node[draw] at (9.3,0.9) (sigfox) {SigFox};
+    \node[draw] at (10,2) (nb) {NB-IOT};
+    \node[draw,dotted,fit=(lora) (sigfox) (nb), label=above:{LPWAN}] {};
+
+    
+    \node[draw] at (2.2,3.5) (bluetooth) {Bluetooth};
+    \node[draw] at (2.7,2.5) (zigbee) {ZigBee};
+    \node[draw] at (2.0,1.8) (ble) {BLE};
+    \node[draw] at (3,5) (wifi) {WiFi};
+    \node[draw,dotted,fit=(bluetooth) (zigbee) (ble) (wifi), label=above:{Short-range}] {};
+
+    \node[draw] at (7,5) (lte) {LTE};
+    \node[draw] at (5.8,6) (5g) {5G};
+    \node[draw,dotted,fit=(lte) (5g), label=above:{Cellular}] {};
+\end{tikzpicture}
+\caption{Comparison of the existing IoT wireless technologies by range and datarate}
+\label{fig:commrangegraph}
+\end{figure}

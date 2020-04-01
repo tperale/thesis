@@ -1,0 +1,63 @@
+\begin{figure}[H]
+\begin{subfigure}[b]{.5\textwidth}
+    \centering
+    \begin{tikzpicture}[auto, thick]
+      % Place super peers and connect them
+      \foreach \place/\name in {{(0,-1)/a}, {(2,0)/b}, {(2.5, -3)/c}}
+        \node[gateways] (\name) at \place {};
+      \node[server] (d) at (1.5,-1.5) {};
+      %
+      \foreach \source/\dest in {a/d, b/d}
+        \path[dotted] (\source) edge (\dest);
+      \path (c) edge (d); % Non dotted
+      %
+      % Place normal peers
+      \foreach \pos/\i in {above right of/1, right of/2, below right of/3}
+        \node[motes, \pos =b ] (b\i) {};
+      \foreach \speer/\peer in {b/b1,b/b2,b/b3}
+        \path[dotted] (\speer) edge (\peer);
+      %
+      \foreach \pos/\i in {below left of/1, below of/2, left of/3, above right of/4}
+        \node[motes, \pos =a ] (a\i) {};
+      \foreach \speer/\peer in {a/a1,a/a2,a/a3,a/a4}
+        \path[dotted] (\speer) edge (\peer);
+      %
+      \path[dotted] (b) edge (a4);
+    \end{tikzpicture}
+    \caption{Star topology}
+    \label{fig:startopology}
+\end{subfigure}
+\hfill
+\begin{subfigure}[b]{.5\textwidth}
+    \centering
+    \begin{tikzpicture}[auto, thick]
+      % Place super peers and connect them
+      \foreach \place/\name in {{(0,-1)/a}, {(2,0)/b}, {(2, -3)/c}, {(1,1)/d}, {(1.5, -1.5)/f}}
+        \node[motes] (\name) at \place {};
+      \foreach \source/\dest in {a/b, a/c, b/c, d/b, f/a, f/b, f/c}
+        \path[dotted] (\source) edge (\dest);
+      %
+      % Place normal peers
+      \foreach \pos/\i in {above right of/1, right of/2, below right of/3}
+        \node[motes, \pos =b ] (b\i) {};
+      \foreach \speer/\peer in {b/b1,b/b2,b/b3}
+        \path[dotted] (\speer) edge (\peer);
+      %
+      \foreach \pos/\i in {above left of/1, left of/2, above of/3}
+        \node[motes, \pos =d ] (d\i) {};
+      \foreach \speer/\peer in {d/d1,d/d2,d/d3}
+        \path[dotted] (\speer) edge (\peer);
+      %
+      \foreach \pos/\i in {below left of/1, below of/2, left of/3}
+        \node[motes, \pos =a ] (a\i) {};
+      \foreach \speer/\peer in {a/a1,a/a2,a/a3}
+        \path[dotted] (\speer) edge (\peer);
+    \end{tikzpicture}
+    \caption{Mesh Network Topology}
+    \label{fig:meshtopology}
+\end{subfigure}
+\caption{Different LoRa Network Topologies}
+\label{fig:topologies}
+\end{figure}
+
+
