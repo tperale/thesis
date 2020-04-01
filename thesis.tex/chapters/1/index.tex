@@ -1,15 +1,34 @@
 \section{Introduction}
 
-With each year new companies jumping into the \emph{IoT} sector and all the major \emph{IT actors} investing and developing products\footnote{https://www.fortunebusinessinsights.com/industry-reports/internet-of-things-iot-market-100307}, as well as telecoms building new infrastructure. The \emph{Internet of Things} has undoubtedly been a subject of hype during the last decade while still maintaining a consistent growth until now. 
-Business analysts agree that we should expect to reach at least 40 billion installed \emph{IoT} devices by 2027\footnote{https://www.businessinsider.com/internet-of-things-report}. The \emph{Internet of Things} is used to describe inter-connected devices gathering data without the need of human interaction.
-We are, as consumer, already familiar with the traditional \emph{IoT} products we use in our households that allow to connect our light bulbs, our fridge and washing machine, ...
-Meanwhile we have less knowledge of the industrial usage of \emph{IoT}, also known as \emph{IIoT}. \emph{IIoT} is one of the fastest growing domain of the market. More and more industries are adopting \emph{IoT}  to consolidate their productions with \emph{real-time monitoring}, predictive maintenance on their assets and products, connecting their supply chains, all of this enabled with the help of network of sensors.
-This is applicable in a wide spectrum of domains like \emph{smart farming}, \emph{smart cars}, \emph{smart cities}, \emph{energy managements}, ...
+With each year new companies jumping into the \emph{IoT} sector and all the
+major \emph{IT actors} investing and developing
+products\footnote{https://www.fortunebusinessinsights.com/industry-reports/internet-of-things-iot-market-100307},
+as well as telecoms building new infrastructure. The \emph{Internet of Things}
+has undoubtedly been a subject of hype during the last decade while still
+maintaining a consistent growth until now.
+Business analysts agree that we should expect to reach at least 40 billion
+installed \emph{IoT} devices by
+2027\footnote{https://www.businessinsider.com/internet-of-things-report}. The
+\emph{Internet of Things} is used to describe inter-connected devices gathering
+data without the need of human interaction.
+We are, as consumer, already familiar with the traditional \emph{IoT} products
+we use in our households that allow to connect our light bulbs, our fridge and
+washing machine, \ldots
+Meanwhile we have less knowledge of the industrial usage of \emph{IoT}, also
+known as \emph{IIoT}. \emph{IIoT} is one of the fastest growing domain of the
+market. More and more industries are adopting \emph{IoT}  to consolidate their
+productions with \emph{real-time monitoring}, predictive maintenance on their
+assets and products, connecting their supply chains, all of this enabled with
+the help of network of sensors.
+This is applicable in a wide spectrum of domains like \emph{smart farming},
+\emph{smart cars}, \emph{smart cities}, \emph{energy managements}, \ldots
 
 \paragraph{}
 
-The common aspect of all of these applications are that they can communicate wirelessly.
-A multitude of telecommunication technologies are used or were created to suit this solution and can be categorized by three different characteristics
+The common aspect of all of these applications are that they can communicate
+wirelessly.
+A multitude of telecommunication technologies are used or were created to suit
+this solution and can be categorized by three different characteristic.
 
 \begin{itemize}
     \item Long or Short \emph{range}
@@ -17,8 +36,11 @@ A multitude of telecommunication technologies are used or were created to suit t
     \item Low or high \emph{power usage} 
 \end{itemize}
 
-From these characteristics you can only chose two according to the physical law % TODO Explanation needed
-The following graphics\ref{fig:commrangegraph} show a classification of the existing wireless communication used in the \emph{IoT} and mix the three main categories.
+From these characteristics you can only chose two according to the physical
+law % TODO Explanation needed
+The following graphics\ref{fig:commrangegraph} show a classification of the
+existing wireless communication used in the \emph{IoT} and mix the three main
+categories.
 
 \begin{itemize}
     \item \emph{Short-Range wireless communication}
@@ -28,18 +50,46 @@ The following graphics\ref{fig:commrangegraph} show a classification of the exis
 
 \input{thesis.tex/chapters/1/fig/comparaison.tex}
 
-This work focus only on \emph{LoRa}, a proprietary chirp spread spectrum modulation technique owned by \emph{Semtech} operating in the sub-GHz unlicensed \emph{ISM} band, that will be explained in more details in section \ref{section:lora}.
-The main characteristics of \emph{LoRa} is that it trade throughput for range and low power transmission that as already achieved a record distance of 700km with direct line of sight between the receiver and the transmitter\footnote{https://www.thethingsnetwork.org/article/ground-breaking-world-record-lorawan-packet-received-at-702-km-436-miles-distance}. However this case is not a real world example, we should expect a typical range in urban areas of around \emph{~2-5km} and \emph{15km} in suburban areas\cite{8030482}. Fine tuning the \emph{PHY} settings of the protocol also allow to trade communication distance over throughput and a longer band usage which decrease the number of concurrent motes that can communicate over the band\cite{10.1145/2988287.2989163}.
+This work focus only on \emph{LoRa}, a proprietary chirp spread spectrum
+modulation technique owned by \emph{Semtech} operating in the sub-GHz
+unlicensed \emph{ISM} band, that will be explained in more details in section
+\ref{section:lora},
+The main characteristics of \emph{LoRa} is that it trade throughput for range
+and low power transmission that as already achieved a record distance of 700km
+with direct line of sight between the receiver and the
+transmitter\footnote{https://www.thethingsnetwork.org/article/ground-breaking-world-record-lorawan-packet-received-at-702-km-436-miles-distance}.
+However this case is not a real world example, we should expect a typical range
+in urban areas of around \emph{2 to 5km} and \emph{15km} in suburban
+areas\cite{8030482}. Fine tuning the \emph{PHY} settings of the protocol also
+allow to trade communication distance over throughput and a longer band usage
+which decrease the number of concurrent motes that can communicate over the
+band\cite{10.1145/2988287.2989163}.
 
-\emph{LoRa} is often used in conjunction with the \emph{LoRaWAN} a point-to-multipoint protocols. \emph{LoRaWAN} is a ALOHA based\cite{loraalliance:lorawanspecification} network using a star-of-stars topology composed of
-wirelessly interconnected \emph{motes} sending data to \emph{gateways} which relay messages to central servers over a Cellular or Ethernet connection as we can see in Figure \ref{fig:startopology}.
+\emph{LoRa} is often used in conjunction with the \emph{LoRaWAN} a
+point-to-multipoint protocols. \emph{LoRaWAN} is a ALOHA
+based\cite{loraalliance:lorawanspecification} network using a star-of-stars
+topology composed of wirelessly interconnected \emph{motes} sending data to
+\emph{gateways} which relay messages to central servers over a Cellular or
+Ethernet connection as we can see in Figure \ref{fig:startopology},
 
 \input{thesis.tex/chapters/1/fig/topology.tex}
 
-The issue we have is \emph{LoRaWAN} does not scale\cite{10.1145/2988287.2989163}, especially in an urban environment where a lot of motes could overlap. \emph{LoRaWAN} is \emph{ALOHA} based and\emph{CSMA} is not possible because \emph{Channel Activity Detection} only detect the preamble of a communication. This mean a lot of collision can occur during a transmission attempt with a gateway. The \emph{LoRaWAN} protocol state that on collision occur the transmission has to be re-done which lead to a bigger energy consumption as well as occupying the channel even more.
-Link quality may also vary some motes far away from the gateway may have issue with doing a correct transmission. Environmental factor like temperature, humidity\cite{evaluation_of_the_reliability_of_lora}, have a lot of influence in the link quality.
+The issue we have is \emph{LoRaWAN} does not
+scale\cite{10.1145/2988287.2989163}, especially in an urban environment where a
+lot of motes could overlap. \emph{LoRaWAN} is \emph{ALOHA} based and\emph{CSMA}
+is not possible because \emph{Channel Activity Detection} only detect the
+preamble of a communication. This mean a lot of collision can occur during a
+transmission attempt with a gateway. The \emph{LoRaWAN} protocol state that on
+collision occur the transmission has to be re-done which lead to a bigger
+energy consumption as well as occupying the channel even more.
+Link quality may also vary some motes far away from the gateway may have issue
+with doing a correct transmission. Environmental factor like temperature,
+humidity\cite{evaluation_of_the_reliability_of_lora}, have a lot of influence
+in the link quality.
 
-Also gateways may not be available everywhere, some use cases may not allow the the installation of gateways, which would imply a power and internet connection, that's the case for pipelines and tunnel, % cite here TODO
+Also gateways may not be available everywhere, some use cases may not allow the
+the installation of gateways, which would imply a power and internet
+connection, that's the case for pipelines and tunnel, % cite here TODO
 where we would prefer to only run devices on batteries.
 
 \input{thesis.tex/chapters/1/fig/coverage.tex}
@@ -53,8 +103,12 @@ where we would prefer to only run devices on batteries.
 
 \paragraph{}
 
-That why opting for a multi-hop solution instead of the star network has been proposed and can be an actual good idea to increase the redundancy and the reliability of the lossy network. Gateways are also sensible to power outage and can be a single point a failure of the network while a multi-hop network can adapt to this kind of topological changes. % TODO cite study with the roover water
-
+That why opting for a multi-hop solution instead of the star network has been
+proposed and can be an actual good idea to increase the redundancy and the
+reliability of the lossy network. Gateways are also sensible to power outage
+and can be a single point a failure of the network while a multi-hop network
+can adapt to this kind of topological changes. 
+% TODO cite study with the roover water
 One of the solution that arised from \emph{IoT} solutions is to use
 Time-Slotted Channel Hopping communication to route.
 
