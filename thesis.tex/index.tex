@@ -1,10 +1,11 @@
-\documentclass[11pt]{article}
+\documentclass[11pt]{report}
 \usepackage{multicol,lipsum,microtype}
-\usepackage{vub}
+\usepackage[dvipsnames]{xcolor}
 \usepackage[backend=biber]{biblatex}
 \addbibresource{bib/main.bib}
+\usepackage{vub}
 \usepackage{listings}
-\usepackage{xcolor}
+\usepackage{xargs}
 \usepackage{float}
 \usepackage{tikz}
 \usepackage{pgfplots}
@@ -12,6 +13,13 @@
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{acronym} 
+
+\usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
+\newcommandx{\unsure}[2][1=]{\todo[linecolor=red,backgroundcolor=red!25,bordercolor=red,#1]{#2}}
+\newcommandx{\change}[2][1=]{\todo[linecolor=blue,backgroundcolor=blue!25,bordercolor=blue,#1]{#2}}
+\newcommandx{\info}[2][1=]{\todo[linecolor=OliveGreen,backgroundcolor=OliveGreen!25,bordercolor=OliveGreen,#1]{#2}}
+\newcommandx{\improvement}[2][1=]{\todo[linecolor=Plum,backgroundcolor=Plum!25,bordercolor=Plum,#1]{#2}}
+\newcommandx{\thiswillnotshow}[2][1=]{\todo[disable,#1]{#2}}
 
 % \usetikzlibrary{external}
 % \tikzexternalize[prefix=tikz/]
@@ -218,6 +226,8 @@
 \begin{document}
 \maketitle
 
+\pagenumbering{roman}
+
 \section*{Abstract}
 
 \newpage
@@ -240,13 +250,15 @@
 
 \newpage
 
+\pagenumbering{arabic}
+
 \input{thesis.tex/chapters/1/index.tex}
 
-\section{Context}
+\chapter{Context}
 
 % As of today very little work has been done on creating a multihop LoRa Network (see Kris Paper on RPL LoRa in context section)
 
-\subsection{LoRa}
+\section{LoRa}
 
 \label{section:lora}
 
@@ -264,39 +276,39 @@ The data rate can range from 0.3kbps to 27kbps depending on the \emph{SF} % TODO
 
 % See 'Understanding the limits of LoRaWAN' the 3 channels definition in Europe
 
-\subsection{TSCH}
+\section{TSCH}
 
-\subsection{6LoWPAN}
+\section{6LoWPAN}
 
 % 6TOP Sublayer
 
-\subsection{Contiki OS}
+\section{Contiki OS}
 
-\section{Related work}
+\chapter{Related work}
 
-\subsubsection{Time-Slotted LoRa}
+\subsection{Time-Slotted LoRa}
 
-\subsubsection{Multihop LoRa}
+\subsection{Multihop LoRa}
 
-\section{Radio Driver for Zolertia Zoul rev-b with the RN2483 module}
+\chapter{Radio Driver for Zolertia Zoul rev-b with the RN2483 module}
 
 % Most of the LoRaWAN features were not implemented or tested since this was out of the scope of this project.
 
-\subsection{Issues with the previous implementation}
+\section{Issues with the previous implementation}
 
-\subsection{Validation test}
+\section{Validation test}
 
-\section{Time-Slotted Channel Hopping Implementation for LoRa}
+\chapter{Time-Slotted Channel Hopping Implementation for LoRa}
 
-\subsection{Adaptation of the timing}
+\section{Adaptation of the timing}
 
 \paragraph{LoRa Time On Air}
 
-\subsection{Testing}
+\section{Testing}
 
-\subsection{Considerations}
+\section{Considerations}
 
-\section{Conclusion and further work}
+\chapter{Conclusion and further work}
 
 \newpage
 
