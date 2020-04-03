@@ -1,0 +1,14 @@
+\begin{figure}[H] % TODO More info on axis
+\centering
+\begin{tikzpicture}[auto, thick]
+  \node(pc) [server, label=below:{PC}] {};
+  \node(ftdi) [draw, rectangle, right=of pc, right=4cm] {USB to UART Adapter};
+  \node(module) [draw, rectangle, minimum size=6mm, right=of ftdi, right=2.5cm] (module) {RN2483 Module};
+
+  \path (pc) edge[<->] node[]{USB Connection} (ftdi) ;
+  \path (ftdi) edge[->,bend left] node[text width=1cm, align=center]{TX} (module);
+  \path (module) edge[->,bend left] node[text width=1cm, align=center]{RX} (ftdi);
+\end{tikzpicture}
+\caption{Simple communication with the module scenario}
+\label{fig:pcconn}
+\end{figure}

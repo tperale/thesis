@@ -27,6 +27,7 @@
 \usetikzlibrary{fit}
 \usetikzlibrary{calc}
 \usetikzlibrary{quotes}
+\usetikzlibrary{positioning}
 \usetikzlibrary{backgrounds,calc,shadings,shapes.arrows,shapes.symbols,shadows}
 
 \tikzstyle{bag} = [align=center]
@@ -284,19 +285,13 @@ The data rate can range from 0.3kbps to 27kbps depending on the \emph{SF} % TODO
 
 \section{Contiki OS}
 
-\chapter{Related work}
+\section{Related work}
 
 \subsection{Time-Slotted LoRa}
 
 \subsection{Multihop LoRa}
 
-\chapter{Radio Driver for Zolertia Zoul rev-b with the RN2483 module}
-
-% Most of the LoRaWAN features were not implemented or tested since this was out of the scope of this project.
-
-\section{Issues with the previous implementation}
-
-\section{Validation test}
+\input{thesis.tex/chapters/driver/index.tex}
 
 \chapter{Time-Slotted Channel Hopping Implementation for LoRa}
 
