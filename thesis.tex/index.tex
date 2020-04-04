@@ -8,6 +8,7 @@
 \usepackage{xargs}
 \usepackage{float}
 \usepackage{tikz}
+\usepackage{pgf-umlsd}
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.16}
 \usepackage{caption}
@@ -28,6 +29,7 @@
 \usetikzlibrary{calc}
 \usetikzlibrary{quotes}
 \usetikzlibrary{positioning}
+\usetikzlibrary{arrows,automata}
 \usetikzlibrary{backgrounds,calc,shadings,shapes.arrows,shapes.symbols,shadows}
 
 \tikzstyle{bag} = [align=center]
@@ -267,6 +269,7 @@
 \paragraph{Chirp Spread Spectrum (CSS) modulation}
 \paragraph{Transmission Power}
 \paragraph{Spreading Factor}
+
 The higher the \emph{SF} the longer the communication range get while the transmission also get slower. Frames can be send at the same time if they are all sent with a different spreading factors\cite{8030482}.
 
 The data rate can range from 0.3kbps to 27kbps depending on the \emph{SF} % TODO Calculation needed
@@ -276,6 +279,29 @@ The data rate can range from 0.3kbps to 27kbps depending on the \emph{SF} % TODO
 \paragraph{Channels}
 
 % See 'Understanding the limits of LoRaWAN' the 3 channels definition in Europe
+
+\paragraph{Time On Air}
+
+\begin{equation}
+  \label{eq:tsym}
+  T_{sym} = \frac{2^{SF}}{BW}
+\end{equation}
+\begin{equation}
+  \label{eq:tpreamble}
+  T_{preamble} = (n_{preamble} + 4.25)T_{sym}
+\end{equation}
+\begin{equation}
+  \label{eq:payloadsymnb}
+  payloadSymbNb = 8 + \max(ceil(\frac{8PL - 4SF + 28 + 16 - 20H}{4(SF - 2DE)})(CR + 4),0)
+\end{equation}
+\begin{equation}
+  \label{eq:tpayload}
+  T_{payload} = payloadSymNb T_{sym}
+\end{equation}
+\begin{equation}
+  \label{eq:tpacket}
+  T_{packet} = T_{preamble} + T_{paylaod}
+\end{equation}
 
 \section{TSCH}
 

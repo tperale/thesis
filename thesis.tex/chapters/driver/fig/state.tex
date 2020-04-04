@@ -1,0 +1,19 @@
+\begin{figure}[H]
+\centering
+  \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=3.5cm]
+  \tikzstyle{every state}=[thick,draw=gray!50,fill=gray!20,draw=none,text=black]
+
+  \node[initial,state] (A)                    {Transmission};
+  \node[state]         (B) [above right of=A] {Reception};
+  \node[state]         (C) [below of=B]       {Timeout};
+  \node[state]         (D) [right of=B]       {Received};
+
+  \path (A) edge [bend right]    node {     } (B)
+            edge [bend left]     node {     } (C)
+        (B) edge [bend left]     node {     } (C)
+            edge                 node {     } (D)
+        (C) edge [bend left]     node {     } (A)
+        (D) edge [bend right=85] node {     } (A);
+\end{tikzpicture}
+\caption{The command states\label{fig:cmdstate}}
+\end{figure}

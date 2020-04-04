@@ -1,0 +1,13 @@
+\begin{figure}[H]
+\centering
+  \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=3.5cm]
+  \tikzstyle{every state}=[thick,draw=gray!50,fill=gray!20,draw=none,text=black]
+
+  \node[initial,state] (A)              {None};
+  \node[state]         (B) [right of=A] {Received};
+
+    \path (A) edge [bend right] node[below] {Reception} (B)
+          (B) edge [bend right] node[above] {Read} (A);
+\end{tikzpicture}
+\caption{The RX states\label{fig:rxstate}}
+\end{figure}

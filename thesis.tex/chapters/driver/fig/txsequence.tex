@@ -1,0 +1,24 @@
+\begin{figure}[H]
+\centering
+
+\begin{sequencediagram}
+
+\newthread{A}{RE-Mote}{}
+\newinst[1]{B}{RN2483}{}
+\newinst[3]{C}{Radio Band}{}
+\begin{call}{A}{radio tx~\ldots}{B}{radio\_tx\_ok}
+  \mess{B}{ok}{A}
+  
+  \begin{sdblock}{Radio Transmission}{Transmition time calculated
+    in~\ref{eq:tpacket}}
+    \begin{call}[4]{B}{}{C}{}
+    \end{call}
+  \end{sdblock}
+\end{call}
+
+\end{sequencediagram}
+
+  \caption{\lstinline{radio tx} command sequence diagram\label{fig:txsequence}}
+
+\end{figure}
+
