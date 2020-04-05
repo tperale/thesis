@@ -106,14 +106,17 @@ module.
 
 The first design challenge of the driver implementation is to create a
 synchronous mechanism to receive message from the UART\@. 
-The need for synchronous messaging is crucial when using this module, a simple
-acknowledgement from the command is almost mandatory and avoid two command
-clash by using the module when a command hasn't been acknowledged.
+The need for synchronous messaging is crucial when using this module, every
+commands and configuration of the module is done via UART and a simple
+acknowledgement from the command is almost mandatory to avoid two command
+to clash by using the module at the same time.
 The previous implementation in~\cite{8847137} used synchronous fixed delays to 
-wait for the module to get a response but this way of working has its own limitation 
-as each command involves their own delays.
+wait for the module response but this method has its own limitation 
+as each commands has their own delays.
 
-The UART driver implementation for the CC2538 is working by executing a 
+The UART driver implementation for the CC2538 don't have a synchronous blocking
+read call for the UART out of the box and assume the programmer will use
+response in processes instead. The way the receiption is working is by executing a 
 so called \emph{input handler} at each interruption triggered from an 
 UART reception.
 The default input handler is the \lstinline{serial_line_input_byte} 
@@ -122,24 +125,23 @@ using this handler with UART0 to get debug messages with a USB connection from
 a computer.
 We have to define our own handler for UART1 peripheral to communicate with the
 module.
-It will be similar as the default one because they are both using same mesasge
+It will be similar as the default one because they are both using same message
 structure, terminating by \lstinline{\r\n} but 
-\lstinline{serial_line_input_byte} is passing each character to a standalone
-process: \lstinline{serial_line_process}.
-This process is used to spend the least amount of time in an interrupt context. 
-When the communication is fully received an event is broadcasted.
+where \lstinline{serial_line_input_byte} is passing each character to a standalone
+process (\lstinline{serial_line_process}) broadcasting an event at command
+reception, our handler is directly threating  the message in the interrupt.
 
-This way of working is not possible in our use case because Contiki don't have 
-any mechanisms allowing programmers to wait for an event inside a function, 
-this is only doable inside a process but doing everything inside a big process
-is not an option.
+Working with processes and events, is not possible in our use case because Contiki 
+don't have any mechanisms allowing programmers to wait for an event inside a 
+function. We can only wait for a specific event inside a process but doing 
+everything inside a big process is not an option.
 Our custom handler is designed as a state machine (Fig~\ref{fig:cmdstate}) and 
 work with its own reception buffer. It takes advantage of the limited response 
 format from the RN2483 module to sort each new communications.
 
 \begin{itemize}
   \item Messages starting with \lstinline{radio rx  } are asynchronous LoRa
-    message
+    messages.
   \item \lstinline{radio_tx_ok} indicate the end of a transmission. This
     implies we have done a transmission before.
   \item \lstinline{ok} indicate the acknowledgement of a command.
@@ -151,12 +153,12 @@ I implemented an helper functions, to ease the command transmission and
 acknowledgement with the module.
 
 \begin{description}
-  \item[\lstinline{rn2483_receive_synch}] busywait on the command states
+  \item[rn2483\_receive\_synch] busywait on the command states
     (Fig~\ref{fig:cmdstate}) until the received state or after the timeout
     passed.
-  \item[\lstinline{rn2483_send_cmd}] a printf style command with automatic wait
+  \item[rn2483\_send\_cmd] a printf style command with automatic wait
     for acknowledgement (with the possibility to add a custom timeout).
-  \item[\lstinline{rn2483_raw_cmd}] sending the command from a buffer without
+  \item[rn2483\_raw\_cmd] sending the command from a buffer without
     format or wait for acknowledgement.
 \end{description}
 
@@ -164,13 +166,37 @@ acknowledgement with the module.
 
 \subsection{Transmission}
 
-The radio transmission command is different from the other commands available
-for the module. After the acknowledgement of the radio transmission command the
-module will send another message once the message is fully transmitted.
+The radio transmission command has a different pattern from the other commands 
+available for the module. After the acknowledgement of the radio transmission 
+command the module will send another message once the message is fully
+transmitted.
 
 \input{thesis.tex/chapters/driver/fig/txsequence.tex}
 
+Microchip chose to represent the payload as string formated hex number to
+facilitate the manual writing of commands, making the message paylaod twice as
+long as its original content. As all the content we will handle 
+are represented as \emph{8 bit} number array, a function to convert array to
+string representation and vice versa was taken from the RIOT-OS project.
+
 \subsection{Asynchronous Reception}
+
+The last component of a complete driver implementation is to receive radio
+messages.
+Reception follow a different scheme from the other commands because a message
+reception can happen at any time asynchronously from the moment we run the
+command \lstinline{radio rx 0}.
+To tackle this issue a one message inbox was implemented (see
+Fig~\ref{fig:rxstate}).
+When a command is fully transmitted from the module we look at the structure of
+the message. Every message received from the radio start with \lstinline{radio rx  }, if it follow this structure a flag is set and is unset at the moment we
+read the message from our code.
+Messages are received in a string formated hex number and we convert it to and \emph{8
+bit integer array}. This array is stored in a different place than the received
+message as command may be executed between the moment we receive the message and
+the moment we read it.
+Also a timestamp is saved at the reception to keep track of when was received the
+message.
 
 \input{thesis.tex/chapters/driver/fig/rxstate.tex}
 
