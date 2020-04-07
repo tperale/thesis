@@ -216,6 +216,20 @@
   },
 }
 
+\newcommand{\messdash}[4][0]{
+  \stepcounter{seqlevel}
+  \path
+  (#2)+(0,-\theseqlevel*\unitfactor-0.7*\unitfactor) node (mess from) {};
+  \addtocounter{seqlevel}{#1}
+  \path
+  (#4)+(0,-\theseqlevel*\unitfactor-0.7*\unitfactor) node (mess to) {};
+  \draw[->,>=angle 60, dashed] (mess from) -- (mess to) node[midway, above]
+  {#3};
+
+  \node (#3 from) at (mess from) {};
+  \node (#3 to) at (mess to) {};
+}
+
 
 \title{Master Thesis}
 \subtitle{Toward Energy Efficient LoRa Multihop networks}
