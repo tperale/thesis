@@ -1,8 +1,8 @@
-\chapter{Radio Driver for Zolertia with the RN2483 module}
+\chapter{Radio Driver for Zolertia with the RN2483 module\label{section:radio}}
 
 % Most of the LoRaWAN features were not implemented or tested since this was out of the scope of this project.
 
-Since the \emph{Zolertia RE-Mote REV-B} don't support \emph{LoRa} out of the
+The \emph{Zolertia RE-Mote REV-B} platform doesn't support \emph{LoRa} out of the
 box we have to implement a software driver for the Microchip \emph{RN2483} LoRa
 module.
 
@@ -167,7 +167,7 @@ acknowledgement with the module.
 \subsection{Transmission}
 
 The radio transmission command has a different pattern from the other commands 
-available for the module. After the acknowledgement of the radio transmission 
+of the module. After the acknowledgement of the radio transmission 
 command the module will send another message once the message is fully
 transmitted.
 
@@ -183,7 +183,7 @@ string representation and vice versa was taken from the RIOT-OS project.
 
 The last component of a complete driver implementation is to receive radio
 messages.
-Reception follow a different scheme from the other commands because a message
+Reception follow a different scheme from the other commands, a message
 reception can happen at any time asynchronously from the moment we run the
 command \lstinline{radio rx 0}.
 To tackle this issue a one message inbox was implemented (see
@@ -202,6 +202,94 @@ message.
 
 \subsection{Contiki Radio Driver}
 
+The Contiki wiki didn't provided any information about writting a radio driver
+and porting a new radio platform for Contiki.
+I based my implementation from the other radio driver implementation already
+available on Contiki to understand the driver structure.
+
+To create a Contiki radio driver we have to implement a \lstinline{radio_driver}
+structure that must implement the following functions.
+
+\begin{description}
+  \item[init] is the first function of the driver executed at startup.
+    This is where we will configure the RN2483 with our default configuration
+    aswell as setting the module to point-to-point mode, to not use the default
+    LoRaWAN stack.
+  \item[prepare] is the function called before a transmission with the data we
+    want to transmit as parameter and its length. We can't transmit radio
+    messages while listening for incoming messages, the first step of
+    preparation is to exit this mode with the command \lstinline{radio rxstop}.
+    The command also take care to convert the data to the hex string and
+    already format the radio command ready to be sent.
+  \item[transmit] send the already formated command in the prepare function and
+    wait for the \lstinline{radio_tx_ok} acknowledgement.
+  \item[send] is the combination of preparing a function and directly sending
+    it.
+  \item[read] copy a new radio message to the buffer passed as parameter. It
+    check the message inbox to see if we received a new message before copying
+    it.
+  \item[channel\_clear]
+  \item[receiving\_packet] should theorically check if the radio module is
+    currently getting a new message from a transmission. This is a function we
+    can expect from some platform with integrated radio module but the
+    simplicity of the RN2483 show his limit and I found no way for the module
+    to acknowledge when it's receiving a new message.
+  \item[pending\_packet] check the message inbox to see if we received a new
+    message.
+  \item[on] start listening to messages and wake-up the module.
+  \item[off] stop listening to incoming messages and put the module to sleep.
+  \item[get\_value, set\_value, get\_object, set\_object] are all function used
+    to configure the radio driver in a streamlined way. The parameter we need to
+    implement will be discussed in Chapter~\ref{section:tsch}.
+\end{description}
+
+% TODO talk about Poll mode
+
 \section{Validation test}
 
 % Talk about project configuration like with the NETSTACK
+To verify the implementation of the radio driver two examples were made.
+
+\begin{itemize}
+  \item The \emph{RN2483 shell} available in
+    \lstinline{/example/platform-specific/lora/rn2483} is a tool to interract
+    directly with the module.
+  \item The \emph{ping-pong} example based on the nullnet example already
+    available in \emph{contiki-ng} located in 
+    \lstinline{/example/platform-specific/lora/nullnet} demonstrate the driver
+    is correctly working with upper layer of the network stack.
+\end{itemize}
+
+\subsection{Shell}
+
+This example was made to directly interract with the module interface and test
+the command execution through uart in an easy way.
+
+This was used during the development of the driver as a way to test parameters
+as well as the synchronous communication implementation.
+
+\subsection{Ping-Pong}
+
+I based this example on the \emph{nullnet-broadcast} example to test if two
+node could communicate using the LoRa driver I implemented by being handled by
+the \emph{CSMA} MAC layer instead of directly using the driver API\@.
+
+The example is using the following stack in Fig~\ref{fig:pingpongstack}.
+
+\input{thesis.tex/chapters/driver/fig/pingpongstack.tex}
+
+The example is a simple two-way communication one sending a request with a
+small \emph{1 byte} payload and waiting for the acknowledgement by sending back
+this payload. No other request is sent until the acknowledgement is received.
+
+It's working by setting up two nodes with the two different implementation 
+available in the example folder.
+
+\begin{itemize}
+  \item \lstinline{ping.c} send the first request.
+  \item \lstinline{pong.c} send the acknowledgement.
+\end{itemize}
+
+The behavious is schematized in Fig~\ref{fig:pingpongsequence}.
+
+\input{thesis.tex/chapters/driver/fig/pingpongsequence.tex}

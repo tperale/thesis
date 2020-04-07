@@ -1,0 +1,44 @@
+\begin{figure}[H]
+\centering
+  \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.6cm]
+
+  \tikzstyle{comment}=[
+    right=2pt,
+    font=\small,
+    fill=white,
+    text=black,
+    draw=black,
+  ]
+
+  \tikzstyle{every state}=[rectangle,thick,
+    draw=black,fill=gray!20,text=black,
+    minimum width= 6cm,
+    minimum height= 1.20cm
+  ]
+
+  \tikzstyle{smallstate}=[rectangle,thick,
+    draw=black,fill=gray!10,text=black,
+    minimum width= 4cm,
+    minimum height= 1.20cm
+  ]
+
+  \node[smallstate]         (A)                    {Null Net};
+  \node[smallstate]         (B) [below of=A]       {Null Routing};
+\begin{scope}[on background layer]
+  \node[state, fit=(A)(B)] (AB)                 {};
+\end{scope}
+  \node[state,below=1cm]         (C) [below of=AB]       {CSMA};
+  \node[state]         (D) [below of=C]       {LoRa};
+
+  \node[comment]       at (AB.north west) {Network Layer};
+  \node[comment]       at (C.north west) {MAC Layer};
+  \node[comment]       at (D.north west) {Physical Layer};
+  % \path (A) edge [bend right]    node {     } (B)
+  %           edge [bend left]     node {     } (C)
+  %       (B) edge [bend left]     node {     } (C)
+  %           edge                 node {     } (D)
+  %       (C) edge [bend left]     node {     } (A)
+  %       (D) edge [bend right=85] node {     } (A);
+\end{tikzpicture}
+\caption{The network stack used for the ping-pong example\label{fig:pingpongstack}}
+\end{figure}
