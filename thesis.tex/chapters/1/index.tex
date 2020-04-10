@@ -5,13 +5,13 @@ major \emph{IT actors} investing in the development of new
 products\footnote{\url{https://www.fortunebusinessinsights.com/industry-reports/internet-of-things-iot-market-100307}},
 as well as telecoms building infrastructure for this new 
 demand\footnote{\url{https://www.proximus.be/en/id_cl_iot/companies-and-public-sector/it-services/iot/internet-of-things.html}}
-The \emph{Internet of Things}, describing inter connected devices gathering
+The \emph{Internet of Things}, describing interconnected devices gathering
 data without human interaction, has undoubtedly been a subject of hype during the
 last decade while maintaining a consistent growth until now.
 Business analysts agree that we should expect to reach at least 40 billion
 installed \emph{IoT} devices by
 2027\footnote{\url{https://www.businessinsider.com/internet-of-things-report}}. 
-We are, as consumer, already familiar with the traditional \emph{IoT} products
+Consumers are already familiar with the traditional \emph{IoT} products
 we use in our households. They allow to connect our light bulbs, our fridge and
 washing machine, \ldots
 Meanwhile we have less knowledge of the industrial usage of \emph{IoT}, also
@@ -28,7 +28,7 @@ sectors like \emph{smart farming}, \emph{smart cars}, \emph{smart cities},
 The common aspect of all of these applications are that they can communicate
 wirelessly.
 A multitude of telecommunication technologies are used or were created to suit
-this solution and can be categorized by three different characteristic.
+this solution and can be categorized by three different characteristics.
 
 \begin{itemize}
     \item Long or Short \emph{range}
@@ -50,20 +50,20 @@ main categories.
 
 \input{thesis.tex/chapters/1/fig/comparaison.tex}
 
-This work focus only on \emph{LoRa}, a proprietary chirp spread spectrum
+This work focus only on \emph{LoRa}, a proprietary \emph{chirp spread spectrum}
 modulation technique owned by \emph{Semtech}, operating in the sub-GHz
 unlicensed \emph{ISM} band, that will be explained in more details in 
 Section~\ref{section:lora}.
 The main characteristics of \emph{LoRa} is that it trade throughput for range
 and low power transmission. 
-The long-range capabilities of the protocol has really caught the attention of
-a lot of people with record distance transmission over 700km
+The long-range capabilities of the protocol has caught the attention of
+many people with record distance transmission over 700 km
 with direct line of sight between the receiver and the
 transmitter\footnote{https://www.thethingsnetwork.org/article/ground-breaking-world-record-lorawan-packet-received-at-702-km-436-miles-distance}.
 However, this case is not a real world example, we should still expect a typical 
-range in urban areas of around \emph{2 to 5km} and \emph{15km} in suburban
-areas~\cite{8030482}. Fine tuning the \emph{PHY} settings of the protocol also
-allow to trade communication distance over throughput and a longer band usage
+range in urban areas of around \emph{2 to 5 km} and \emph{15 km} in suburban
+areas~\cite{8030482}. Fine-tuning the \emph{PHY} settings of the protocol also
+allow trading communication distance over throughput and a longer band usage,
 which decrease the number of concurrent motes that can communicate over the
 band~\cite{10.1145/2988287.2989163}.
 
@@ -81,11 +81,11 @@ developed\footnote{\url{https://www.thethingsnetwork.org/map}}.
 \input{thesis.tex/chapters/1/fig/topology.tex}
 
 The issue is that \emph{LoRaWAN} does not scale as studied 
-in~\cite{8030482}~\cite{10.1145/2988287.2989163}. This occur especially 
-with dense network, like in urban environments, where a lot of collision can
+in~\cite{8030482}~\cite{10.1145/2988287.2989163}. This occurs especially 
+with dense networks, like in urban environments, where a lot of collision can
 happen during transmission.
 
-LoRaWAN is a \emph{ALOHA} based MAC protocol and channel sensing is not possible 
+LoRaWAN is a \emph{ALOHA} based MAC protocol and channel sensing is impossible 
 because \emph{Channel Activity Detection} (CAD) only detect the preamble of a 
 communication. % TODO reference needed
 This lead to collision when transmitting at the same time and until the message 
@@ -99,17 +99,17 @@ station.
 The \emph{duty-cycle} regulations in place with the \emph{ISM} bands on every
 transmitting devices (motes and gateways) is then a limiting factor 
 for \emph{LoRaWAN} (\cite{8030482}).
-The european ISM band has set a duty-cycle of \emph{1\%} meaning the each node 
+The european ISM band has set a duty-cycle of \emph{1\%} meaning each node 
 and gateway has a maximum transmission time per hour of \emph{36 sec/hour}. 
 Increasing the number of retransmission of a packet quickly become impossible.
 % TODO {Add some reference to ISM regulations} 
 
 Link quality is also influencing on LoRaWAN efficiency. 
-Motes on the limit of the gateway coverage may struggle accomplishing a 
+Motes on the limit of the gateway coverage may struggle to achieve a
 complete transmission. 
 Environmental factor like temperature, humidity as studied 
-in~\cite{evaluation_of_the_reliability_of_lora}, as well as the topology of the 
-terrain~\cite{lorajambalaya}, have a lot of influence in the link quality.
+in~\cite{evaluation_of_the_reliability_of_lora}, the topology of the 
+terrain~\cite{lorajambalaya}, influence a lot the link quality.
 All these factor make the network coverage of a typical gateway not uniform 
 as we can see in Fig~\ref{fig:coverage}.
 
@@ -137,21 +137,20 @@ issue this whole network will remain unconnected.
 
 
 Using a multi-hop routing protocol (Fig~\ref{fig:meshtopology}) solution
-instead of LoRaWAN could actually mitigate some of the protocol congestion
-issues (\cite{8115756}).
+could mitigate LoRaWAN congestion issues (\cite{8115756}).
 Increasing the redundancy and the reliability of the lossy network could be a
 solution to the problems previously exposed like varying topology,
 environmental changing conditions or end-of-reach devices.
 A multi-hop network can adapt to this kind of variation, routing protocols can
-actually change the path of a packet when node are not responding and keep
-tracks of the routes available. % TODO {Maybe cite study with the node in water roover}
+keep track and change packets routes for not responding nodes
+% TODO {Maybe cite study with the node in water roover}
 Also multi-hop is a strong candidate for large areas monitoring application
-where few gateways are available.
+where few gateways may be available.
 
-Work to create such a multi-hop routing protocol with LoRa has already been
+Work to create multi-hop routing protocol with LoRa has already been
 done in~\cite{8115756} but didn't took into account the energy consumption of
 the motes.
-Hopefully Medium Access Control (MAC) protocols such as \emph{TSCH} have
+Medium Access Control (MAC) protocols such as \emph{TSCH} have
 already been developed for the \emph{IEEE 802.15.4} standard to solve the
 energy consumption problem.
 Work in~\cite{8847137} and~\cite{njomgang_2018} has already been done in

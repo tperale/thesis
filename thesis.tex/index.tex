@@ -271,65 +271,7 @@
 
 \input{thesis.tex/chapters/1/index.tex}
 
-\chapter{Context}
-
-% As of today very little work has been done on creating a multihop LoRa Network (see Kris Paper on RPL LoRa in context section)
-
-\section{LoRa}
-
-\label{section:lora}
-
-\paragraph{Packet Format}
-\paragraph{Chirp Spread Spectrum (CSS) modulation}
-\paragraph{Transmission Power}
-\paragraph{Spreading Factor}
-
-The higher the \emph{SF} the longer the communication range get while the transmission also get slower. Frames can be send at the same time if they are all sent with a different spreading factors\cite{8030482}.
-
-The data rate can range from 0.3kbps to 27kbps depending on the \emph{SF} % TODO Calculation needed
-
-\paragraph{Bandwidth}
-\paragraph{Coding-Rate}
-\paragraph{Channels}
-
-% See 'Understanding the limits of LoRaWAN' the 3 channels definition in Europe
-
-\paragraph{Time On Air}
-
-\begin{equation}
-  \label{eq:tsym}
-  T_{sym} = \frac{2^{SF}}{BW}
-\end{equation}
-\begin{equation}
-  \label{eq:tpreamble}
-  T_{preamble} = (n_{preamble} + 4.25)T_{sym}
-\end{equation}
-\begin{equation}
-  \label{eq:payloadsymnb}
-  payloadSymbNb = 8 + \max(ceil(\frac{8PL - 4SF + 28 + 16 - 20H}{4(SF - 2DE)})(CR + 4),0)
-\end{equation}
-\begin{equation}
-  \label{eq:tpayload}
-  T_{payload} = payloadSymNb T_{sym}
-\end{equation}
-\begin{equation}
-  \label{eq:tpacket}
-  T_{packet} = T_{preamble} + T_{paylaod}
-\end{equation}
-
-\section{TSCH}
-
-\section{6LoWPAN}
-
-% 6TOP Sublayer
-
-\section{Contiki OS}
-
-\section{Related work}
-
-\subsection{Time-Slotted LoRa}
-
-\subsection{Multihop LoRa}
+\input{thesis.tex/chapters/context/index.tex}
 
 \input{thesis.tex/chapters/driver/index.tex}
 
