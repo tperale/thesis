@@ -1,21 +1,335 @@
 \chapter{Time-Slotted Channel Hopping Implementation for LoRa\label{section:tsch}}
 
+\section{Timing parameters}
+
+Contiki developers have already implemented the parameters for
+platforms using IEEE 802.15.4.
+Adapting the timing to LoAa would mean longer parameters because of the long
+transmission time, will lead to its set of problem we will cover in this
+section.
+
+Different parts constitute slotframes in TSCH. Precisely timing each part lead
+to better energy usage by each motes and higher overall throughput.
+
+Contiki define the following parameter we need to define in $\mu s$.
+
+\begin{lstlisting}
+enum tsch_timeslot_timing_elements {
+  tsch_ts_cca_offset,
+  tsch_ts_cca,
+  tsch_ts_tx_offset,
+  tsch_ts_rx_offset,
+  tsch_ts_rx_ack_delay,
+  tsch_ts_tx_ack_delay,
+  tsch_ts_rx_wait,
+  tsch_ts_ack_wait,
+  tsch_ts_rx_tx,
+  tsch_ts_max_ack,
+  tsch_ts_max_tx,
+  tsch_ts_timeslot_length,
+  tsch_ts_elements_count, /* Not a timing element */
+};
+\end{lstlisting}
+
+The first two parameters remained unused because I didn't used the TSCH
+\emph{CCA} option. 
+\lstinline{tsch_ts_rx_tx} not used anywhere in the Contiki codebase.
+
+\begin{itemize}
+  \item \lstinline{tx_offset} represent time needed for the packet to get
+    prepared before getting on air.
+  \item \lstinline{max_tx} is the maximum transmission time (time on air) using
+    LoRa. The parameter depends on the spreading factor and the maximum bytes
+    transmittable.
+  \item \lstinline{rx_ack_delay} buffering time between packet transmission and
+    the acknowledgement reception. This delay is long enough for the receiver
+    to receive the message compute it and transmit the acknowledgement packet.
+  \item \lstinline{ts_max_ack} is the maximum transmission time (time on air) for
+    the acknowledgement packet reception.
+\end{itemize}
+
+The Fig~\ref{fig:tstiming} represent the parameters organization during
+timeslots.
+
+\input{thesis.tex/chapters/tsch/fig/timeslots.tex}
+
+\subsection{Timing size issue}
+
+Contiki store each timing parameter in a 16 bit unsigned integer.
+
+\begin{lstlisting}
+typedef uint16_t tsch_timeslot_timing_usec[tsch_ts_elements_count];
+\end{lstlisting}
+
+This set the maximum parameter value to $64436\mu s$.
+Not long enough to accept some of the longest transmission using LoRa, that can
+reach more than 350ms with spreading factor 7.
+
+I changed the TSCH implementation to use 32 bit integer instead, allowing more
+room for the parameters.
+
+\begin{lstlisting}
+typedef uint32_t tsch_timeslot_timing_usec[tsch_ts_elements_count];
+\end{lstlisting}
+
+\subsection{$\mu s$ and $rtimer$ ticks conversion}
+
+Contiki make all microsecond to \emph{RTIMER} conversion with the following
+function.
+
+\begin{lstlisting}
+#define US_TO_RTIMERTICKS(US)  ((US) >= 0 ?                        \
+  (((int32_t)(US) * (RTIMER_ARCH_SECOND) + 500000) / 1000000L) :      \
+  ((int32_t)(US) * (RTIMER_ARCH_SECOND) - 500000) / 1000000L)
+\end{lstlisting}
+
+The 32 bits integer has a maximum value of \ref{eq:maxint32}.
+
+\begin{equation}
+  \label{eq:maxint32}
+  max(int32\_t) = \frac{2^{32}}{2} - 1 = 2147483647
+\end{equation}
+
+\begin{equation}
+  \label{eq:rtimersecond}
+  RTIMER\_ARCH\_SECOND = 32768
+\end{equation}
+
+\begin{equation}
+  \label{eq:maxus}
+  \begin{multlined}
+  max(int32\_t) = x * RTIMER\_ARCH\_SECOND + 500000 \\
+  x = ceil(\frac{max(int32\_t) - 500000}{RTIMER\_ARCH\_SECOND}) \\
+  x = 131057 \\
+  \end{multlined}
+\end{equation}
+
+Every conversion over 131056 $\mu s$ will make the 32 bits integer overflow.
+I made a new conversion function using 64 bits integer instead to avoid the
+limitation and changed every conversion made with the previous version in TSCH
+with this new one.
+
+\begin{lstlisting}
+#define US_TO_RTIMERTICKS_64(US) ((US) >= 0 ? \
+  ((int32_t)(((int64_t)(US) * (RTIMER_ARCH_SECOND) + 500000) / 1000000L)) : \
+  ((int32_t)((int64_t)(US) * (RTIMER_ARCH_SECOND) - 500000) / 1000000L)) 
+\end{lstlisting}
+
 \section{Porting TSCH}
+
+According to the \emph{contiki-ng}
+wiki\footnote{\url{https://github.com/contiki-ng/contiki-ng/wiki/Documentation:-TSCH-and-6TiSCH}}
+on TSCH, porting the MAC protocol to new radio platforms, require specific
+configurations parameters.
+
+The radio driver define those PHY layer specific parameters.
 
 \subsection{Channels}
 
-\subsection{Timestamp}
+Channel hopping is one of the main feature of TSCH. 
+
+\subsection{Packet Duration}
+
+Transmission duration is the parameter we can calculate with confidence.
+We already covered the equation in \ref{eq:tpacket}.
+
+Contiki previously calculated the time on air with the
+\lstinline{TSCH\_PACKET\_DURATION(bytes)} macro using two parameters to do the
+calculation.
+
+\begin{itemize}
+    \item RADIO\_BYTE\_AIR\_TIME
+    \item RADIO\_PHY\_OVERHEAD
+\end{itemize}
+
+Because LoRa communication depends on multiple variables, simple function
+dependant on bytes transmitted isn't precise enough.
+
+I replaced this macro by the equation~\ref{eq:tpacket} for precise measurement
+of the time on air.
 
 \subsection{Radio delay}
 
-\subsection{$\mu s$ and rtimer ticks conversion}
+There is two different radio delay originating from the RN2483 module.
+One at transmission and the other at reception. 
+They should in theory be constant for each radio driver and TSCH use the
+following parameters to access them.
 
-\subsection{LoRa Time On Air}
+\begin{itemize}
+  \item RADIO\_CONST\_DELAY\_BEFORE\_TX
+  \item RADIO\_CONST\_DELAY\_BEFORE\_RX
+\end{itemize}
 
-\section{Adaptation of the timing}
+With the RN2483 module the radio delay highly depend on the transmission length 
+and will then vary for each communications.
 
-\paragraph{Timing size issue}
+\subsubsection{Transmission delay}
+
+Represent the time for the module to get messages on air. 
+This delay is made of 3 parts.
+
+\begin{itemize}
+  \item UART message transmission to the module.
+  \item Module message treatment.
+  \item Module sending back acknowledgement.
+\end{itemize}
+
+We know the message length, the acknowledgement length and we can then
+calculate parameter $1.$ and $3.$ because the baudrate is known.
+
+\begin{equation}
+  \label{eq:baudrate}
+  UART(x) = \frac{x . (bit_{start} + bits_{data} + bit_{stop})}{baudrate}
+\end{equation}
+
+The second parameter is unknown and the datasheet don't give any meaningful
+information about the module computation timing.
+
+I did measurement of the time between message transmission and acknowledgement
+with an oscilloscope to try to find a correlation between the number of bytes
+transmitted and the treatment length.
+
+\begin{figure}[H]
+  \centering
+
+  \begin{tikzpicture}
+  \begin{axis}[
+    width=0.8\textwidth,
+    height=0.6\textwidth,
+    axis x line=bottom,
+    xmin=3000,
+    xmax=24000,
+    xlabel={$time_{s}$},
+    xlabel near ticks,
+    xticklabel style={/pgf/number format/1000 sep=},
+    axis y line=left,
+    ymin=0,
+    ymax=128,
+    ylabel={bytes},
+    ylabel near ticks
+  ]
+    \addplot[color=red,mark=x] coordinates {
+      (3080,1)
+      (3560,4)
+      (4200,8)
+      (6400,21)
+      (8280,32)
+      (12600,58)
+      (13680,64)
+      (17360,86)
+      (23800,124)
+    };
+  \end{axis}
+  \end{tikzpicture}
+
+  \caption{Transmission delay measurements\label{fig:transmissiondelay}}
+\end{figure}
+
+I approximate the following function depending the number of transmitted bytes.
+
+\begin{equation}
+  \label{eq:transmissioncompute}
+  T_{TX}(x) = 2852 + 169x
+\end{equation}
+
+I calculated the whole transmission delay with the following formula
+
+\begin{gather}
+  \label{eq:transmissiondelay}
+  msg_{length}(x) = x * 2 + length("radio~tx~\backslash r \backslash n") \\
+  Delay_{TX}(x) = T_{TX}(x) + UART(msg_{length}(x)) + UART(length("ok \backslash r\backslash n"))
+\end{gather}
+
+\subsubsection{Reception delay}
+
+\subsubsection{Detection delay}
+
+Represent the time for the module to transmit new messages to the platform
+from the moment the communication is finished.
+This delay is made of two parts we can calculate when we know the message
+length.
+
+\begin{itemize}
+  \item Module message computation
+  \item UART message transmission from the module to the platform
+\end{itemize}
+
+I also measured the delay between the end of communication and the start of the
+message transmission to the platform with an oscilloscope.
+
+\begin{figure}[H]
+  \centering
+  \begin{tikzpicture}
+  \begin{axis}[
+    width=0.8\textwidth,
+    height=0.6\textwidth,
+    axis x line=bottom,
+    xmin=0,
+    xmax=55000,
+    xlabel={$time_{s}$},
+    xlabel near ticks,
+    xticklabel style={/pgf/number format/1000 sep=},
+    axis y line=left,
+    ymin=0,
+    ymax=128,
+    ylabel={bytes},
+    ylabel near ticks
+  ]
+    \addplot[color=red,mark=x] coordinates {
+      (820,1)
+      (1420,4)
+      (1940,3)
+      (2350,4)
+      (4240,8)
+      (8160,16)
+      (15600,32)
+      (31100,64)
+      (53200,110)
+    };
+  \end{axis}
+  \end{tikzpicture}
+  \caption{Reception delay measurements\label{fig:transmissiondelay}}
+\end{figure}
+
+The best matching function I found, used the number of symbols transmitted as
+parameter.
+
+\begin{equation}
+  \label{eq:detectcomp}
+  T_{detect}(x) = 408x + 49 . N_{sym}(x)
+\end{equation}
+
+The whole detection delay is calculated with the following formula.
+
+\begin{gather}
+  msg_{length}(x) = x * 2 + length("radio~rx~~\backslash r \backslash n") \\
+  \label{eq:detectdelay}
+  Delay_{detect}(x) = T_{detect}(x) + UART(msg_{length}(x))
+\end{gather}
+
+\subsection{Packet Timestamp}
+
+Timestamps are an essential variable in TSCH to calculate timeslot drift
+between two motes. 
+Contiki define the packet timestamps at the moment the transmission start.
+There is no way with the RN2483 module to know when the reception started.
+On packet reception, I calculate the timestamp with the detect delay 
+in equation~\ref{eq:detectdelay} and the transmission time in
+equation~\ref{eq:tpacket}.
+
+Each timeslot use the same offset before starting the actual transmission.
+Knowing the packet timestamp precisely allow receiving mote to determine the
+drift from the transmitter. Some motes are designed as time source and
+receiving mote will adjust their clock to these.
 
 \section{Testing}
+
+\subsection{simple-node}
+
+\subsection{UDP Transmission}
+
+\section{Energy consumption}
+
+\subsection{}
 
 \section{Considerations}

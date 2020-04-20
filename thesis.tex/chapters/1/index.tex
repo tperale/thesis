@@ -25,10 +25,9 @@ sectors like \emph{smart farming}, \emph{smart cars}, \emph{smart cities},
 
 \paragraph{}
 
-The common aspect of all of these applications are that they can communicate
-wirelessly.
-A multitude of telecommunication technologies are used or were created to suit
-this solution and can be categorized by three different characteristics.
+All these applications have in common to communicate wirelessly.
+Telecoms created new technologies to suit this new domain that can be
+characterized by three different characteristics.
 
 \begin{itemize}
     \item Long or Short \emph{range}
@@ -38,9 +37,9 @@ this solution and can be categorized by three different characteristics.
 
 % From these characteristics you can only chose two according to the physical
 % law. % TODO Explanation needed with the exact law reference explaining this
-The following graphics (Fig~\ref{fig:commrangegraph}) show a classification of
-existing wireless communication protocol used in the \emph{IoT} and mix it in three 
-main categories.
+The following graphics (Fig~\ref{fig:commrangegraph}) show the classification
+of the existing wireless communication protocol used in the \emph{IoT} and mix
+it in three main categories.
 
 \begin{itemize}
     \item \emph{Short-Range wireless communication} Short range, high data-rate
@@ -72,7 +71,7 @@ point-to-multipoint protocols.
 \emph{LoRaWAN} is a ALOHA based~\cite{loraalliance:lorawanspecification} network
 using a star-of-stars topology composed of wirelessly interconnected 
 \emph{motes} sending data to \emph{gateways}, relaying messages to central 
-servers over a Cellular or Ethernet connection as we can see in 
+servers over Cellular or Ethernet connections as we can see in 
 Figure~\ref{fig:startopology}.
 This single-hop topology is an easy to deploy solution because network coverage
 for LoRaWAN is fairly
@@ -80,49 +79,50 @@ developed\footnote{\url{https://www.thethingsnetwork.org/map}}.
 
 \input{thesis.tex/chapters/1/fig/topology.tex}
 
-The issue is that \emph{LoRaWAN} does not scale as studied 
-in~\cite{8030482}~\cite{10.1145/2988287.2989163}. This occurs especially 
-with dense networks, like in urban environments, where a lot of collision can
-happen during transmission.
+The issue with \emph{LoRaWAN} as studied 
+in~\cite{8030482}~\cite{10.1145/2988287.2989163} is, it does not scale. 
+% This occurs especially 
+% with dense networks, like in urban environments, where collisions can
+% happen on transmission.
 
 LoRaWAN is a \emph{ALOHA} based MAC protocol and channel sensing is impossible 
 because \emph{Channel Activity Detection} (CAD) only detect the preamble of a 
 communication. % TODO reference needed
 This lead to collision when transmitting at the same time and until the message 
 is correctly sent, the transmission has to be re-done.
-We should then expect bigger energy consumption for the motes and bigger radio 
-channel occupation.
+This lead to more energy consumption for the motes and more radio 
+channel usage.
 As the network get more dense~\cite{8030482}, the effect of collision get 
-increasingly significant with little to no packet getting received by a base
-station.
+increasingly significant with little to no packet getting received by gateways.
 
 The \emph{duty-cycle} regulations in place with the \emph{ISM} bands on every
 transmitting devices (motes and gateways) is then a limiting factor 
 for \emph{LoRaWAN} (\cite{8030482}).
 The european ISM band has set a duty-cycle of \emph{1\%} meaning each node 
-and gateway has a maximum transmission time per hour of \emph{36 sec/hour}. 
+and gateway can transmit \emph{36 sec/hour} maximum. 
+% Increasing the retransmission is impossible.
 Increasing the number of retransmission of a packet quickly become impossible.
 % TODO {Add some reference to ISM regulations} 
 
-Link quality is also influencing on LoRaWAN efficiency. 
-Motes on the limit of the gateway coverage may struggle to achieve a
+Link quality influence LoRaWAN efficiency. 
+Motes on the limit of the gateway coverage may struggle to
 complete transmission. 
 Environmental factor like temperature, humidity as studied 
 in~\cite{evaluation_of_the_reliability_of_lora}, the topology of the 
-terrain~\cite{lorajambalaya}, influence a lot the link quality.
-All these factor make the network coverage of a typical gateway not uniform 
+terrain~\cite{lorajambalaya}, influence the link quality.
+All these factor make the network coverage typically not uniform 
 as we can see in Fig~\ref{fig:coverage}.
 
-Gateways can restrain the deployment of a LoRa network.
+Gateways can restrain the deployment of LoRa networks.
 They may not be available to deploy everywhere and some use cases may not even allow
 the installation of gateways because they require more demanding infrastructure 
-than a battery operated mote.
+than battery operated motes.
 That's the case for pipelines and tunnel as in~\cite{Abrardo_2019},
-where we would prefer to only install motes running on batteries because a
-gateway wouldn't have much effect with the linear nature of the installation.
+we would prefer to only install motes running on batteries because
+gateways wouldn't have much effect with the linear nature of the installation.
 They can also be a single point of failure of the network, when a single
-gateway is connecting a portion of the network, in the event of a technical
-issue this whole network will remain unconnected.
+gateway is connecting a portion of the network. 
+The network disconnects on technical issues.
 
 \input{thesis.tex/chapters/1/fig/coverage.tex}
 
@@ -135,12 +135,10 @@ issue this whole network will remain unconnected.
 
 \paragraph{}
 
-
-Using a multi-hop routing protocol (Fig~\ref{fig:meshtopology}) solution
-could mitigate LoRaWAN congestion issues (\cite{8115756}).
+Multi-hop routing protocol (Fig~\ref{fig:meshtopology}) can mitigate
+the LoRaWAN congestion issues (\cite{8115756}).
 Increasing the redundancy and the reliability of the lossy network could be a
-solution to the problems previously exposed like varying topology,
-environmental changing conditions or end-of-reach devices.
+solution to the previously exposed problems.
 A multi-hop network can adapt to this kind of variation, routing protocols can
 keep track and change packets routes for not responding nodes
 % TODO {Maybe cite study with the node in water roover}
@@ -148,13 +146,13 @@ Also multi-hop is a strong candidate for large areas monitoring application
 where few gateways may be available.
 
 Work to create multi-hop routing protocol with LoRa has already been
-done in~\cite{8115756} but didn't took into account the energy consumption of
+done in~\cite{8115756} but didn't take into account the energy consumption of
 the motes.
-Medium Access Control (MAC) protocols such as \emph{TSCH} have
-already been developed for the \emph{IEEE 802.15.4} standard to solve the
-energy consumption problem.
-Work in~\cite{8847137} and~\cite{njomgang_2018} has already been done in
-\emph{VUB} to adapt TSCH for LoRa.
+The \emph{IEEE 802.15.4} standard already developed, a Medium Access Control (MAC)
+protocol, named \emph{TSCH} to solve the energy consumption problem.
+
+Work to adapt TSCH for LoRa in~\cite{8847137} and~\cite{njomgang_2018}, has
+already been done at \emph{VUB}.
 This thesis is part of the outcome of the combined efforts of the previous
-years by adapting \emph{TSCH} for the \emph{Zoleratia RE-Mote} working with a
+years to adapt \emph{TSCH} for the \emph{Zoleratia RE-Mote} working with the
 \emph{RN2483} LoRa shield.

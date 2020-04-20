@@ -1,0 +1,64 @@
+\begin{figure}[H]
+  \centering
+
+\begin{tikzpicture}[
+  timeslot/.style={draw, rectangle, minimum size=1cm},
+  description/.style={draw, rectangle, minimum size=1cm},
+  arr/.style={help lines,black!70,<->},
+]
+
+\foreach [evaluate={\ts=int(mod(\i, 4))}] \i in {0,...,7} {
+  \node (ts\i) [timeslot] at (\i, 0) {$TS_{\ts}$};
+}
+\node (ts8) [minimum height=1cm, minimum width=2cm, black!70] at (8.5, 0) {\ldots};
+
+\draw[help lines, black!70]
+  (ts8.north west) -- (ts8.north east) node[fill=white, black!70] {$\ldots$};
+\draw[help lines, black!70]
+  (ts8.south west) -- (ts8.south east) node[fill=white, black!70] {$\ldots$};
+
+\draw[ultra thick] 
+  (ts0.south west) rectangle (ts3.north east)
+  (ts4.south west) rectangle (ts7.north east);
+
+\draw[arr]
+  ([yshift=10pt]ts0.north west) -- node[fill=white] {$SF0$} ([yshift=10pt]{ts3.north east});
+\draw[arr]
+  ([yshift=10pt]ts4.north west) -- node[fill=white] {$SF1$} ([yshift=10pt]{ts7.north east});
+\draw[arr]
+  ([yshift=10pt]ts8.north west) -- node[fill=white] {$SF\ldots$} ([yshift=10pt]{ts8.north east});
+
+\begin{scope}[xshift=-1.2cm,yshift=-2cm,inner sep=0pt, outer sep=0pt]
+  \node (desc) [fit={(-2.5,0) (0,1)}, label=center:{Transmitter}] {};
+  \node (desc0) [description, fit={(0,0) (3,1)}, label=center:{tx\_offset}] {};
+  \node (desc1) [description, fit={(3,0) (6,1)}, label=center:{max\_tx}] {};
+  \node (desc2) [description, fit={(6,0) (9,1)}, label=center:{rx\_ack\_delay}] {};
+  \node (desc3) [description, fit={(9,0) (12,1)}, label=center:{max\_ack}] {};
+\end{scope}
+
+\draw[help lines, black!70,-]
+  ([yshift=0pt]ts4.south west) -- 
+  ([yshift=0pt]{desc0.north west});
+\draw[help lines, black!70,-]
+  ([yshift=0pt]ts4.south east) -- 
+  ([yshift=0pt]{desc3.north east});
+
+\begin{scope}[xshift=-1.2cm,yshift=-3.5cm,inner sep=0pt, outer sep=0pt]
+  \node (ddesc) [fit={(-2.5,0) (0,1)}, label=center:{Receiver}] {};
+  \node (ddesc0) [description, fit={(0,0) (3,1)}, label=center:{rx\_offset}] {};
+  \node (ddesc1) [description, fit={(3,0) (6,1)}, label=center:{rx\_wait}] {};
+  \node (ddesc2) [description, fit={(6,0) (9,1)}, label=center:{tx\_ack\_delay}] {};
+  \node (ddesc3) [description, fit={(9,0) (12,1)}, label=center:{max\_ack}] {};
+\end{scope}
+
+\draw[help lines, black!70,-]
+  ([yshift=0pt]desc0.south west) -- 
+  ([yshift=0pt]{ddesc0.north west});
+\draw[help lines, black!70,-]
+  ([yshift=0pt]desc3.south east) -- 
+  ([yshift=0pt]{ddesc3.north east});
+
+\end{tikzpicture}
+
+\caption{Slotframes representation with the timings\label{fig:tstiming}}
+\end{figure}
