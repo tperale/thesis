@@ -1,0 +1,37 @@
+\begin{figure}[H]
+\centering
+  \begin{tikzpicture}[]
+
+  \begin{scope}[
+      xshift=-0.2cm,
+      asn/.style={black!70, minimum width=2cm},
+      timeslot/.style={draw, rectangle, minimum width=2cm, minimum height=1cm},
+      arr/.style={help lines,black!70,<->},
+  ]
+    \foreach \i in {0,...,7} {
+      \node (ts\i) [asn] at (2*\i, 1) {$TS_{\i}$};
+    }
+    \node (tss0) [timeslot] at (0, 0) {\tiny Shared};
+    \node (tss1) [timeslot] at (2, 0) {\tiny :2dac $\rightarrow$ :2f2a};
+    \node (tss2) [timeslot] at (4, 0) {\tiny :2dbc $\rightarrow$ :2f2a};
+    \node (tss3) [timeslot] at (6, 0) {\tiny :2dbc $\rightarrow$ :2dac};
+    \node (tss4) [timeslot] at (8, 0) {\tiny :2f2a $\rightarrow$ :2dbc};
+    \node (tss5) [timeslot] at (10, 0) {};
+    \node (tss6) [timeslot] at (12, 0) {};
+    \node (tss7) [timeslot] at (14, 0) {};
+  \end{scope}
+  \begin{scope}[xshift=5cm,yshift=-2cm,->,>=stealth',shorten >=1pt,auto,node distance=2.5cm]
+    \tikzstyle{every state}=[thick,draw=gray!50,fill=gray!20,draw=none,text=black]
+
+    \node[state,thick,draw=red!40]         (A) [] {:2f2a};
+    \node[state]         (B) [below of=A]       {:2dac};
+    \node[state]         (C) [right of=B]       {:2dbc};
+
+    \path (A) edge [bend left]    node {$TS_4$} (C)
+          (B) edge [bend left]     node {$TS_1$} (A)
+          (C) edge [bend left]     node[above right] {$TS_2$} (A)
+              edge [bend left] node {$TS_3$} (B);
+  \end{scope}
+\end{tikzpicture}
+\caption{Custom Schedule\label{fig:cmdstate}}
+\end{figure}

@@ -1,6 +1,6 @@
 \documentclass[11pt]{report}
 \usepackage{multicol,lipsum,microtype}
-\usepackage[dvipsnames]{xcolor}
+\usepackage[table, xcdraw,dvipsnames]{xcolor}
 \usepackage[backend=biber]{biblatex}
 \addbibresource{bib/main.bib}
 \usepackage{vub}
@@ -8,6 +8,7 @@
 \usepackage{xargs}
 \usepackage{float}
 \usepackage{tikz}
+\usepackage{bytefield}
 \usepackage{pgf-umlsd}
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.16}
@@ -28,6 +29,8 @@
 % \usetikzlibrary{external}
 % \tikzexternalize[prefix=tikz/]
 % \usepackage[a4paper,landscape,hmargin={1cm,1cm}]{geometry}
+\usepackage{tikz-timing}[2014/10/29]
+\usetikztiminglibrary[rising arrows]{clockarrows}
 \usetikzlibrary{fit}
 \usetikzlibrary{calc}
 \usetikzlibrary{quotes}
@@ -288,7 +291,7 @@
 
 \newpage
 
-\section{Appendix}
+\input{thesis.tex/chapters/appendix/index.tex}
 
 \end{document}
 
