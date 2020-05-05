@@ -6,24 +6,24 @@
 
 LoRa is a proprietary chirp spread spectrum technology made by Semtech with
 integrated Forward Error Correction (FEC).
-LoRa operate in this sub-GHz unlicensed Industrial, Scientific and Medical
-(ISM) bands on multiple channels.
-The main characteristics of LoRa, is that it trades data rate for long range 
+LoRa operates in this sub-GHz unlicensed Industrial, Scientific and Medical
+(ISM) bands.
+The main characteristic of LoRa, is that it trades data rate for long range 
 and low power consumption with a maximum data rate of 27 kbps~\cite{8030482}.
 LoRa supports bi-directional communications with maximum message length of 242
 bytes~\cite{loraalliance:lorawanspecification}.
 
-This section will cover the LoRa physical layer parameters, the packet structure and how
-all these parameters influence the Time On Air (ToA).
+This section will cover the LoRa physical layer parameters, the packet structure and 
+will explain how all these parameters influence the Time On Air (ToA).
 
 \subsection{Chirp Spread Spectrum (CSS) modulation}
 
 Chirp Spread Spectrum is a spread spectrum technique, developed in 1940 for
-military application in radars and sonars \cite{semtech:modulationbasics}, but is 
-getting adopted in the recent years for low power data transmission.
-Chirp are sinusoidal signals increasing (upchirps) or decreasing (downchirps)
-in frequency.
-Fig~\ref{fig:downchirp} is an example of a downchirp.
+military applications in radars and sonars \cite{semtech:modulationbasics}, but
+has been adopted in the recent years for low power data transmission.
+Chirps are sinusoidal signals increasing (upchirps) or decreasing (downchirps)
+in frequency over time.
+Figure~\ref{fig:downchirp} shows an example of a downchirp.
 
 Using CSS has the advantage to ensure equivalent timing and frequency offset
 between the receiver and transmitter and robustness to channel degradation
@@ -46,9 +46,9 @@ interference)~\cite{semtech:modulationbasics}.
 
 \subsubsection{Spreading Factor (SF)}
 
-The spreading factor, a parameter of the LoRa modulation, represent the
-relation~(\ref{eq:sf}) between the symbols rate ($R_{s}$) and chirp rate ($R_{c}$)
-(see~\cite{semtech:modemdesign}) where $2^{SF}$ equal to the number of chirps per
+The spreading factor, a parameter of the LoRa modulation, represents the
+relation~(\ref{eq:sf}) between the symbol rate ($R_{s}$) and chirp rate ($R_{c}$)
+(see~\cite{semtech:modemdesign}) where $2^{SF}$ equals to the number of chirps per
 symbols.
 
 \begin{equation}
@@ -58,16 +58,16 @@ symbols.
 
 The SF can range from 7 to 12, higher SF improve the Signal-to-noise ratio
 (SNR) and receiver sensitivity~\cite{semtech:modemdesign}.
-Increasing the SF trade transmission range for slower communications.
+Increasing the SF trades transmission range for slower communications.
 
-The LoRa modulation uses orthogonal spreading factors to enable concurrent multiple
-packet's transmission on the same channel with different
+The LoRa modulation uses orthogonal spreading factors to enable concurrent
+packet transmission at the same time with different
 spreading factors~\cite{semtech:modulationbasics}.
 
 \subsubsection{Bandwidth (BW)}
 
 Bandwidth is the range of frequencies available during modulation.
-LoRa support three bandwidth in the european ISM band.
+LoRa support three bandwidth in the European ISM band.
 
 \begin{itemize}
     \item 125 kHz
@@ -75,12 +75,12 @@ LoRa support three bandwidth in the european ISM band.
     \item 500 kHz
 \end{itemize}
 
-Available Bandwidth depends on the region. % See limit of lora wan
+Available bandwidth depends on the region. % See limit of lora wan
 % Europe only use 125 and 250 kHz. source needed
 
-The BW is interchangeable with the chirps rate, to do the symbols rate
+The BW is interchangeable with the chirp rate, to do the symbols rate
 calculation.
-Increasing the BW increase the symbols rate, and thus, the data rate.
+Increasing the BW increases the symbols rate, and thus, the data rate.
 
 \begin{gather}
  \label{eq:bw} 
@@ -89,7 +89,7 @@ Increasing the BW increase the symbols rate, and thus, the data rate.
 \end{gather}
 
 According to~\cite{semtech:modulationbasics}, increasing the
-bandwidth increase the noise floor (\ref{eq:noisefloorbw}), reducing the
+bandwidth increases the noise floor (\ref{eq:noisefloorbw}), reducing the
 range of the communication.
 
 \begin{equation}
@@ -115,13 +115,13 @@ range of the communication.
 
 \subsubsection{Coding-Rate (CR)}
 
-The Coding rate represent the proportion between information bit and error
+The Coding rate represents the proportion between information bits and error
 correction bits. 
-Forward Error Correction (FEC) is the process of adding error bits to a
-transmission to help with data restoration in case of corruption.
+Forward Error Correction (FEC) is the process of adding error correction bits to a
+transmission, to help with data restoration in case of bit errors.
 
-Increasing the coding rate will decrease the data rate as communicating actual
-information get longer but also more reliable.
+Increasing the coding rate will decrease the actual data rate. 
+There is more overhead, but also more reliability.
 
 The next table~\ref{table:cr} show the CR parameter available in LoRa.
 
@@ -141,7 +141,7 @@ The next table~\ref{table:cr} show the CR parameter available in LoRa.
 
 \subsubsection{Data Rate}
 
-The following equation~\ref{eq:bitrate} calculate the bit rate depending on the
+The following equation~\ref{eq:bitrate} calculates the bit rate depending on the
 parameters I introduced in the previous sections\cite{semtech:modulationbasics}.
 
 \begin{equation}
@@ -194,7 +194,7 @@ Three part constitute packets.
 \begin{description}
   \item[Preamble] synchronize the receiver for the incoming data flow. The
     preamble length is configurable.
-  \item[Header] Depend on the packet type explicit or implicit.
+  \item[Header] Depends on the packet type explicit or implicit.
   \begin{description}
     \item[Explicit] mode header provides information on the payload.
     \begin{itemize}
@@ -202,8 +202,8 @@ Three part constitute packets.
       \item Forward Error Correction code rate.
       \item The presence or not of the payload CRC.
     \end{itemize}
-    \item[Implicit] mode remove the header from the packet. This mode should be
-      used when payload, coding rate and CRC presence are known and we want to
+    \item[Implicit] mode removes the header from the packet. This mode should be
+      used when payload, coding rate and CRC presence are known and when we want to
       reduce the packet length.
   \end{description}
   \item[Payload] is a variable length field containing the transmitted data as
@@ -288,7 +288,7 @@ communications by using the following principles.
   \item[Time-division multiple access] or (TDMA) by assigning time-slots for each
     participant in the network avoiding collisions.
   \item[Synchronization] time-synchronized nodes syncing their clock with each
-    other for improved power usage of the radio.
+    other for being able to keep the notion of time slot.
   \item[Channel Hopping] for better band usage, less interference and more
     throughput.
 \end{description}
@@ -297,23 +297,31 @@ In the following section I will present the TSCH protocol building blocks.
 
 \subsection{Time Slots}
 
-Time slots are a fixed unit of time to execute the TSCH network operations. 
+A time slot in TSCH is a unit of time to execute the network operations. 
 The duration of the time slot is not standardized and depend on the physical 
 layer we are using. 
 Time slots should be long enough for the longest frame size to be sent
-between two nodes with an acknowledgement~\cite{rfc7554}. 
-Every time slot in a TSCH network have the same duration.
+between two nodes, together with an acknowledgement~\cite{rfc7554}. 
+Every time slot in a TSCH network has the same duration.
 
-For each time slots operations, a schedule orchestrate what each
+For each time slots operations, a schedule orchestrates what each
 node of the network will use his time-slot for.
 
 \begin{description}
   \item [Transmit] if a packet is on the outgoing buffer of the node.
   \item [Receive] listen for incoming packets that may arrive.
-  \item [Sleep]
+  \item [Sleep] to save energy.
 \end{description}
 
-\emph{Channel Hopping} increase the network capacity and multiple device can
+Each transmitting or receiving time slot is made of the following parts.
+
+\begin{itemize}
+  \item The packet transmission or reception.
+  \item Guard time for time slots synchronization.
+  \item Acknowledgement reception or transmission.
+\end{itemize}
+
+\emph{Channel Hopping} increases the network capacity and multiple device can
 share time-slots to transmit at the same time on different channels.
 
 We can define \emph{links} as being made up of time slots and
@@ -327,14 +335,13 @@ channels~\cite{Chen2013PerformanceAO}.
 Multiple links constitute a time slot (dependent on the number of channel
 available). Devices can transmit on different links during the same time slot.
 
-\subsection{Slotframes}
+\paragraph{}
 
-Slotframes are a group of time slots that repeats over time as represented
-in Fig~\ref{fig:timeslots}. 
-
-The size of the slotframe will directly impact on the energy consumption of
-each node as increasing the size will decrease the number of time a node has
-to exit sleep mode to listen or transmit packets.
+A set of time slots that repeat over time is known as a slotframe.
+A slotframe is made of time slots and empty slots.
+The slotframe length has a direct impact on the network capacity.
+Figure~\ref{fig:timeslots} represent how time slots and slotframes are
+organized together. 
 
 \input{thesis.tex/chapters/context/fig/timeslots.tex}
 
@@ -344,7 +351,7 @@ to exit sleep mode to listen or transmit packets.
 
 ASN is a shared counter between all the devices that define the number of time slots 
 elapsed since the start of the start of the network (see Fig~\ref{fig:asn}).
-ASN increase after each time-slot and is calculated with \ref{eq:asn} where $k$
+ASN increases after each time-slot and is calculated with \ref{eq:asn} where $k$
 is the slotframe offset.
 
 \begin{equation}
@@ -407,6 +414,9 @@ is the slotframe offset.
 % 6TOP Sublayer
 
 \section{Contiki OS}
+
+% Contiki is a free and open source Real-Time operating system specifically made
+% for IoT applications.
 
 \section{Related work}
 

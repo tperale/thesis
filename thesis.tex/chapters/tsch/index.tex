@@ -12,14 +12,14 @@ required to port TSCH to a new LoRa module.
 
 Contiki developers have already implemented the parameters for
 platforms using IEEE 802.15.4.
-Adapting the timing to LoRa would mean longer parameters because of the long
-transmission time, will lead to its set of problem we will cover in this
+Adapting the timing to LoRa would mean longer time period because of the long
+transmission time on LoRa, which lead to a set of problems that we will cover in this
 section.
 
-Different parts constitute slotframes in TSCH. Timing precisely each part lead
-to better energy usage by each motes and higher overall throughput.
+Contiki use the following parameter we need to define in $\mu s$ to time each
+part of a time slot.
 
-Contiki define the following parameter we need to define in $\mu s$.
+% Guard time precise = better energy usage.
 
 \begin{lstlisting}
 enum tsch_timeslot_timing_elements {
@@ -39,27 +39,27 @@ enum tsch_timeslot_timing_elements {
 };
 \end{lstlisting}
 
-I didn't define \lstinline{tsch_ts_cca_offset} and \lstinline{tsch_ts_cca} I
-didn't used the TSCH \emph{CCA} option.
+I did not define \lstinline{tsch_ts_cca_offset} and \lstinline{tsch_ts_cca} 
+because \emph{CCA} is implossible with LoRa.
 Also, \lstinline{tsch_ts_rx_tx} is not used anywhere in the Contiki codebase.
 
 \begin{itemize}
-  \item \lstinline{tx_offset} represent time needed for the packet to get
+  \item \lstinline{tx_offset} represents the time needed for the packet to get
     prepared before getting transmitted on air. The end of
-    \lstinline{tx_offset} should precisely be the moment the packet get
-    transmitted. The parameter is the same as \lstinline{rx_offset}.
+    \lstinline{tx_offset} s the moment the packet get transmitted. 
+    The parameter is the same as \lstinline{rx_offset}.
   \item \lstinline{max_tx} is the maximum transmission time (time on air) using
-    LoRa. The parameter depends on the spreading factor and the maximum bytes
-    transmittable.
+    LoRa. The parameter depends on the spreading factor and the maximum number
+    of bytes transmittable.
   \item \lstinline{rx_ack_delay} buffering time between packet transmission and
     the acknowledgement reception. This delay is long enough for the receiver
-    to receive the message compute it and transmit the acknowledgement packet.
+    to receive the message compute its check for correctness and transmit the acknowledgement packet.
     The parameter is the same as \lstinline{tx_ack_delay}.
   \item \lstinline{ts_max_ack} is the maximum transmission time (time on air) for
     the acknowledgement packet reception.
 \end{itemize}
 
-The Fig~\ref{fig:tstiming} represent the parameters organization during
+Figure~\ref{fig:tstiming} represents the parameters organization during
 a time-slot.
 
 \input{thesis.tex/chapters/tsch/fig/timeslots.tex}
@@ -73,8 +73,9 @@ typedef uint16_t tsch_timeslot_timing_usec[tsch_ts_elements_count];
 \end{lstlisting}
 
 This set the maximum parameter value to $64436\mu s$.
-This value is not long enough to accept some of the longest LoRa transmission, 
-that can reach more than 350ms with spreading factor 7.
+This value is not long enough to store LoRa transmissions at maximum payload.
+It take 379 ms to transmit a maximum payload packet with the fastest spreading
+factor (SF 7).
 
 I changed the TSCH implementation to use 32 bit integer instead, allowing more
 room for the parameters.
@@ -85,7 +86,7 @@ typedef uint32_t tsch_timeslot_timing_usec[tsch_ts_elements_count];
 
 \subsection{$\mu s$ and $rtimer$ ticks conversion}
 
-Contiki make all microsecond to \emph{RTIMER} conversion with the following
+Contiki makes all microsecond to \emph{RTIMER} conversion with the following
 function.
 
 \begin{lstlisting}
@@ -127,14 +128,14 @@ with this new one.
 
 \subsection{Interrupt Priority Clash}
 
-Each time-slot operation are scheduled using \lstinline{rtimer_set}.
-This function schedule the time-slot using the real-time timer from the CC2538.
-It mean the time-slot is ran in an interruption.
+Each time-slot operation is scheduled using \lstinline{rtimer_set}.
+This function schedules the time-slot using the real-time timer from the CC2538.
+It means that the time-slot is ran in an interrupt.
 
 This is not an issue in the original implementation of TSCH using the CC2536
 because the radio driver is internal to the processor.
-The radio driver need to also use interruptions to receive messages from the UART.
-By default the real-time timer, \lstinline{SMT_IRQn}, as the same priority as
+The radio driver needs to also use interrupts to receive messages from the UART.
+By default the real-time timer, \lstinline{SMT_IRQn}, has the same priority as
 the UART1 interruption. 
 This is why I changed the \lstinline{rtimer_arch_schedule} implementation with
 the following line to set a lower priority.
@@ -148,22 +149,24 @@ NVIC_SetPriority(SMT_IRQn, 7);
 The CC2538 watchdog is set to a period of 32,768 ticks or 1 second. 
 Because Contiki run most TSCH operations inside an interrupt
 context, the watchdog timer is not reset inside.
-During long wait or long transmission the watchdog is not reset and would
+During long wait or long transmissions, the watchdog is not reset and would
 make the system reset.
-This is why when I'm busywaiting with the command
+This is why when the program busywait with the command
 \lstinline{RTIMER_BUSYWAIT_UNTIL_ABS}, I modified it execution to also execute
 a \lstinline{watchdog_periodic} to reset the watchdog timer.
 
 \subsection{Drift limitations}
 
+\subsection{Guard time issue}
+
 \section{Porting TSCH}
 
 According to the \emph{contiki-ng}
 wiki\footnote{\url{https://github.com/contiki-ng/contiki-ng/wiki/Documentation:-TSCH-and-6TiSCH}}
-on TSCH, porting the MAC protocol to new radio platforms, require specific
+on TSCH, porting the MAC protocol to new radio platforms, requires specific
 configurations parameters.
 
-The radio driver define those PHY layer specific parameters.
+The radio driver defines those PHY layer specific parameters.
 
 \subsection{Channels}
 
@@ -171,11 +174,11 @@ The radio driver define those PHY layer specific parameters.
 
 \subsection{Packet Duration}
 
-Transmission duration is the parameter we can calculate with confidence.
-We already covered the equation in \ref{eq:tpacket}.
+LoRa Transmission duration is known with the equation
+in \ref{eq:tpacket}.
 
-Contiki previously calculated the time on air with the
-\lstinline{TSCH\_PACKET\_DURATION(bytes)} macro using two parameters to do the
+The current implementation of Contiki calculate the time on air with the
+\lstinline{TSCH\_PACKET\_DURATION(bytes)} macro by using two parameters to do the
 calculation.
 
 \begin{itemize}
@@ -183,8 +186,9 @@ calculation.
     \item RADIO\_PHY\_OVERHEAD
 \end{itemize}
 
-Because LoRa communication depends on multiple variables, simple function
-dependant on the number of bytes transmitted isn't precise enough.
+Because LoRa communication is dependant on the number of symbols transmitted
+instead of the number of bytes the current implementation in TSCH is not
+precise enough.
 
 I changed the TSCH implementation to allow user defined macro and
 I replaced it by the equation~\ref{eq:tpacket} for precise measurement
@@ -192,7 +196,7 @@ of the time on air.
 
 \subsection{Radio delay}
 
-Radio delays are hardware platform dependant values. 
+Radio delays are hardware platform dependent values. 
 They get accessed from the radio driver.
 
 TSCH use three of these values.
@@ -203,14 +207,14 @@ TSCH use three of these values.
   \item RADIO\_CONST\_DELAY\_BEFORE\_DETECT
 \end{itemize}
 
-They should in theory be constant but since the communications delay depends
+They should in theory be constant but since the communication delay depends
 on the transmission length with the RN2483 module, I made them variable.
 
 % TODO oscilloscope output picture
 
 \subsubsection{Transmission delay}
 
-Represent the time for the module to get messages on air. 
+Represents the time for the module to get messages on air. 
 This delay is made of 3 parts.
 
 \begin{enumerate}
@@ -219,7 +223,7 @@ This delay is made of 3 parts.
   \item Module sending back acknowledgement.
 \end{enumerate}
 
-The program know the message length because
+The program knows the message length because
 \lstinline{NETSTACK_RADIO.prepare()} is executed before getting this parameter.
 The acknowledgement length is constant. 
 I can then calculate parameter $1.$ and $3.$ with the equation~\ref{eq:baudrate}.
@@ -229,8 +233,8 @@ I can then calculate parameter $1.$ and $3.$ with the equation~\ref{eq:baudrate}
   UART(x) = \frac{x . (bit_{start} + bits_{data} + bit_{stop})}{baudrate}
 \end{equation}
 
-The second parameter is unknown and the datasheet don't give any meaningful
-information about the module computation timing.
+The second parameter is unknown and the datasheet does not give any meaningful
+information about the module that computates the timing.
 
 I did measurement of the time between message transmission and acknowledgement
 with an oscilloscope to try to find a correlation between the number of bytes
@@ -281,7 +285,7 @@ Based on these measurements the best matching function is the following.
   T_{TX}(x) = 2852 + 169x \ \ \ \ (\mu s)
 \end{equation}
 
-The parameter return the whole transmission delay with the following
+The parameter returns the total transmission delay with the following
 the~equation~\ref{eq:transmissiondelay}.
 
 \begin{gather}
@@ -290,9 +294,9 @@ the~equation~\ref{eq:transmissiondelay}.
   Delay_{TX}(x) = T_{TX}(x) + UART(msg_{length}(x)) + UART(length("ok \backslash r\backslash n"))
 \end{gather}
 
-The spreading factor don't influence the transmission delay.
+The spreading factor does not influence the transmission delay.
 
-The precision of this parameter is essential for synchronized communications
+The precision of this parameter is essential for synchronized communication
 with TSCH. It will indicate to TSCH how to conduct its radio transmission
 precisely at the end of \lstinline{TS_TX_OFFSET}.
 
@@ -369,7 +373,7 @@ parameter.
   T_{detect}(x) = 408x + 49 . N_{sym}(x) \ \ \ (\mu s)
 \end{equation}
 
-The whole detection delay is calculated with the following formula.
+The total detection delay is calculated with the following formula.
 
 \begin{gather}
   msg_{length}(x) = x * 2 + length("radio~rx~~\backslash r \backslash n") \\
@@ -381,14 +385,14 @@ The whole detection delay is calculated with the following formula.
 
 Timestamps are an essential variable in TSCH to calculate timeslot drift
 between two motes. 
-Contiki define the packet timestamps at the moment the transmission start.
+Contiki takes the packet timestamps at the moment the transmission starts.
 There is no way with the RN2483 module to know when the reception started.
 On packet reception, I calculate the timestamp with the detect delay 
 in equation~\ref{eq:detectdelay} and the transmission time in
 equation~\ref{eq:tpacket}.
 
-Each timeslot use the same offset before starting the actual transmission.
-Knowing the packet timestamp precisely allow receiving mote to determine the
+Each timeslot uses the same offset before starting the actual transmission.
+Knowing the packet timestamp precisely allows the receiving mote to determine the
 drift from the transmitter. Some motes are designed as time source and
 receiving mote will adjust their clock to these.
 
@@ -396,11 +400,11 @@ receiving mote will adjust their clock to these.
 
 The transmitter can know in advance the moment the receiver will fully
 receive the message. In the previous implementation of TSCH the transmitter
-slot operation used to wait a constant time between transmission. I modified
+slot operation used to wait a constant time between transmissions. I modified
 this to include the detection delay at the transmitter side and the receiver
 will wait a constant time at reception instead.
 
-This will mitigate the effect of drifting timeslot, big messages are increasing
+This will mitigate the effect of drifting timeslots, big messages are increasing
 the detection time that could lead to miss the time frame for sending the
 acknowledgement.
 
