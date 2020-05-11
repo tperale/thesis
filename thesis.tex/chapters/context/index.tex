@@ -1,6 +1,9 @@
-\chapter{Context}
+\chapter{Context\label{section:context}}
 
 % As of today little work has been done on creating a multihop LoRa Network (see Kris Paper on RPL LoRa in context section)
+I will introduce in this chapter all the concepts needed for the understanding
+of the experiment I conducted in this thesis.
+I will also give an overview of related work to the topic.
 
 \section{LoRa\label{section:lora}}
 
@@ -289,6 +292,11 @@ European ISM band (863-870 MHz)~\cite{Polonelli_2019}.
 
 % TODO Talk about 1% duty cycle
 
+% \section{IPv6 over Low-Power Wireless Personal Area Networks (6LoWPAN)}
+
+% 6LoWPAN is an open standard defined in RFc 6282 by the Internet Engineering
+% Task Force (IETF).
+
 \section{Time-Slotted Channel Hopping (TSCH)}
 
 TSCH is a Medium Access Control (MAC) layer protocol defined by the IEEE
@@ -358,44 +366,7 @@ is the slotframe offset.
   ASN = k SF_{len} + TS_{offset}
 \end{equation}
 
-\begin{figure}[H]
-\centering
-\begin{tikzpicture}[
-  asn/.style={black!70, minimum size=1cm},
-  timeslot/.style={draw, rectangle, minimum size=1cm},
-  arr/.style={help lines,black!70,<->},
-  desc/.style={black!70},
-]
-
-\foreach \i in {0,...,7} {
-  \node (ts\i) [asn] at (\i, 1) {\tiny $ASN_{\i}$};
-}
-\foreach [evaluate={\ts=int(mod(\i, 4))}] \i in {0,...,7} {
-  \node (ts\i) [timeslot] at (\i, 0) {$TS_{\ts}$};
-}
-\node (ts8) [minimum height=1cm, minimum width=2cm, black!70] at (8.5, 0) {\ldots};
-\draw[help lines, black!70]
-  (ts8.north west) -- (ts8.north east) node[fill=white, black!70] {$\ldots$};
-\draw[help lines, black!70]
-  (ts8.south west) -- (ts8.south east) node[fill=white, black!70] {$\ldots$};
-
-\draw[ultra thick] 
-  (ts0.south west) rectangle (ts3.north east)
-  (ts4.south west) rectangle (ts7.north east);
-
-\draw[arr]
-  ([yshift=-10pt]ts0.south west) -- node[fill=white] {$SF0$} ([yshift=-10pt]{ts3.south east});
-\draw[arr]
-  ([yshift=-10pt]ts4.south west) -- node[fill=white] {$SF1$} ([yshift=-10pt]{ts7.south east});
-\draw[arr]
-  ([yshift=-10pt]ts8.south west) -- node[fill=white] {$SF\ldots$} ([yshift=-10pt]{ts8.south east});
-\node[desc] at
-  ([xshift=2cm, yshift=-28pt]ts0.south west) {$k = 0$};
-\node[desc] at
-  ([xshift=2cm, yshift=-28pt]ts4.south west) {$k = 1$};
-\end{tikzpicture}
-\caption{Absolute Slot Number\label{fig:asn}}
-\end{figure}
+\input{thesis.tex/chapters/context/fig/asn.tex}
 
 \subsection{Channel Hopping}
 
@@ -422,11 +393,15 @@ compute the same channel offset~\cite{rfc7554}.
 
 \begin{equation}
   \label{eq:channel}
-  Channel_{offset} = (ASN + Scheduled_{offset}) mod Channel_{number}
+  Channel_{offset} = (ASN + Scheduled_{offset}) \% Channel_{number}
 \end{equation}
 
 If the slotframe length is a prime number, even with static schedule,
 with known channel offset, the timeslot will use a different channel every time.
+Figure~\ref{fig:channelhopping} show how scheduled cells in a TSCH network of
+four timeslot and three channels change channel depending on the ASN.
+
+\input{thesis.tex/chapters/context/fig/channel_hopping.tex}
 
 \subsection{Scheduling}
 
@@ -440,7 +415,7 @@ Dedicated time slots cell need the following parts to be defined.
   \item Address of the node to communicate with.
 \end{itemize}
 
-Shared cells multiple nodes can transmit at the same time on the same channel.
+% Shared cells multiple nodes can transmit at the same time on the same channel.
 
 To ensure the execution of the same slots, each transmission is an opportunity 
 for neighbor to resynchronize their clocks.
@@ -452,9 +427,13 @@ a Keep Alive (KA) is sent and used to adjust the drift at synchronization.
 
 % TODO Graph explaining of we resync like serge did ?
 
-\section{6LoWPAN}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{thesis.tex/chapters/context/fig/sync.png}
+  \caption{Synchronization in a TSCH timeslot\cite{TELESHERMETO201784}\label{fig:sync}}
+\end{figure}
 
-% 6TOP Sublayer
+
 
 \section{Contiki OS}
 
@@ -463,8 +442,8 @@ for IoT applications. Contiki ships with a low-power IPv6 communication stack
 and a variety of routing and MAC protocols making a particularly adapted OS to
 use with Wireless Sensor Network (WSN).
 
-Contiki use protothreads, a programming abstraction which around Contiki is
-built.
+Contiki use protothreads, a programming abstraction which Contiki is
+built around.
 They allow to write event-driven programs with little memory overhead, and
 claims to reduce the complexity of embedded programs that used to be written 
 like state machines~\cite{10.1145/1182807.1182811}.
@@ -502,16 +481,16 @@ multi-hop network for LoRa and TSCH.
 
 \paragraph{}
 
-Work to port TSCH to a new radio protocol has already been done
-in~\cite{uwbtsch}.
+Work to port TSCH and the 6LoWPAN stack to a new radio protocol has already 
+been done in~\cite{uwbtsch} for the Ultra-Wide Band (UWB).
 
-\paragraph{BLEach}
+% \paragraph{BLEach}
 
 \paragraph{UWB-TSCH}
 
 Charlier M. in~\cite{uwbtsch} explore what it need to adapt TSCH for the Ultra
 Wideband (UWB). 
-In a similar way from LoRa UWB don't allow CCA and can not use CSMA for its 
+In a similar way from LoRa, UWB don't allow CCA and can not use CSMA for its 
 communications.
 His work show what it take to adapt TSCH for another radio layer. 
 Its also an evaluation of the performance of TSCH outside of 802.15.4.

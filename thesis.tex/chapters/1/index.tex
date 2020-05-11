@@ -70,13 +70,9 @@ around \emph{2 to 5 km} and around \emph{15 km} in suburban
 areas~\cite{8030482}.
 Fine-tuning the \emph{PHY} settings of the protocol
 allows to trade communication distance for throughput.
-% and a longer band usage,
-% which decreases the number of concurrent motes that can communicate over the
-% band~\cite{10.1145/2988287.2989163}.
 
 \emph{LoRa} is often used in conjunction with the \emph{LoRaWAN} a 
 LPWAN protocol.
-% point-to-multipoint.
 \emph{LoRaWAN} is an ALOHA based~\cite{loraalliance:lorawanspecification}
 MAC protocol for organizing a network
 using a star-of-stars topology composed of wirelessly interconnected 
@@ -158,15 +154,39 @@ keep track and change packets routes for not responding nodes
 Also multi-hop is a strong candidate for large areas monitoring application
 where few gateways may be available or where blind spots arise.
 % TODO more than one work !!
-Work to create multi-hop routing protocol with LoRa has already been
-done in~\cite{8115756} but did not take into account the energy consumption of
-the motes.
-The \emph{IEEE 802.15.4} standard already developed, a Medium Access Control (MAC)
-protocol, named \emph{TSCH} to solve the energy consumption problem and
-increase the realiability.
+% Work to create multi-hop routing protocol with LoRa has already been
+% done in~\cite{8115756} but did not take into account the energy consumption of
+% the motes.
+
+The \emph{IEEE 802.15.4} standard developed TSCH, a Medium Access Control (MAC)
+protocol to use with a compliant physical layer.
+TSCH works particularly well where LoRaWAN shows weaknesses. 
+TSCH is resilient to external interference with the use of channel hopping, a
+high density network of node can be run without collision issues.
+It also provide high reliability communications and deterministic delays by 
+keeping the nodes time-synchronized.
+
+\paragraph{}
+
+This thesis aim to adapt the TSCH MAC protocol for LoRa
+and thus bringing a reliable, long range and low power IPv6 multi-hop
+solution to the LoRa ecosystem.
 
 Work to adapt TSCH for LoRa in~\cite{8847137} and~\cite{njomgang_2018}, has
 already been done at \emph{VUB}.
 This thesis builds on the combined efforts of the previous
 years to adapt \emph{TSCH} for the \emph{Zolertia RE-Mote} working with the
 \emph{RN2483} LoRa shield.
+
+\paragraph{}
+
+The Chapter \ref{section:context} will give the background information and context needed to
+understand the building blocks to achieve my end goal.
+The Chapter \ref{section:context} will also give an overview of the related work on the subject of
+LoRa multi-hop communications.
+The Chapter 3 give the implementation details of writing a driver for the
+RN2483 in Contiki OS and the experimentation with the driver.
+Chapter 4 provide design and implementation of bringing TSCH to LoRa as well as
+the different testing done on the implementation.
+Finally, Chapter 5 will conclude the work by summarising it and suggesting
+further research.

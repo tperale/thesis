@@ -396,26 +396,72 @@ Knowing the packet timestamp precisely allows the receiving mote to determine th
 drift from the transmitter. Some motes are designed as time source and
 receiving mote will adjust their clock to these.
 
-\subsection{Mitigating the drift}
+% \subsection{Mitigating the drift}
 
-The transmitter can know in advance the moment the receiver will fully
-receive the message. In the previous implementation of TSCH the transmitter
-slot operation used to wait a constant time between transmissions. I modified
-this to include the detection delay at the transmitter side and the receiver
-will wait a constant time at reception instead.
+% The transmitter can know in advance the moment the receiver will fully
+% receive the message. In the previous implementation of TSCH the transmitter
+% slot operation used to wait a constant time between transmissions. I modified
+% this to include the detection delay at the transmitter side and the receiver
+% will wait a constant time at reception instead.
 
-This will mitigate the effect of drifting timeslots, big messages are increasing
-the detection time that could lead to miss the time frame for sending the
-acknowledgement.
+% This will mitigate the effect of drifting timeslots, big messages are increasing
+% the detection time that could lead to miss the time frame for sending the
+% acknowledgement.
+
+\section{Considerations}
+
+During the adaptation of the TSCH protocol for the RN2483 I stumbled upon huge
+clock drift that made me unable to run a reliable network using TSCH.
+
+After several improvement and research I came to the conclusion that the RN2483
+module we were using and the assumption I made in the previous section about it
+computation time were still to imprecise to run with the Contiki TSCH
+implementation out of the box.
+
+The function \ref{eq:transmissiondelay} and \ref{eq:detectcomp} can
+create imprecision of multiple ms.
+The original implementation tried to statistically correct the internal clock
+drift of the motes with the function
+\lstinline{tsch_timesync_adaptive_compensate}.
+The function learned from the nodes drift from the time source to predict the
+difference.
+
+I stopped using this function because the imprecision from the module make the
+matter worst.
 
 \section{Testing}
 
 \subsection{simple-node}
 
-\subsection{UDP Transmission}
+\subsection{RPL Custom Schedule}
 
 \input{thesis.tex/chapters/tsch/fig/schedule.tex}
 
 \section{Energy consumption}
 
-\section{Considerations}
+Because of the missing feature of the RN2483 module a real world measurement of
+the energy consumption is not relevant.
+The module is wasting energy in two places.
+
+\begin{itemize}
+  \item The slow UART communication between the platform and the module. A max 
+    payload transmission to the module take $86 ms$.  That's $86 ms$ of wasted 
+    energy where the radio is on receive mode.
+  \item Because we can't receive a feedback from the module when it detect a
+    preamble each timeslot must wait the maximum transmission time. This could
+    be avoided.
+\end{itemize}
+
+Because I knew I would not be able to measure meaningful data from my
+implementation I did not take time to experiment with the sleep feature of the
+module.
+
+% Maybe the next phrase is better in the conclusion
+
+A re-implementation of this project with a module like SX1272 would allow to
+measure meaningful data.
+Questions like if using external clock to improve the accuracy and reduce the
+number of EB would be possible to answer and we would have a better idea of the
+overall power consumption of the network.
+A study of how longer sleeping period between de-synchronize the network should
+be conducted.

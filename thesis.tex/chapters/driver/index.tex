@@ -264,8 +264,6 @@ structure that must implement the following functions.
 
 \section{Validation test}
 
-% Talk about project configuration like with the NETSTACK
-
 To verify the implementation of the radio driver two examples are available.
 
 \begin{itemize}
@@ -278,19 +276,17 @@ To verify the implementation of the radio driver two examples are available.
     is correctly working with upper layer of the network stack.
 \end{itemize}
 
-For each Contiki project, \emph{Contiki's Network Protocol stack}, also known
-as \lstinline{NETSTACK}, defines the different OSI layers implementations we 
-want to use in our project (Fig~\ref{fig:netstack}).
-Also, each project is bundled with a \lstinline{project-conf.h}
+% For each Contiki project, \emph{Contiki's Network Protocol stack}, also known
+% as \lstinline{NETSTACK}, defines the different OSI layers implementations we 
+% want to use in our project (Fig~\ref{fig:netstack}).
+Each project is bundled with a \lstinline{project-conf.h}
 configuration file in which we can define the parameters of our project. 
-To set my LoRa driver as the physical layer implementation we must add this line to
-each \lstinline{project-conf.h}.
+To set my LoRa driver as the physical layer implementation we must add the
+following line to change the NETSTACK configuration.
 
 \begin{lstlisting}
-#define NETSTACK_CONF_RADIO                        rn2483_radio_driver
+#define NETSTACK_CONF_RADIO rn2483_radio_driver
 \end{lstlisting}
-
-\input{thesis.tex/chapters/driver/fig/netstack.tex}
 
 \subsection{Shell}
 
