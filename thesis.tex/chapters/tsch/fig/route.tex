@@ -1,0 +1,19 @@
+\begin{figure}[H]
+\centering
+  \begin{tikzpicture}[]
+
+  \begin{scope}[xshift=5cm,yshift=-2cm,->,>=stealth',shorten >=1pt,auto,node distance=2.5cm]
+    \tikzstyle{every state}=[thick,draw=gray!50,fill=gray!20,draw=none,text=black]
+
+    \node[state]         (A) [] {:2f2a};
+    \node[state]         (B) [below left of=A]       {:2dac};
+    \node[state]         (C) [below right of=A]       {:2dbc};
+    \node[state]         (D) [below left of=B]       {:2f09};
+
+    \path (A) edge  node {$3$} (C)
+          (B) edge  node {$2$} (A)
+          (D) edge  node {$1$} (B);
+  \end{scope}
+\end{tikzpicture}
+\caption{Route to send a message from :2f09 to :2dbc\label{fig:route}}
+\end{figure}
