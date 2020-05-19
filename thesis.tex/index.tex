@@ -13,6 +13,8 @@
 \usepackage{pgf-umlsd}
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.16}
+\usepgfplotslibrary{statistics}
+\usepgfplotslibrary{groupplots}
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{acronym}
@@ -20,6 +22,8 @@
 \usepackage{amssymb}
 \usepackage{amsmath}
 \usepackage{zi4}            % Nice font
+\usepackage{booktabs}
+\usepackage{multirow}
 
 \definecolor{bluekeywords}{rgb}{0.13, 0.13, 1}
 \definecolor{greencomments}{rgb}{0, 0.5, 0}
@@ -43,7 +47,9 @@
 \usetikzlibrary{quotes}
 \usetikzlibrary{positioning}
 \usetikzlibrary{arrows,automata}
-\usetikzlibrary{backgrounds,calc,shadings,shapes.arrows,shapes.symbols,shadows}
+\usetikzlibrary{backgrounds,calc,shadings,shadows}
+\usepackage{circuitikz}
+\usetikzlibrary{shapes,decorations.pathreplacing}
 
 \tikzstyle{bag} = [align=center]
 
@@ -310,9 +316,9 @@ Gonzalez Boix\newline Supervisor: Roald Van Glabbeek}
 
 \chapter{Conclusion and further work}
 
-The goal of the thesis was to adapt TSCH to work with LoRa to have a low power
-and reliable multihop solution for LoRa using Contiki OS and the RN2483 LoRa
-module.
+The goal of the thesis was to adapt TSCH to work with LoRa to achieve power
+efficient and reliable multihop networking with LoRa on Contiki OS with the 
+RN2483 LoRa module.
 % My work was built upon the previous work of student conducted in VUB but
 % didn't achieved a fully working TSCH protocol working with LoRa.
 
@@ -320,13 +326,20 @@ module.
 
 My work was divided in two parts. 
 In the first part I successfully implemented a working driver for the RN2483
-module, the section~\ref{section:pingpong} detail how I ran a ping pong
-example based on that driver.
+module. 
+The section~\ref{section:pingpong} detail how I ran a ping pong
+example based on that driver to proove the driver is fully working with the
+rest of the applications.
 
-The second part should have been limited to the adaptations of some variable 
-of the TSCH protocol to work with LoRa.
-But it turned out the long delay in LoRa communication made me discover a lot of
-bugs coming from the current implementation of TSCH.
+The second part should have been on paper limited to the adaptations of the
+timing variable of the TSCH protocol to work with LoRa.
+In the end, the long delay in LoRa communication turned out to 
+not work out of the box and the second part became a
+bug hunt with the TSCH implementation detailed in~\ref{section:timingparameters}.
+I finaly managed to bring TSCH to LoRa in~\ref{section:tschtesting} by
+demonstating TSCH and LoRa integrate to the 6TiSCH networking stack.
+
+\paragraph{}
 
 In his last year master thesis, Roald Van Glabbeek suggested further research
 should conduct a power analysis on the RN2483 module.
@@ -339,18 +352,33 @@ SX1272 module.
 This thesis showed the way on what it take to adapt TSCH for a new radio
 driver and re-implementation of this project with a module like SX1272 will then be
 facilitated and would allow to measure meaningful data.
-Questions and analysis of the accuracy of the network will then be possible.
-A study of how longer sleeping period between de-synchronize the network could
-be conducted.
+Analysis of the accuracy and reliability of the network will then be possible.
+A study on how longer sleeping period de-synchronize the network or the period
+needed between EB packets, could be conducted.
 
 \paragraph{}
 
-The litterature don't really talk about using adaptive SF in a multihop
-network. 
-My implementation worked on a single SF at the time, we are missing a lot of
-feature from LoRa running such a network.
-The modification of RPL done in~\cite{8115756} can give us an indication of the
-direction for the future work on the subject.
+The ideal implementation would adapt its SF depending on the distance
+between two hops.
+In my implementation even though the different SF are supported, it operate
+on a single SF at the time. 
+We miss a lot of LoRa features with the single SF, supporting multiple SF at
+the same time would increase the network troughput and increase the
+transmission range for nodes with low reception.
+The litterature don't really talk about using adaptive SF in a multihops
+network except for~\cite{8115756} that could give us indications on the future
+work on the subject.
+
+\paragraph{}
+
+Related work reinveted the wheel by implementing their own multi-hop protocol
+on top of LoRa.
+Using TSCH, an already well studied MAC protocol, and its ability to
+communicate over multiple channel with time-slots for better power usage 
+represent a step forward in the journey to achieve multi-hop communication with
+LoRa.
+Using every SF to use the full LoRa capacity is the future challenge for this
+kind of work.
 
 \newpage
 

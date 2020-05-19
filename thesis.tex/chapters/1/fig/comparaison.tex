@@ -24,8 +24,8 @@
     \draw[] (-0.1,7)--(0.1,7);
     
     \node[draw] at (8,1.5) (lora) {LoRa};
-    \node[draw] at (9.3,0.9) (sigfox) {SigFox};
-    \node[draw] at (10,2) (nb) {NB-IOT};
+    \node[draw] at (9.0,0.8) (sigfox) {SigFox};
+    \node[draw] at (7.4,2.2) (nb) {NB-IOT};
     \node[draw,dotted,fit=(lora) (sigfox) (nb), label=above:{LPWAN}] {};
 
     
@@ -35,7 +35,7 @@
     \node[draw] at (3,5) (wifi) {WiFi};
     \node[draw,dotted,fit=(bluetooth) (zigbee) (ble) (wifi), label=above:{Short-range}] {};
 
-    \node[draw] at (7,5) (lte) {LTE};
+    \node[draw] at (6.8,5) (lte) {LTE};
     \node[draw] at (5.8,6) (5g) {5G};
     \node[draw,dotted,fit=(lte) (5g), label=above:{Cellular}] {};
 \end{tikzpicture}

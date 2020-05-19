@@ -7,6 +7,11 @@ the box. This chapter covers the implementation of a radio driver on
 \emph{Contiki-NG} for the \emph{RN2483}, a LoRa module from Microhip,
 communicating with the \emph{RE-Mote} platform.
 
+This chapter will also give the reader more context about the inner working of
+the RN2483 module.
+It will help understand the inherent issues with the module
+described in chapter~\ref{section:tsch}.
+
 \section{Preliminary work}
 
 Last year \emph{Roald Van Glabbeek}, in the course of his master thesis~\cite{8847137}, 
@@ -129,7 +134,7 @@ fixed delays slow the global execution.
 
 % TODO Maybe sequence diagram with a clash
 
-My implementation of the UART driver for the CC2538 in Contiki does not have synchronous 
+The UART driver for the CC2538 in Contiki does not have synchronous 
 blocking read function out of the box, it assumes the programmer will compute the
 responses from UART in processes waiting for an event instead.
 Reception works by executing an \emph{input handler} at each interruption
@@ -137,15 +142,11 @@ triggered from UART reception.
 Contiki set the default input handler with the function
 \lstinline{serial_line_input_byte},
 specifically designed for serial communication with terminals. 
-I keep using this handler with UART0 to get debug messages from USB connections.
-
-We have to define our own handler, for the UART1 peripheral, similarly as the
-default one because they both use same message structure terminating by
-\lstinline{\r\n}.
 The function \lstinline{serial_line_input_byte} pass each character to standalone
 process (\lstinline{serial_line_process}) and broadcast an event on command
-full reception, instead our handler directly threat each message in an
-interrupt.
+full reception. 
+I implemented a custom handler directly threating each message in the
+interrupt instead of using processes.
 
 Working with processes and events, is impossible in our use case because Contiki 
 does not have any mechanisms that allows programmers to wait for an event inside a 

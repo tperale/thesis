@@ -32,6 +32,7 @@
 \node (choff2) [black!70] at (-1.5, 2) {$Ch_{off} 1$};
 \node (choff1) [black!70] at (-1.5, 1) {$Ch_{off} 0$};
 
+\begin{scope}[on background layer]
 \fill[blue!50] (ts10.south west) rectangle (ts10.north east);
 \fill[blue!50] (ts24.south west) rectangle (ts24.north east);
 
@@ -40,6 +41,7 @@
 
 \fill[green!50] (ts22.south west) rectangle (ts22.north east);
 \fill[green!50] (ts36.south west) rectangle (ts36.north east);
+\end{scope}
 
 \draw[ultra thick] 
   (ts10.south west) rectangle (ts33.north east)

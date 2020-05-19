@@ -87,6 +87,30 @@
 \caption{Reception Spreading Factor 10\label{table:rxsf10}}
 \end{table}
 
+\section*{Packet timestamp implementation\label{code:timestampimpl}}
+
+\begin{lstlisting}[language=c]
+static radio_result_t
+rn2483_get_object(radio_param_t param, void *dest, size_t size)
+{
+  switch(param) {
+  case RADIO_PARAM_LAST_PACKET_TIMESTAMP:
+    if(size != sizeof(rtimer_clock_t) || !dest) {
+      return RADIO_RESULT_INVALID_VALUE;
+    }
+    *(rtimer_clock_t *)dest = RN2483_DEV.packet_timestamp 
+      - US_TO_RTIMERTICKS_64(
+          RX_RECEIVING_DELAY_US(RN2483_DEV.rx_len)
+          + t_packet(&(RN2483_DEV.radio), RN2483_DEV.rx_len)
+          + TRANSMISSION_TIME_US(RX_CMD_LENGTH(RN2483_DEV.rx_len))
+      );
+    return RADIO_RESULT_OK;
+  }
+}
+\end{lstlisting}
+
+
+
 \section*{Custom Schedule Code\label{code:customsched}}
 
 \begin{lstlisting}
@@ -133,3 +157,5 @@ tsch_schedule_custom(void)
   }
 }
 \end{lstlisting}
+
+

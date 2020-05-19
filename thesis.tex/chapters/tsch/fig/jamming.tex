@@ -1,0 +1,23 @@
+\begin{figure}[H]
+\centering
+
+\begin{tikzpicture}[auto, node distance=2cm,>=latex']
+
+\tikzset{
+  block/.style = {draw, fill=white, rectangle, minimum height=3em, minimum width=2cm},
+  input/.style = {coordinate},
+  output/.style = {coordinate},
+  pinstyle/.style = {pin edge={to-,t,black}},
+  radiation/.style={decorate,decoration={expanding waves,angle=12,segment length=4pt}},
+  zigzag/.style={to path={ -- ($(\tikztostart)!.55!-7:(\tikztotarget)$) -- ($(\tikztostart)!.45!7:(\tikztotarget)$) -- (\tikztotarget) \tikztonodes}}
+}
+\node[block](tx){Transmitter Node};
+\node[block,above right= 2cm of tx](ttx){Jammer};
+\node[block,right = 5cm of tx](rx){Coordinator Node};
+
+\draw[radiation] ([shift={(1cm,0cm)}]tx.east)-- node [above=5mm] {} ([shift={(-1cm,0cm)}]rx.west);
+\draw[-stealth,line width=1mm] (ttx.south) to[zigzag] +(0,-1.5);
+\end{tikzpicture}
+
+\caption{Structure of the channel jamming test\label{fig:jammer}}
+\end{figure}

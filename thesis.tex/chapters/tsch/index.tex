@@ -6,9 +6,9 @@ It cover the issues induced by the current Contiki implementation and how I
 managed to fix them to achieve a Time-Slotted Channel Hopping working with LoRa.
 
 The reader of this chapter will get a better understanding of the the steps
-required to port TSCH to a new LoRa module.
+required to port TSCH to a new LoRa module in Contiki.
 
-\section{Timing parameters}
+\section{Timing parameters\label{section:timingparameters}}
 
 Contiki developers have already implemented the parameters for
 platforms using IEEE 802.15.4.
@@ -41,13 +41,16 @@ enum tsch_timeslot_timing_elements {
 
 I did not define \lstinline{tsch_ts_cca_offset} and \lstinline{tsch_ts_cca} 
 because \emph{CCA} is implossible with LoRa.
-Also, \lstinline{tsch_ts_rx_tx} is not used anywhere in the Contiki codebase.
+Also, the parameter \lstinline{tsch_ts_rx_tx} is not used anywhere in the 
+Contiki codebase.
 
 \begin{itemize}
   \item \lstinline{tx_offset} represents the time needed for the packet to get
     prepared before getting transmitted on air. The end of
-    \lstinline{tx_offset} s the moment the packet get transmitted. 
+    \lstinline{tx_offset} is the moment the packet get transmitted. 
     The parameter is the same as \lstinline{rx_offset}.
+    As we saw in~Fig~\ref{fig:sync} the bigger this parameter the bigger the
+    clock drift can be between two nodes.
   \item \lstinline{max_tx} is the maximum transmission time (time on air) using
     LoRa. The parameter depends on the spreading factor and the maximum number
     of bytes transmittable.
@@ -193,7 +196,7 @@ could also be used.
 I decided three different channel was enough for my testing and reduce the time
 for a node to join the network.
 
-\subsection{Packet Duration}
+\subsection{Packet Duration\label{section:transmissiontime}}
 
 LoRa Transmission duration is known with the equation
 in \ref{eq:tpacket}.
@@ -265,33 +268,74 @@ transmitted and the treatment length.
   \centering
 
   \begin{tikzpicture}
-  \begin{axis}[
+
+  \begin{groupplot}[group style={group size=1 by 2,
+      horizontal sep=0pt,
+      vertical sep=1cm},
+      height=6cm,width=6cm,
+  ]
+  \nextgroupplot[
     width=0.8\textwidth,
     height=0.6\textwidth,
     axis x line=bottom,
-    xmin=3000,
-    xmax=24000,
-    xlabel={$time_{\mu s}$},
-    xlabel near ticks,
-    xticklabel style={/pgf/number format/1000 sep=},
+    ymin=3000,
+    ymax=24000,
+    ylabel={$time_{\mu s}$},
+    ylabel near ticks,
+    yticklabel style={/pgf/number format/1000 sep=},
     axis y line=left,
-    ymin=0,
-    ymax=128,
-    ylabel={bytes},
-    ylabel near ticks
+    xmin=0,
+    xmax=128,
+    xlabel={bytes},
+    xlabel near ticks
   ]
     \addplot[color=red,mark=x] coordinates {
-      (3080,1)
-      (3560,4)
-      (4200,8)
-      (6400,21)
-      (8280,32)
-      (12600,58)
-      (13680,64)
-      (17360,86)
-      (23800,124)
+      (1,3080)
+      (4,3560)
+      (8,4200)
+      (21,6400)
+      (32,8280)
+      (58,12600)
+      (64,13680)
+      (86,17360)
+      (124,23800)
     };
-  \end{axis}
+    \addplot[color=blue] coordinates {
+      (1,3021)
+      (4,3528)
+      (8,4204)
+      (16,5556)
+      (32,8260)
+      (64,13668)
+      (110,21442)
+    };
+
+  \nextgroupplot[
+    ycomb,
+    width=0.8\textwidth,
+    height=0.25\textwidth,
+    axis lines=middle,
+    ymin=-100,
+    ymax=100,
+    ylabel={$time_{\mu s}$},
+    ylabel near ticks,
+    yticklabel style={/pgf/number format/1000 sep=},
+    xmin=0,
+    xmax=128,
+    xticklabels=\empty,
+  ]
+    \addplot[color=blue, mark=x] coordinates {
+      (1,-59)
+      (4,-32)
+      (8,4)
+      (16,6)
+      (32,-20)
+      (64,-12)
+      (110,12)
+    };
+
+  \end{groupplot}
+
   \end{tikzpicture}
 
   \caption{Message treatment delay measurements\label{fig:transmissiondelay}}
@@ -335,7 +379,7 @@ It consist of the two following steps.
 Because in my implementation the radio is always on, there is no real reception
 delay.
 
-\subsubsection{Detection delay}
+\subsubsection{Detection delay\label{section:detectiondelay}}
 
 % TODO Detection does not really represent that. It the delay between the start
 % of the transmission and the acknowledgement by the platform since we can't
@@ -360,33 +404,74 @@ message transmission to the platform with an oscilloscope.
 \begin{figure}[H]
   \centering
   \begin{tikzpicture}
-  \begin{axis}[
+
+  \begin{groupplot}[group style={group size=1 by 2,
+      horizontal sep=0pt,
+      vertical sep=1cm},
+      height=6cm,width=6cm,
+  ]
+  \nextgroupplot[
     width=0.8\textwidth,
     height=0.6\textwidth,
     axis x line=bottom,
-    xmin=0,
-    xmax=55000,
-    xlabel={$time_{\mu s}$},
-    xlabel near ticks,
-    xticklabel style={/pgf/number format/1000 sep=},
-    axis y line=left,
     ymin=0,
-    ymax=128,
-    ylabel={bytes},
-    ylabel near ticks
+    ymax=55000,
+    ylabel={$time_{\mu s}$},
+    ylabel near ticks,
+    yticklabel style={/pgf/number format/1000 sep=},
+    axis y line=left,
+    xmin=0,
+    xmax=128,
+    xlabel={bytes},
+    xlabel near ticks
   ]
     \addplot[color=red,mark=x] coordinates {
-      (820,1)
-      (1420,4)
-      (1940,3)
-      (2350,4)
-      (4240,8)
-      (8160,16)
-      (15600,32)
-      (31100,64)
-      (53200,110)
+      (1,820)
+      (2,1420)
+      (3,1940)
+      (4,2350)
+      (8,4240)
+      (16,8160)
+      (32,15600)
+      (64,31100)
+      (110,53200)
     };
-  \end{axis}
+    \addplot[color=blue] coordinates {
+      (1,898)
+      (4,2332)
+      (8,4244)
+      (16,8068)
+      (32,15716)
+      (64,31012)
+      (110,53000)
+    };
+
+  \nextgroupplot[
+    ycomb,
+    width=0.8\textwidth,
+    height=0.25\textwidth,
+    axis lines=middle,
+    ymin=-200,
+    ymax=200,
+    ylabel={$time_{\mu s}$},
+    ylabel near ticks,
+    yticklabel style={/pgf/number format/1000 sep=},
+    xmin=0,
+    xmax=128,
+    xticklabels=\empty,
+  ]
+    \addplot[color=blue, mark=x] coordinates {
+      (1,68)
+      (4,-18)
+      (8,4)
+      (16,-92)
+      (32,116)
+      (64,-88)
+      (110,-200)
+    };
+
+  \end{groupplot}
+
   \end{tikzpicture}
   \caption{Reception delay measurements\label{fig:transmissiondelay}}
 \end{figure}
@@ -409,18 +494,21 @@ The total detection delay is calculated with the following formula.
 
 \subsection{Packet Timestamp}
 
-Timestamps are an essential variable in TSCH to calculate timeslot drift
-between two motes. 
-Contiki takes the packet timestamps at the moment the transmission starts.
-There is no way with the RN2483 module to know when the reception started.
-On packet reception, I calculate the timestamp with the detect delay 
-in equation~\ref{eq:detectdelay} and the transmission time in
-equation~\ref{eq:tpacket}.
-
-Each timeslot uses the same offset before starting the actual transmission.
+As we saw in Figure~\ref{fig:sync} each timeslot uses the same offset before 
+starting the transmission.
 Knowing the packet timestamp precisely allows the receiving mote to determine the
-drift from the transmitter. Some motes are designed as time source and
-receiving mote will adjust their clock to these.
+drift from the transmitter. 
+The clock is adjusted when receiving a packet from a time source.
+% Contiki takes the packet timestamps at the moment the transmission starts.
+
+There is no way for the RN2483 module to know when the reception started but
+a timestamp is saved when the packet is fully received by the platform.
+On packet reception, I calculate the communication start time with the 
+\emph{detect delay} covered in section~\ref{section:detectiondelay} and the
+equation~\ref{eq:detectdelay}, as well as the transmission time of
+section~\ref{section:transmissiontime} and equation~\ref{eq:tpacket}.
+
+The implementation is available in the appendix~\ref{code:timestampimpl}.
 
 % \subsection{Mitigating the drift}
 
@@ -434,7 +522,7 @@ receiving mote will adjust their clock to these.
 % the detection time that could lead to miss the time frame for sending the
 % acknowledgement.
 
-\section{Considerations}
+\section{Drift issues}
 
 During the adaptation of the TSCH protocol for the RN2483 I stumbled upon huge
 clock drift that made me unable to run a reliable network using TSCH.
@@ -452,17 +540,81 @@ drift of the motes with the function
 The function learned from the nodes drift from the time source to predict the
 difference.
 
-I stopped using this function because the imprecision from the module make the
-matter worst.
+The Figure~\ref{fig:driftmeasurement} show how
+\lstinline{tsch_timesync_adaptive_compensate} introduce a lot more drift on the
+receiver timeslot on a network of two nodes running for 10 minutes.
+The lower overall drift explain why I stopped using this function.
+Re-using the adaptive compensation should be done on module achieving precise
+timestamps.
 
-\section{Testing}
+\begin{figure}[H]
+  \centering
+  \begin{tikzpicture}
+    \begin{axis}
+      [
+      width=\textwidth,
+      height=0.5\textwidth,
+      ytick={1,2},
+      yticklabels={w/o, w},
+      xlabel={$time_{ms}$},
+      xlabel near ticks,
+      ]
+      \addplot+[
+      boxplot prepared={
+        median=0.25,
+        upper quartile=0.40,
+        lower quartile=-1.95,
+        upper whisker=7.9,
+        lower whisker=-8.9
+      },
+      ] coordinates {};
+      \addplot+[
+      boxplot prepared={
+        median=3.33,
+        upper quartile=6.500,
+        lower quartile=-4.100,
+        upper whisker=13.333,
+        lower whisker=-16.666
+      },
+      ] coordinates {};
+    \end{axis}
+  \end{tikzpicture}
+  \caption{Drift measurement with and without \lstinline{tsch_timesync_adaptive_compensate}\label{fig:driftmeasurement}}
+\end{figure}
+
+\section{Testing\label{section:tschtesting}}
 
 \subsection{Channel Jamming}
+
+The example is inspired by the same test conducted in~\cite{tschoverlora}.
+The goal is to demonstrate the resilience of transmiting messages with LoRa and
+TSCH over a busy channel.
+To conduct this test I used two motes running a TSCH network and a third one
+as a jammer like in Figure~\ref{fig:jammer}.
+
+\input{thesis.tex/chapters/tsch/fig/jamming.tex}
+
+One mote from the TSCH network will send UDP messages to the coordinator
+every 30 seconds.
+Meanwhile the third mote constantly send messages on a single channel to
+simulate a busy channel of the network.
+The test aim to show if the protocol deal with interference by retransmitting 
+the message on a different channel.
+
+\paragraph{}
+
+I sent 50 packet to the coordinator in the course of my test and all of them
+managed to reach the destination.
+This test could be enhanced by measuring the transmission time of the packet
+with and without the channel jammed but I couldn't get my hand on a digital
+analyzer to measure every transmissions.
+
+% TODO find a way to measure (and talk about) retransmission
 
 \subsection{RPL Custom Schedule}
 
 For this example I will create a custom schedule and test if application can
-work on top of the TSCH working with LoRa network.
+work on top of the TSCH and LoRa network.
 For this purpose I will run an UDP client and server on each nodes and will try
 to send a message between two nodes to see the packet get routed correctly with
 RPL and the multi-hop topology.
@@ -470,7 +622,7 @@ RPL and the multi-hop topology.
 \paragraph{}
 
 I received a multitude of boards from the ETRO Lab, to run my
-implementation on, and they had the following MAC addresses.
+implementation on, with the following MAC addresses.
 
 \begin{enumerate}
   \item $:2f2a$
@@ -540,7 +692,7 @@ Each node of the network is running a UDP server on port 8765.
 #0012.4b00.14d5.2f09> msg_to 0012.4b00.14d5.2dbc
 Sending message to fd00::212:4b00:14d5:2dbc
 [INFO:TSCH] send packet to 0012.4b00.14d5.2f2a with seqno 46, queue 7 8, len 21 51
-[INFO: TSCH-LOG  ] {asn 00.00001eca link  0   7   0  0  0 ch  1} uc-1-0 tx LL-2f09->LL-2f2a, len  51, seq  46, st 2  1
+[INFO:TSCH] {asn 00.00001eca link  0   7   0  0  0 ch  1} uc-1-0 tx LL-2f09->LL-2f2a, len  51, seq  46, st 2  1
 \end{lstlisting}
 
 The \lstinline{:2f2a} node receive the following message on reception of the

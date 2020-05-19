@@ -5,6 +5,40 @@ I will introduce in this chapter all the concepts needed for the understanding
 of the experiment I conducted in this thesis.
 I will also give an overview of related work to the topic.
 
+\section{Low Power Wide Area Network (LPWAN)\label{section:lpwan}}
+
+Every IoT project has their own requirements. 
+LPWAN is typically made for sensor network with limited throughput.
+The characteristic of a LPWAN are the following.
+
+\begin{itemize}
+  \item Low power as the name suggest. The network is made of battery operated
+    motes that must run for year without replacement.
+  \item Long range. Mote should transmit over multiple km without repeiter.
+  \item Low cost devices. No expensive infrastructure requirement and motes
+    operate with simple hardware.
+  \item Limited data throughput.
+\end{itemize}
+
+LPWAN include LoRa but it's not the only option available. 
+Sigfox, NB-IOT are other well known LPWAN options.
+
+\paragraph{IPv6 over Low-Power Wireless Personal Area Networks (6LoWPAN)}
+
+6LoWPAN is an open standard defined in RFc 6282 by the Internet Engineering
+Task Force (IETF).
+The idea of 6LoWPAN is to bring IPv6 packet over the small link layer frame of
+LPWAN with the help of a header compression mechanisms.
+6LoWPAN bring native IP communication to LPWAN.
+This mean each motes of the network can now communicate simply using special
+edge router that handles the data exchange between the 6LoWPAN network and the
+internet.
+
+\paragraph{6TiSCH}
+
+In the same way as with 6LoWPAN, 6TiSCH define an adaptation layer for IPv6
+over TSCH named 6top.
+
 \section{LoRa\label{section:lora}}
 
 LoRa is a proprietary chirp spread spectrum technology made by Semtech with
@@ -46,6 +80,9 @@ interference)~\cite{semtech:modulationbasics}.
 \end{figure}
 
 \subsection{PHY Parameters}
+
+% TODO remainder of why we do this ? explain those characteristics will be
+% important in the TSCH implementation
 
 \subsubsection{Spreading Factor (SF)}
 
@@ -104,13 +141,11 @@ range of the communication.
 
 \begin{table}[h!]
 \centering
-\begin{tabular}{|c|c|}
-\hline
-\rowcolor[HTML]{C0C0C0} 
-\multicolumn{1}{|c|}{\cellcolor[HTML]{C0C0C0}Bandwidth(kHz)} & Noise Floor (dBm) \\ \hline
-125                                                          & -123              \\ \hline
-250                                                          & -120              \\ \hline
-500                                                          & -117              \\ \hline
+\begin{tabular}{@{}ll@{}}
+Bandwidth(kHz) & Noise Floor (dBm) \\ \midrule
+125            & -123              \\
+250            & -120              \\
+500            & -117              \\ \bottomrule
 \end{tabular}
 \caption{Noise floor variation\label{table:bw}}
 \end{table}
@@ -130,16 +165,15 @@ The next table~\ref{table:cr} show the CR parameter available in LoRa.
 
 \begin{table}[h!]
 \centering
-\begin{tabular}{|c|c|}
+\begin{tabular}{@{}ll@{}}
 \hline
-\rowcolor[HTML]{C0C0C0} 
-  \multicolumn{1}{|c|}{\cellcolor[HTML]{C0C0C0}CR} & Proportion ($\frac{4}{4 + CR}$) \\ \hline
-1                                                & $\frac{4}{5}$\\ \hline
-2                                                & $\frac{4}{6}$\\ \hline
-3                                                & $\frac{4}{7}$\\ \hline
-4                                                & $\frac{4}{8}$\\ \hline
+CR & Proportion ($\frac{4}{4 + CR}$) \\ \midrule
+1                                                & $\frac{4}{5}$\\
+2                                                & $\frac{4}{6}$\\
+3                                                & $\frac{4}{7}$\\
+4                                                & $\frac{4}{8}$\\ \bottomrule
 \end{tabular}
-  \caption{Existing Coding Rates\label{table:cr}}
+\caption{Existing Coding Rates\label{table:cr}}
 \end{table}
 
 \subsubsection{Data Rate}
@@ -152,9 +186,23 @@ parameters I introduced in the previous sections\cite{semtech:modulationbasics}.
   R_{b} = SF \frac{\frac{4}{4 + CR}}{\frac{2^{SF}}{BW}} bits/sec
 \end{equation}
 
-The data rate can range from $0.3 kbps$ to $27 kbps$ depending on the \emph{SF} % TODO Calculation needed
+The data rate is highly variable depending on the CR, BW and SF.
+See table~\ref{table:datarate}.
 
-% TODO datarange table
+\begin{table}[h!]
+\centering
+\begin{tabular}{@{}lllll@{}}
+\toprule
+CR & BW (kHz) & SF7 (bits/sec) & SF8 (bits/sec) & SF10 (bits/sec) \\ \midrule
+\multirow{2}{*}{$\frac{4}{5}$} & 125000   & 5469           & 3125           & 976             \\
+  & 250000   & 10937          & 6250           & 1953            \\
+\multirow{2}{*}{$\frac{4}{6}$} & 125000   & 4557           & 2604           & 813             \\
+  & 250000   & 9114           & 5208           & 1627            \\
+\multirow{2}{*}{$\frac{4}{8}$} & 125000   & 3417           & 1954           & 660             \\
+  & 250000   & 6835           & 3906           & 1220            \\ \bottomrule
+\end{tabular}
+\caption{Data rates depending on CR, BW and SF\label{table:datarate}}
+\end{table}
 
 \subsection{Packet Structure}
 
@@ -292,11 +340,6 @@ European ISM band (863-870 MHz)~\cite{Polonelli_2019}.
 
 % TODO Talk about 1% duty cycle
 
-% \section{IPv6 over Low-Power Wireless Personal Area Networks (6LoWPAN)}
-
-% 6LoWPAN is an open standard defined in RFc 6282 by the Internet Engineering
-% Task Force (IETF).
-
 \section{Time-Slotted Channel Hopping (TSCH)}
 
 TSCH is a Medium Access Control (MAC) layer protocol defined by the IEEE
@@ -425,7 +468,10 @@ Time source node send Enhanced Beacon (EB) packet to synchronize the receiving
 nodes of the network. When nodes don't resynchronize for a long period of time 
 a Keep Alive (KA) is sent and used to adjust the drift at synchronization.
 
-% TODO Graph explaining of we resync like serge did ?
+Figure~\ref{fig:sync} represent the clock drift that can occur between two
+distant time slots.
+As we can see the receiver will know the drift based on the moment he receive
+the data and then adjust its timeslot length to finish earlier.
 
 \begin{figure}[H]
   \centering
@@ -433,13 +479,11 @@ a Keep Alive (KA) is sent and used to adjust the drift at synchronization.
   \caption{Synchronization in a TSCH timeslot\cite{TELESHERMETO201784}\label{fig:sync}}
 \end{figure}
 
-
-
 \section{Contiki OS}
 
 Contiki is a free and open source Real-Time operating system (OS) specifically made
 for IoT applications. Contiki ships with a low-power IPv6 communication stack
-and a variety of routing and MAC protocols making a particularly adapted OS to
+and a variety of routing and MAC protocols making it a particularly adapted OS to
 use with Wireless Sensor Network (WSN).
 
 Contiki use protothreads, a programming abstraction which Contiki is
@@ -448,15 +492,16 @@ They allow to write event-driven programs with little memory overhead, and
 claims to reduce the complexity of embedded programs that used to be written 
 like state machines~\cite{10.1145/1182807.1182811}.
 
-The Contiki OS project has been unmaintained since 2017 but at this moment a
-fork named Contiki-NG was created.
-That fork has been the basis for many LPWAN experimentation with the
-development of the 6TiSCH stack for the OS~\cite{Duquennoy2017TSCHA6}.
+The Contiki OS project has been unmaintained since 2017 but a
+fork named Contiki-NG was created since.
+That fork has been the basis for many LPWAN experimentation, for example 
+with the development of the 6TiSCH stack for the OS~\cite{Duquennoy2017TSCHA6}.
 
 \paragraph{}
 
-Contiki's Network Protocol stack, also known as \lstinline{NETSTACK}, define
-the network stack we are using in a program.
+Contiki's Network Protocol stack, also known as \lstinline{NETSTACK}, is a
+feature of the OS.
+It aloow to define the network stack we are using in a program easily.
 It defines the different OSI layers implementations we 
 want to use in a Contiki project (Fig~\ref{fig:netstack}).
 
@@ -466,16 +511,17 @@ Developers must define the following variable to change the network stack
 in a Contiki project.
 
 \begin{itemize}
-  \item NETSTACK\_NETWORK
-  \item NETSTACK\_ROUTING
-  \item NETSTACK\_MAC
-  \item NETSTACK\_RADIO
+  \item \lstinline{NETSTACK_NETWORK}
+  \item \lstinline{NETSTACK_ROUTING}
+  \item \lstinline{NETSTACK_MAC}
+  \item \lstinline{NETSTACK_RADIO}
 \end{itemize}
 
 \input{thesis.tex/chapters/driver/fig/netstack.tex}
 
 \section{Related work}
 
+This is not the first attempt to bring multi-hop communication to LoRa.
 This section will give a state of the art of the research on
 multi-hop network for LoRa and TSCH.
 
