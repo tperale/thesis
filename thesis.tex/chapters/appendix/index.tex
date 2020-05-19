@@ -1,6 +1,6 @@
-\chapter*{Appendix}
+\chapter{Table}
 
-\section*{RN2483 Timing Measurements and Predictions}
+\section{RN2483 Timing Measurements and Predictions}
 
 \begin{table}[H]
 \centering
@@ -87,7 +87,9 @@
 \caption{Reception Spreading Factor 10\label{table:rxsf10}}
 \end{table}
 
-\section*{Packet timestamp implementation\label{code:timestampimpl}}
+\chapter{Listing}
+
+\section{Packet timestamp implementation\label{code:timestampimpl}}
 
 \begin{lstlisting}[language=c]
 static radio_result_t
@@ -111,7 +113,7 @@ rn2483_get_object(radio_param_t param, void *dest, size_t size)
 
 
 
-\section*{Custom Schedule Code\label{code:customsched}}
+\section{Custom Schedule Code\label{code:customsched}}
 
 \begin{lstlisting}
 static linkaddr_t node_1_address = {{ 

@@ -193,8 +193,7 @@ facilitate the manual writing of commands, making the message payload twice as
 long as its original content. 
 As all the content we will handle is represented as an \emph{8 bit} number array, 
 I took the function to convert array to string representation and vice versa
-from the RIOT-OS project.
-% TODO REF
+from the RIOT-OS project.  % TODO REF
 
 \subsection{Asynchronous Reception}
 
@@ -262,6 +261,36 @@ structure that must implement the following functions.
 \end{description}
 
 % TODO talk about Poll mode
+
+\subsection{Device Configuration}
+
+The module can be configured through the following structure.
+It allow programmer to access LoRa different parameters from the code without
+having to interact with the module.
+
+\begin{lstlisting}[language=C]
+typedef struct {
+  radio_modulating_mode mod;
+  radio_channel chan;
+  uint32_t freq;
+  radio_sf sf;
+  radio_bw bw;
+  radio_cr cr;
+  uint32_t prlen;
+  radio_pwr pwr;
+  bool crc;
+  bool iqi;
+  bool explicit_header;
+  uint32_t wdt;
+} lora_radio_t;
+\end{lstlisting}
+
+This structure has a default definition but can be redefined from anywhere 
+by redefining \lstinline{RN2483_DEV_CONF} and the current in use parameter are
+accessed with \lstinline{RN2483_DEV}.
+
+We will see in Chapter~\ref{section:tsch} how those variable are used for
+calculations.
 
 \section{Validation test}
 
