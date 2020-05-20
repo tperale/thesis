@@ -2,10 +2,10 @@
 
 This chapter will cover the adaptation of the TSCH MAC protocol in Contiki OS to
 work with LoRa.
-It cover the issues induced by the current Contiki implementation and how I
+It covers the issues induced by the current Contiki implementation and how I
 managed to fix them to achieve a Time-Slotted Channel Hopping working with LoRa.
 
-The reader of this chapter will get a better understanding of the the steps
+The reader of this chapter will get a better understanding of the steps
 required to port TSCH to a new LoRa module in Contiki.
 
 \section{Timing parameters\label{section:timingparameters}}
@@ -56,7 +56,7 @@ Contiki codebase.
     of bytes transmittable.
   \item \lstinline{rx_ack_delay} buffering time between packet transmission and
     the acknowledgement reception. This delay is long enough for the receiver
-    to receive the message compute its check for correctness and transmit the acknowledgement packet.
+    to receive the message computes its check for correctness and transmits the acknowledgement packet.
     The parameter is the same as \lstinline{tx_ack_delay}.
   \item \lstinline{ts_max_ack} is the maximum transmission time (time on air) for
     the acknowledgement packet reception.
@@ -77,7 +77,7 @@ typedef uint16_t tsch_timeslot_timing_usec[tsch_ts_elements_count];
 
 This set the maximum parameter value to $64436\mu s$.
 This value is not long enough to store LoRa transmissions at maximum payload.
-It take 379 ms to transmit a maximum payload packet with the fastest spreading
+It takes 379 ms to transmit a maximum payload packet with the fastest spreading
 factor (SF 7).
 
 I changed the TSCH implementation to use 32 bit integer instead, allowing more
@@ -133,10 +133,10 @@ with this new one.
 
 Each time-slot operation is scheduled using \lstinline{rtimer_set}.
 This function schedules the time-slot using the real-time timer from the CC2538.
-It means that the time-slot is ran in an interrupt.
+It means that the time-slot is run in an interrupt.
 
-This is not an issue in the original implementation of TSCH using the CC2536
-because the radio driver is internal to the processor.
+This is not an issue in the initial implementation of TSCH, which use the
+CC2536, because the radio driver is internal to the processor.
 The radio driver needs to also use interrupts to receive messages from the UART.
 By default the real-time timer, \lstinline{SMT_IRQn}, has the same priority as
 the UART1 interruption. 
@@ -154,7 +154,7 @@ Because Contiki run most TSCH operations inside an interrupt
 context, the watchdog timer is not reset inside.
 During long wait or long transmissions, the watchdog is not reset and would
 make the system reset.
-This is why when the program busywait with the command
+This is why when the program busy wait with the command
 \lstinline{RTIMER_BUSYWAIT_UNTIL_ABS}, I modified it execution to also execute
 a \lstinline{watchdog_periodic} to reset the watchdog timer.
 
@@ -166,8 +166,7 @@ We must take into account this value is limited to a range of $-2047$ to
 $2047$ because of the structure of the packet.
 
 Bigger drift can occur in my implementation. 
-I have to take into account this limitation and check the limits to avoid 
-overflows.
+I have to take into account this limitation to prevent overflows.
 
 \section{Porting TSCH}
 
@@ -176,11 +175,11 @@ wiki\footnote{\url{https://github.com/contiki-ng/contiki-ng/wiki/Documentation:-
 on TSCH, porting the MAC protocol to new radio platforms, requires specific
 configurations parameters.
 
-The radio driver defines those PHY layer specific parameters.
+The radio driver defines PHY layer specific parameters.
 
 \subsection{Channels}
 
-Channel hopping is one of the main feature of TSCH that need to be implemented
+Channel hopping is one of the main features of TSCH that need to be implemented
 at the driver level.
 For my experimentation I only implemented three channels that can be selected
 with the \lstinline{RADIO_PARAM_CHANNEL} argument.
@@ -193,7 +192,7 @@ could also be used.
   \item 868.5 MHz, 125 KHz BW
 \end{itemize}
 
-I decided three different channel was enough for my testing and reduce the time
+I decided three different channels were enough for my testing and reduce the time
 for a node to join the network.
 
 \subsection{Packet Duration\label{section:transmissiontime}}
@@ -201,7 +200,7 @@ for a node to join the network.
 LoRa Transmission duration is known with the equation
 in \ref{eq:tpacket}.
 
-The current implementation of Contiki calculate the time on air with the
+The current implementation of Contiki calculates the time on air with the
 \lstinline{TSCH_PACKET_DURATION(bytes)} macro by using two parameters to do the
 calculation.
 
@@ -211,10 +210,10 @@ calculation.
 \end{itemize}
 
 Because LoRa communication is dependant on the number of symbols transmitted
-instead of the number of bytes the current implementation in TSCH is not
+instead of the number of bytes, the current implementation in TSCH is not
 precise enough.
 
-I changed the TSCH implementation to allow user defined macro and
+I changed the TSCH implementation to allow my own macro, and
 I replaced it by the equation~\ref{eq:tpacket} for precise measurement
 of the time on air.
 
@@ -238,12 +237,12 @@ on the transmission length with the RN2483 module, I made them variable.
 
 \subsubsection{Transmission delay}
 
-Represents the time for the module to get messages on air. 
-This delay is made of 3 parts.
+It represents the time for the module to get messages on air. 
+This delay is made of three parts.
 
 \begin{enumerate}
   \item UART message transmission to the module.
-  \item Module message treatment (time between the end of $1.$ and the start of $3.$).
+  \item Module message treatment (duration between the ends of $1.$ and the start of $3.$).
   \item Module sending back acknowledgement.
 \end{enumerate}
 
@@ -257,8 +256,8 @@ I can then calculate parameter $1.$ and $3.$ with the equation~\ref{eq:baudrate}
   UART(x) = \frac{x . (bit_{start} + bits_{data} + bit_{stop})}{baudrate}
 \end{equation}
 
-The second parameter is unknown and the datasheet does not give any meaningful
-information about the module that computates the timing.
+The second parameter is unknown, and the datasheet does not give any meaningful
+information about the timing of the module.
 
 I did measurement\footnote{The poor resolution of my oscilloscope introduced
 some accuracy errors in the longer measures} of the time between message
@@ -372,7 +371,7 @@ precisely at the end of \lstinline{TS_TX_OFFSET}.
 
 This parameter is hard to really measure with the RN2483.
 
-It consist of the two following steps.
+It consists of the two following steps.
 
 \begin{enumerate}
   \item Waking up the radio.
@@ -501,7 +500,7 @@ The total detection delay is calculated with the following formula.
 
 As we saw in Figure~\ref{fig:sync} each timeslot uses the same offset before 
 starting the transmission.
-Knowing the packet timestamp precisely allows the receiving mote to determine the
+Knowing the packet timestamp precisely allows the receiving mote to learn the
 drift from the transmitter. 
 The clock is adjusted when receiving a packet from a time source.
 % Contiki takes the packet timestamps at the moment the transmission starts.
@@ -509,7 +508,7 @@ The clock is adjusted when receiving a packet from a time source.
 There is no way for the RN2483 module to know when the reception started but
 a timestamp is saved when the packet is fully received by the platform.
 On packet reception, I calculate the communication start time with the 
-\emph{detect delay} covered in section~\ref{section:detectiondelay} and the
+\emph{detection delay} covered in section~\ref{section:detectiondelay} and the
 equation~\ref{eq:detectdelay}, as well as the transmission time of
 section~\ref{section:transmissiontime} and equation~\ref{eq:tpacket}.
 
@@ -529,7 +528,7 @@ The implementation is available in the appendix~\ref{code:timestampimpl}.
 
 \section{Drift issues}
 
-During the adaptation of the TSCH protocol for the RN2483 I stumbled upon huge
+During the adaptation of the TSCH protocol for the RN2483, I stumbled upon huge
 clock drift that made me unable to run a reliable network using TSCH.
 
 After several improvement and research I came to the conclusion that the RN2483
@@ -549,8 +548,8 @@ The Figure~\ref{fig:driftmeasurement} show how
 \lstinline{tsch_timesync_adaptive_compensate} introduce a lot more drift on the
 receiver timeslot on a network of two nodes running for 10 minutes.
 The lower overall drift explain why I stopped using this function.
-Re-using the adaptive compensation should be done on module achieving precise
-timestamps.
+Re-using the adaptive compensation should be done with a module that can
+provide.
 
 \begin{figure}[H]
   \centering
@@ -592,29 +591,29 @@ timestamps.
 \subsection{Channel Jamming}
 
 The example is inspired by the same test conducted in~\cite{tschoverlora}.
-The goal is to demonstrate the resilience of transmiting messages with LoRa and
+The goal is to demonstrate the resilience of transmitting messages with LoRa and
 TSCH over a busy channel.
-To conduct this test I used two motes running a TSCH network and a third one
+To conduct this test, I used two motes running a TSCH network and a third one
 as a jammer like in Figure~\ref{fig:jammer}.
 
 \input{thesis.tex/chapters/tsch/fig/jamming.tex}
 
 One mote from the TSCH network will send UDP messages to the coordinator
 every 30 seconds.
-Meanwhile the third mote constantly send messages on the same channel to
+Meanwhile, the third mote constantly send messages on the same channel to
 simulate a busy channel of the network.
 The test the protocol can deal with interference by retransmitting 
 the message on a different channel.
 
 \paragraph{}
 
-I sent 50 packet to the coordinator in the course of my test and all of them
+I sent 50 packets to the coordinator in the course of my test and all of them
 managed to reach the destination.
-The figure~\ref{fig:retransmission} show the number of retransmission for each
+The figure~\ref{fig:retransmission} shows the amount of retransmission for each
 packet transmitted during the test.
 This test could be enhanced by measuring the transmission time of the packet
 with and without the channel jammed but I couldn't get my hand on a digital
-analyzer to measure every transmissions.
+analyzer to measure every transmission.
 
 \begin{figure}[H]
   \centering
@@ -701,7 +700,7 @@ analyzer to measure every transmissions.
 
 For this example I will create a custom schedule and test if application can
 work on top of the TSCH and LoRa network.
-For this purpose I will run an UDP client and server on each nodes and will try
+For this purpose I will run an UDP client and server on each node and will try
 to send a message between two nodes to see the packet get routed correctly with
 RPL and the multi-hop topology.
 
@@ -735,7 +734,7 @@ I used the NETSTACK in the Figure~\ref{fig:tschstack} to run this example.
 
 \input{thesis.tex/chapters/tsch/fig/stack.tex}
 
-My goal to prove the routing and the multi-hop functionality is working
+My goal to prove the routing and the multi-hop functionality are working
 correctly is to send an UDP message from $:2f09$ to $:2dbc$.
 The message coming from $:2f09$ will have to go through $:2dac$ and $:2f2a$ to
 reach $:2dbc$ (see Fig~\ref{fig:route}).
@@ -769,8 +768,8 @@ Node IPv6 neighbors:
 -- fe80::212:4b00:14d5:2f09, router 0, state Reachable 
 \end{lstlisting}
 
-To send a 'ping' message to another node I made a custom shell 
-command \lstinline{msg_to} that send an UDP message to the IPv6 address 
+To send a 'ping' message to another node, I made a custom shell 
+command \lstinline{msg_to} that send a UDP message to the IPv6 address 
 passed in argument.
 Each node of the network is running a UDP server on port 8765.
 
@@ -793,7 +792,7 @@ This show my network is able to send and receive UDP messages using RPL.
 
 \subsection{Orchestra}
 
-Similarly to the previous example, in this section I use Orchestra autonomous
+Similarly to the previous example, in this section, I use Orchestra autonomous
 scheduler on top of my TSCH network.
 Transmitting a message between two nodes by the mean of a hop would again show
 the TSCH implementation for LoRa is compatible with the stacks previously used.
@@ -850,7 +849,7 @@ Figure~\ref{fig:orchestra} is in use.
 \input{thesis.tex/chapters/tsch/fig/orchestra.tex}
 
 The node $:2f2a$ has no route to $:2dac$, I will send a message to between
-those two nodes to proove the multihop function is correctly working.
+those two nodes to prove the multihop function is correctly working.
 The coordinator has full knowledge of all the route in the network.
 
 \begin{lstlisting}
@@ -860,24 +859,24 @@ Routing links (3 in total):
 -- fd00::212:4b00:14d5:2f2a  to fd00::212:4b00:14d5:2dbc
 \end{lstlisting}
 
-Sending an UDP message to $:2dac$ worked seamlessly by passing by the
+Sending a UDP message to $:2dac$ worked seamlessly by passing by the
 intermediate node $:2dbc$.
 
 \section{Energy consumption\label{section:energyconsumption}}
 
-Because of the missing feature of the RN2483 module a real world measurement of
+Because of the missing feature of the RN2483 module a real-world measurement of
 the energy consumption is not relevant.
 The module is wasting energy in two places.
 
 \begin{itemize}
   \item The slow UART communication between the platform and the module. A max 
-    payload transmission to the module take $86 ms$.  That's $86 ms$ of wasted 
+    payload transmission to the module takes $86 ms$.  That's $86 ms$ of wasted 
     energy where the radio is on receive mode.
-  \item Because we can't receive a feedback from the module when it detect a
-    preamble each timeslot must wait the maximum transmission time. This could
+  \item Because we can't receive a feedback from the module when it detects a
+    preamble each timeslot must wait for the maximum transmission time. This could
     be avoided.
 \end{itemize}
 
 Because I knew I would not be able to measure meaningful data from my
-implementation I did not take time to experiment with the sleep feature of the
+implementation, I did not take time to experiment with the sleep feature of the
 module.
