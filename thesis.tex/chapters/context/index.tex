@@ -47,7 +47,7 @@ LoRa operates in this sub-GHz unlicensed Industrial, Scientific and Medical
 (ISM) bands.
 The main characteristic of LoRa, is that it trades data rate for long range 
 and low power consumption with a maximum data rate of 27 kbps~\cite{8030482}.
-LoRa supports bi-directional communications with maximum message length of 242
+LoRa supports bi-directional communications with maximum payload size of 242
 bytes~\cite{loraalliance:lorawanspecification}.
 
 This section will cover the LoRa physical layer parameters, the packet structure and 
@@ -62,7 +62,7 @@ Chirps are sinusoidal signals increasing (upchirps) or decreasing (downchirps)
 in frequency over time.
 Figure~\ref{fig:downchirp} shows an example of a downchirp.
 
-Using CSS has the advantage to ensure equivalent timing and frequency offset
+Using CSS has the advantage of offering equivalent timing and frequency offset
 between the receiver and transmitter and robustness to channel degradation
 mechanisms (multipath, fading, Doppler, in-band jamming
 interference)~\cite{semtech:modulationbasics}.
@@ -98,7 +98,7 @@ symbols.
 
 The SF can range from 7 to 12, higher SF improve the Signal-to-noise ratio
 (SNR) and receiver sensitivity~\cite{semtech:modemdesign}.
-Increasing the SF trades transmission range for slower communications.
+Increasing the SF trades data rate for transmission range.
 
 The LoRa modulation uses orthogonal spreading factors to enable concurrent
 packet transmission at the same time with different
@@ -251,7 +251,7 @@ Three part constitute packets.
     \begin{itemize}
       \item Payload length in bytes.
       \item Forward Error Correction code rate.
-      \item The presence or not of the payload CRC.
+      \item The presence or not of the payload cyclic redundancy check (CRC).
     \end{itemize}
     \item[Implicit] mode removes the header from the packet. This mode should be
       used when payload, coding rate and CRC presence are known and when we want to
@@ -267,7 +267,7 @@ The Time on Air is the measure of packet transmission time.
 ToA depends on the parameters we introduced previously to count the number of
 symbols that constitute each communication of a payload.
 
-The following formula define the duration of each symbol~\ref{eq:tsymlong}.
+The following formula defines the duration of each symbol~\ref{eq:tsymlong}.
 The equation~\ref{eq:tsym} is equivalent with the relation~\ref{eq:bw}.
 
 \begin{equation}
@@ -325,7 +325,7 @@ with~\ref{eq:tpacket}.
 \subsection{Channels}
 
 % See 'Understanding the limits of LoRaWAN' the 3 channels definition in Europe
-The channels available is dependant on the country rules we are transmitting from.
+% The channels available is dependant on the country rules we are transmitting from.
 The Things Network~\cite{ttnfrequencyplans} did a summary of the available
 channels available depending on your frequency plan.
 
@@ -343,10 +343,10 @@ European ISM band (863-870 MHz)~\cite{Polonelli_2019}.
 \section{Time-Slotted Channel Hopping (TSCH)}
 
 TSCH is a Medium Access Control (MAC) layer protocol defined by the IEEE
-802.15.4 standard~\cite{rfc7554}.
-The design inherited from WirelessHART and
+802.15.4e standard~\cite{rfc7554}.
+The design is inherited from WirelessHART and
 ISA100.11a~\cite{Duquennoy2017TSCHA6}.
-Time synchronization aim to achieve low power and highly reliable
+Time synchronization aims to achieve low power and highly reliable
 communications by using the following principles.
 
 \begin{description}
@@ -369,7 +369,7 @@ Time slots should be long enough for the longest frame size to be sent
 between two nodes, together with an acknowledgement~\cite{rfc7554}. 
 Every time slot in a TSCH network has the same duration.
 
-For each time slots operations, a schedule orchestrates what each
+For each time slot operation, a schedule orchestrates what each
 node of the network will use his time-slot for.
 
 \begin{description}
@@ -399,7 +399,7 @@ organized together.
 \subsection{Absolute Slot Number (ASN)}
 
 The absolute slot number is a shared counter between all the devices that
-define the number of time slots elapsed since the start of the start of the
+define the number of time slots elapsed since the start of the
 network (see Fig~\ref{fig:asn}).
 ASN increases after each time-slot and is calculated with \ref{eq:asn} where $k$
 is the slotframe offset.
@@ -425,13 +425,13 @@ Links are the conjunction of a time slot and a channel~\cite{Chen2013Performance
   link = (TimeSlot_{number}, Channel_{offset})
 \end{equation}
 
-Multiple links constitute a time slot (dependent on the number of channel
+Multiple links constitute a time slot (dependent on the number of channels
 available). Devices can transmit on different links during the same time slot.
 
 % TODO Topology example multiple timeslot same time TX on different channels
 
 The channel offset is computed by the transmitter and the receiver with the
-function~\ref{eq:channel}. Both node know the $ASN$ and the schedule and can
+function~\ref{eq:channel}. Both nodes know the $ASN$ and the schedule and can
 compute the same channel offset~\cite{rfc7554}.
 
 \begin{equation}
@@ -439,16 +439,16 @@ compute the same channel offset~\cite{rfc7554}.
   Channel_{offset} = (ASN + Scheduled_{offset}) \% Channel_{number}
 \end{equation}
 
-If the slotframe length is a prime number, even with static schedule,
-with known channel offset, the timeslot will use a different channel every time.
-Figure~\ref{fig:channelhopping} show how scheduled cells in a TSCH network of
-four timeslot and three channels change channel depending on the ASN.
+If the slotframe length is a prime number, even with the static schedule,
+with known channel offset, the time slot will use a different channel every time.
+Figure~\ref{fig:channelhopping} shows how scheduled cells in a TSCH network of
+four time slot and three channels change channel depending on the ASN.
 
 \input{thesis.tex/chapters/context/fig/channel_hopping.tex}
 
 \subsection{Scheduling}
 
-The TSCH schedule tell each node what to do during a time slot.
+The TSCH schedule tells each node what to do during a time slot.
 
 Dedicated time slots cell need the following parts to be defined.
 
@@ -462,9 +462,9 @@ Dedicated time slots cell need the following parts to be defined.
 
 To ensure the execution of the same slots, each transmission is an opportunity 
 for neighbor to resynchronize their clocks.
-Synchronization is important to mitigate the nodes internal clock drift.
+Synchronization is important to mitigate each node internal clock drift.
 
-Time source node send Enhanced Beacon (EB) packet to synchronize the receiving
+Time source nodes send Enhanced Beacon (EB) packets to synchronize the receiving
 nodes of the network. When nodes don't resynchronize for a long period of time 
 a Keep Alive (KA) is sent and used to adjust the drift at synchronization.
 
@@ -483,17 +483,17 @@ the data and then adjust its timeslot length to finish earlier.
 
 Contiki is a free and open source Real-Time operating system (OS) specifically made
 for IoT applications. Contiki ships with a low-power IPv6 communication stack
-and a variety of routing and MAC protocols making it a particularly adapted OS to
-use with Wireless Sensor Network (WSN).
+and a variety of routing and MAC protocols making the OS particularly well
+suited for Wireless Sensor Networks (WSN).
 
-Contiki use protothreads, a programming abstraction which Contiki is
+Contiki uses protothreads, a programming abstraction which Contiki is
 built around.
 They allow to write event-driven programs with little memory overhead, and
 claims to reduce the complexity of embedded programs that used to be written 
 like state machines~\cite{10.1145/1182807.1182811}.
 
-The Contiki OS project has been unmaintained since 2017 but a
-fork named Contiki-NG was created since.
+The Contiki OS project has been unmaintained since 2017 but its
+successor named Contiki-NG was created as a fork by the same developers since.
 That fork has been the basis for many LPWAN experimentation, for example 
 with the development of the 6TiSCH stack for the OS~\cite{Duquennoy2017TSCHA6}.
 
@@ -501,12 +501,11 @@ with the development of the 6TiSCH stack for the OS~\cite{Duquennoy2017TSCHA6}.
 
 Contiki's Network Protocol stack, also known as \lstinline{NETSTACK}, is a
 feature of the OS.
-It aloow to define the network stack we are using in a program easily.
-It defines the different OSI layers implementations we 
-want to use in a Contiki project (Fig~\ref{fig:netstack}).
+It allow to defines parts of the network stack we are using in a Contiki
+project (Fig~\ref{fig:netstack}).
 
-NETSTACK implementation allow contiki to communicate between layers without 
-knowing the specific implementation of the layer we communicate with.
+NETSTACK implementation allows contiki to communicate between layers without 
+knowing the specific implementation of the layer, we communicate with.
 Developers must define the following variable to change the network stack 
 in a Contiki project.
 
@@ -525,7 +524,7 @@ in a Contiki project.
 
 This is not the first attempt to bring multi-hop communication to LoRa.
 This section will give a state of the art of the research on
-multi-hop network for LoRa and TSCH.
+multi-hop routing in LoRa.
 
 \paragraph{}
 
@@ -536,16 +535,16 @@ been done in~\cite{uwbtsch} for the Ultra-Wide Band (UWB).
 
 \paragraph{UWB-TSCH}
 
-Charlier M. in~\cite{uwbtsch} explore what it need to adapt TSCH for the Ultra
+Charlier M. in~\cite{uwbtsch} explores the requirements to adapt TSCH for the Ultra
 Wideband (UWB). 
-In a similar way from LoRa, UWB don't allow CCA and can not use CSMA for its 
+Similarly to LoRa, UWB do not allow CCA and can not use CSMA for its 
 communications.
-His work show what it take to adapt TSCH for another radio layer. 
+His work shows what it takes to adapt TSCH for another radio layer. 
 Its also an evaluation of the performance of TSCH outside of 802.15.4.
 
 \paragraph{}
 
-The respective authors of~\cite{DIAS2018424, 8856256}, look at way to extend
+The respective authors of~\cite{DIAS2018424, 8856256}, look at ways to extend
 the current LoRaWAN MAC protocol to allow multi-hop communications.
 
 \paragraph{Multihop LoRaWAN Extension} Dias J., Grilo A. in \cite{DIAS2018424}
@@ -578,32 +577,32 @@ Because of the large deployment cost induced by the large tunnels, the negative
 aesthetic impact of a wired network and the risk of flooding, made the author
 opt for a battery operated wireless network.
 
-They propose a multi-hop solution for Linear Sensor Network (LSN) based on LoRa by
-developing their own MAC protocol tailored for LSN scenario.
-This custom protocol is built around assigning time slot for each nodes with
+They propose a multi-hop routing solution for Linear Sensor Network (LSN) based 
+on LoRa by developing their own MAC protocol tailored for their scenario.
+This custom protocol is built around assigning time slots for each node with
 a common schedule for adjacent nodes.
-This allow neighbor to synchronize their clock and broadcast messages to the
-both end of the aqueducts.
+This allows neighbors to synchronize their clock and broadcast messages to the
+both ends of the aqueducts.
 
 % Their solution allowed the connection of the Bottini
 
 \paragraph{Multi-Hop Linear Network Based on LoRa}
 
-Duong T. in~\cite{duong2018} propose a multi-hop protocol for LoRa linear
-network. 
+Duong T. in~\cite{duong2018} proposes a multi-hop protocol for LoRa linear
+networks. 
 His network is made of two periods. The first is the network initialization to
-verify sink is joinable and synchronize the nodes to make them join the data
-operation perdiod.
-Each node transmit in a different timeslot to their parent node, each hop add
-their own information to the packet they are relaying until the sink is
+verify the gateway is reachable and synchronizes the nodes to make them join the 
+data operation period.
+Each node transmits in a different timeslot to their parent node, each hop adds
+their own information to the packet they are relaying until the gateway is
 reached.
 The clock drift is mitigated by synchronizing on the preamble but the receiver
-don't acknowledge the reception of the packet, making the network sensible to
-interference since it run on a single channel and SF.
+do not acknowledge the reception of the packet, making the network sensible to
+interference since it is running on a single channel and SF.
 
 \paragraph{}
 
-The following study look at way to create fully functionning multi-hop network
+The following study look at ways to create fully functioning multi-hop network
 using LoRa without depending on LoRaWAN specifications.
 
 \paragraph{LoRaBlink}
@@ -612,29 +611,29 @@ Bor M., Vidler J., Roedig Utz. in \cite{lorablink} propose the LoRaBlink
 protocol, designed to support reliable and energy efficient multi-hop
 communication.
 
-Each node of the network remain in listening mode until a beacon is received.
-The beacons are used for time synchronization of the time slots.
-Node transmit to the parent node that relays it the the sink.
-There is not scheduling of which node transmit, it can happen that two node 
+Each node of the network remains in listening mode until a beacon is received.
+Beacons are used for time synchronization of the time slots.
+Each node transmit packets to their parent node that relays it to the gateway.
+There is no scheduling of which node transmits, it can happen that two nodes
 transmit at the same time.
 
 % Every nodes of the network keep track of their distance to the sink
 
-Also, LoRaBlink use fixed SF, BW and channel. This decrease the overall throughput 
+Also, LoRaBlink use fixed SF, BW and channel. This decreases the overall throughput 
 of the network and make it highly sensible to interference.
 
 \paragraph{RPL+LoRa MAC Protocol}
 
-The Authors of~\cite{8115756} from the ETRO lab of VUB, adapted RPL to enable
-multihop communications on top of LoRa. The paper present the modifications of
-the objective function to take into account the SF when computing best routes
-
-The paper describe a solution for a network of nodes to discover each other. It
-use a router sending packets on different spreading factors while the joining
-node listen on the spreading factors by starting by the lowest, this way it
+The Authors of~\cite{8115756} from the SmartNet research group of VUB, adapted RPL 
+to enable multihop communications on top of LoRa. 
+The paper presents the modifications of the objective function to take into
+account the SF when computing best routes.
+The paper describes a solution for a network of nodes to discover each other.
+It uses a router sending packets on different spreading factors while the joining
+node listens on the spreading factors by starting by the lowest, this way it
 pick the fastest spreading factor available.
-It also describe a custom MAC protocol, \emph{RLMAC}, to allow multi-hopping
-with LoRa. It manage time-slots between node and allow the PHY settings fine
+It also describes a custom MAC protocol, \emph{RLMAC}, to allow multi-hop
+routing with LoRa. It manages time-slots between nodes and allows PHY settings
 tuning depending on the links.
 
 The protocol proposed focused on having the fastest delivery time with LoRa
@@ -646,15 +645,16 @@ Reducing the power consumption was not a concern in this paper.
 
 In the course of my work, a new study from Haubro M., Orfanadis C.,
 Oikonomou G. and Fafoutis X.~\cite{tschoverlora} came out on the exact 
-same subject as mine. There work studied the feasibility of porting 
-TSCH to LoRa in Contiki OS using SX1272.
+same subject as mine. 
+Their work studied the feasibility of porting TSCH to LoRa in Contiki OS using
+SX1272.
 
 The authors proved it was possible to adapt TSCH for LoRa by testing their
 implementation with a variety of routing protocol and applications.
-Their implementation works on a single SF at the time but they tested it using
+Their implementation works on a single SF at a time but they tested it using
 SF7 and SF10.
 
 To demonstrate the resilience of TSCH to interference even with LoRa, the
 authors made a radio jammer that transmit on different channels. Their
-experimentation proved no packet were loss when using channel hopping with
+experimentation proved no packets got lost when using channel hopping with
 LoRa.

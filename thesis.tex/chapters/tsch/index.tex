@@ -3,7 +3,7 @@
 This chapter will cover the adaptation of the TSCH MAC protocol in Contiki OS to
 work with LoRa.
 It covers the issues induced by the current Contiki implementation and how I
-managed to fix them to achieve a Time-Slotted Channel Hopping working with LoRa.
+managed to fix them to achieve Time-Slotted Channel Hopping working with LoRa.
 
 The reader of this chapter will get a better understanding of the steps
 required to port TSCH to a new LoRa module in Contiki.
@@ -150,12 +150,12 @@ NVIC_SetPriority(SMT_IRQn, 7);
 \subsection{Watchdog}
 
 The CC2538 watchdog is set to a period of 32,768 ticks or 1 second. 
-Because Contiki run most TSCH operations inside an interrupt
+Because Contiki runs most TSCH operations inside an interrupt
 context, the watchdog timer is not reset inside.
-During long wait or long transmissions, the watchdog is not reset and would
-make the system reset.
-This is why when the program busy wait with the command
-\lstinline{RTIMER_BUSYWAIT_UNTIL_ABS}, I modified it execution to also execute
+During long waits or long transmissions, the watchdog is not reset and trigger
+a system reset.
+This is why when the program busy waits with the command
+\lstinline{RTIMER_BUSYWAIT_UNTIL_ABS}, I modified its execution to also execute
 a \lstinline{watchdog_periodic} to reset the watchdog timer.
 
 \subsection{Drift correction limitations}
@@ -179,12 +179,12 @@ The radio driver defines PHY layer specific parameters.
 
 \subsection{Channels}
 
-Channel hopping is one of the main features of TSCH that need to be implemented
+Channel hopping is one of the main features of TSCH that needs to be implemented
 at the driver level.
 For my experimentation I only implemented three channels that can be selected
 with the \lstinline{RADIO_PARAM_CHANNEL} argument.
 I used the three following channels but the other channels available in LoRaWAN
-could also be used.
+could also be implemented.
 
 \begin{itemize}
   \item 868.1 MHz, 125 KHz BW
@@ -192,14 +192,12 @@ could also be used.
   \item 868.5 MHz, 125 KHz BW
 \end{itemize}
 
-I decided three different channels were enough for my testing and reduce the time
-for a node to join the network.
+Three different channels also reduce the time for a node to join the network,
+making the testing faster.
 
 \subsection{Packet Duration\label{section:transmissiontime}}
 
-LoRa Transmission duration is known with the equation
-in \ref{eq:tpacket}.
-
+LoRa Transmission duration is known with the equation in \ref{eq:tpacket}.
 The current implementation of Contiki calculates the time on air with the
 \lstinline{TSCH_PACKET_DURATION(bytes)} macro by using two parameters to do the
 calculation.
@@ -222,7 +220,7 @@ of the time on air.
 Radio delays are hardware platform dependent values. 
 They get accessed from the radio driver.
 
-TSCH use three of these values.
+TSCH uses these three values
 
 \begin{itemize}
   \item RADIO\_CONST\_DELAY\_BEFORE\_TX
@@ -238,7 +236,7 @@ on the transmission length with the RN2483 module, I made them variable.
 \subsubsection{Transmission delay}
 
 It represents the time for the module to get messages on air. 
-This delay is made of three parts.
+This delay is made of three parts
 
 \begin{enumerate}
   \item UART message transmission to the module.
@@ -378,8 +376,11 @@ It consists of the two following steps.
   \item Start listening to incoming messages.
 \end{enumerate}
 
-Because in my implementation the radio is always on, there is no real reception
+Because in my implementation the radio is always on (as I will explain in
+Section~\ref{section:energyconsumption}) there is no real reception
 delay.
+This variable is then not used but should be taken into account in other
+implementations.
 
 \subsubsection{Detection delay\label{section:detectiondelay}}
 

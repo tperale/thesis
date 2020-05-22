@@ -22,17 +22,16 @@ configuration of the \emph{Zolertia RE-Mote REV-B}. He also started a radio driv
 implementation for Contiki-OS\@.
 
 In the previous attempt to adapt \emph{TSCH} for \emph{LoRa}
-in~\cite{njomgang_2018}, Serge did his experimentation with the \emph{LoRaMote}
-demo platform from \emph{Semtech} using a different LoRa radio module the
-\emph{SX1272}. 
+in~\cite{njomgang_2018}, \emph{Serge Sadja Njomgang} did his experimentation with 
+the \emph{LoRaMote} demo platform from \emph{Semtech} using the \emph{SX1272} LoRa 
+radio module.
 As analyzed in~\cite{8847137}, LoRaMotes turned out to be an issue for the
 further research because they were no longer produced, 
 new versions were expensive and memory was a bottleneck.
 That is why the \emph{Zolertia RE-Mote} was chosen instead. 
-The platform is already available 
-and well maintained in \emph{contiki-ng} (making the transition faster and less
-error prone as less code need to be developed) and the \emph{ETRO Lab} is
-already using the platform.
+The platform is already available and well maintained in \emph{contiki-ng}
+(making the transition faster and the code less error prone) and the \emph{ETRO
+Lab} is already utilizing the platform.
 
 The first part of my work consisted in implementing a reliable
 and fully featured radio driver for the \emph{RN2483} module working in the last
@@ -116,7 +115,7 @@ usage. % \improvement{I don't like this phrase}
   \item[rn2483] Implementation of the Contiki radio device driver. 
     It contains the standardized way of Contiki to use and configure radio
     devices.
-    All the radio driver in Contiki share this structure.
+    All the radio drivers in Contiki share this structure.
 \end{description}
 
 \subsection{Synchronous communication with the module}
@@ -145,7 +144,7 @@ specifically designed for serial communication with terminals.
 The function \lstinline{serial_line_input_byte} pass each character to standalone
 process (\lstinline{serial_line_process}) and broadcast an event on command
 full reception. 
-I implemented a custom handler directly threating each message in the
+I implemented a custom handler directly treating each message in the
 interrupt instead of using processes.
 
 Working with processes and events, is impossible in our use case because Contiki 
@@ -159,7 +158,7 @@ format from the RN2483 module to sort each new communication.
 \begin{itemize}
   \item Asynchronous LoRa radio messages start with \lstinline{radio rx  }.
   \item \lstinline{radio_tx_ok} indicates the end of the radio transmission. 
-  \item \lstinline{ok} indicate the acknowledgement of a command.
+  \item \lstinline{ok} indicates the acknowledgement of a command.
 \end{itemize}
 
 % Talk about the state machine
@@ -239,7 +238,7 @@ structure that must implement the following functions.
     We can not transmit radio messages while listening for incoming messages, the
     first step of preparation is to exit the radio reception mode with the
     command \lstinline{radio rxstop}.
-    The function take care to convert the data in the command ready to be sent.
+    The function takes care to convert the data in the command ready to be sent.
   \item[transmit] sends the already formatted command in the prepare function and
     waits for the \lstinline{radio_tx_ok} acknowledgement.
   \item[send] is the combination of prepare and transmit.
