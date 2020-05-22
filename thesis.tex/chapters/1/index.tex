@@ -5,26 +5,26 @@ major \emph{IT actors} investing in the development of new
 products\footnote{\url{https://www.fortunebusinessinsights.com/industry-reports/internet-of-things-iot-market-100307}},
  telecoms building infrastructure for this new 
 demand\footnote{\url{https://www.proximus.be/en/id_cl_iot/companies-and-public-sector/it-services/iot/internet-of-things.html}}.
-IoT technology allows the gathering of data and the control of actuaturs via
+IoT technology allows the gathering of data and the control of actuators via
 the Internet without any human interaction.
-The field has been developed during the last decade and has mainteined a
+The field has been developed during the last decade and has maintained a
 consistent growth since.
 Business analysts agree that we can expect to reach at least 40 billion
 installed \emph{IoT} devices by
 2027\footnote{\url{https://www.businessinsider.com/internet-of-things-report}}. 
-Costumers are already familiar with the traditional \emph{IoT} products
+We are already familiar with the traditional \emph{IoT} products
 we use in our households. Those products allow to connect our light bulbs, fridge and
 washing machine to the Internet.
-Meanwhile we have less knowledge on the industrial usage of \emph{IoT}, also
+Meanwhile, we have less knowledge on the industrial usage of \emph{IoT}, also
 known as industrial IoT (IIoT). \emph{IIoT} is one of the fastest growing
 segment of the market.
 More and more industries are adopting IIoT to consolidate their productions
 with \emph{real-time monitoring}, to organize predictive maintenance on their
 assets and products to connect their supply chains, etc \ldots
-All of this is enabled with
-the help of network of sensors, and actuators, in a wide variety of
-sectors like \emph{smart farming}, \emph{smart cars}, \emph{smart cities},
-\emph{energy managements}, \ldots
+
+All of this is enabled with the help of sensor networks, and actuators, in a
+wide variety of sectors like \emph{smart farming}, \emph{smart cars},
+\emph{smart cities}, \emph{energy managements}, \ldots
 
 \paragraph{}
 
@@ -32,7 +32,7 @@ All these applications have in common that they count on devices that
 communicate wirelessly.
 % TODO Change not telecom
 Telecoms created new technologies to suit this new domain that can be
-classified by three different characteristics being.
+classified by three different characteristics
 
 \begin{itemize}
     \item Long or Short \emph{range}
@@ -60,19 +60,19 @@ unlicensed \emph{ISM} band. I will cover LoRa in more details in
 Section~\ref{section:lora}.
 The main characteristics of \emph{LoRa} are its low power transmission and the
 fact that it can trade throughput for range by fine-tuning the PHY settings.
-The long-range capabilities of the protocol haves caught the attention of
+The long-range capabilities of the protocol caught the attention of
 many people. 
-Some have succeeded to obtain record distance transmission of over 700 km with
-direct line of sight between the receiver and the
+Some have succeeded to obtain a record transmission distance of over 700 km with
+a direct line of sight between the receiver and the
 transmitter\footnote{https://www.thethingsnetwork.org/article/ground-breaking-world-record-lorawan-packet-received-at-702-km-436-miles-distance}.
 However, this case is not a real world example. The range in urban areas is of
 around \emph{2 to 5 km} and around \emph{15 km} in suburban
 areas~\cite{8030482}.
 
 \emph{LoRa} is often used in conjunction with \emph{LoRaWAN}, an ALOHA 
-based~\cite{loraalliance:lorawanspecification} MAC protocol using a star-of-stars 
-topology network architecture composed of wireless \emph{motes} sending
-messages to \emph{gateways} (GWs).
+based~\cite{loraalliance:lorawanspecification} MAC protocol deployed in a star-of-stars 
+topology.
+LoRaWAN is composed of wireless \emph{motes} sending messages to \emph{gateways} (GWs).
 Those GWs are connected to internet and will relay messages to central servers
 as we can see in Figure~\ref{fig:startopology}.
 This single-hop topology has been successful because free (as well as paid
@@ -83,23 +83,23 @@ deployable in contrast to concurrent LPWAN like \emph{Sigfox} or \emph{NB-IOT}.
 \input{thesis.tex/chapters/1/fig/topology.tex}
 
 The issue with \emph{LoRaWAN}, as studied 
-in~\cite{8030482}~\cite{10.1145/2988287.2989163}, is its inability to scale. 
+in~\cite{8030482}~\cite{10.1145/2988287.2989163} is its inability to scale. 
 % This occurs especially 
 % with dense networks, like in urban environments, where collisions can
 % happen on transmission.
 
 Channel sensing is impossible in LoRa because \emph{Channel Activity Detection}
-(CAD) only detect the preamble of a communication. % TODO reference needed
+(CAD) only detects the packet preamble. % TODO reference needed
 This leads to collision when motes transmit at the same time.
 On collision, transmission has to be re-done using a back-off strategy till the
 message has been correctly received or the number of trials has reached its
 maximum.
-This lead to more energy consumption for the motes and more radio 
+This implies an higher energy consumption for the motes and more radio 
 channel usage.
 As the network gets more dense~\cite{8030482}, the effect of collisions gets
-increasingly significant with little to no packets getting received by gateways.
+increasingly significant with little to no packets received by gateways.
 
-% TODO Figure from the paper.
+% TODO Figure from the paper about received packets ?
 
 The \emph{duty-cycle} regulations in place for the \emph{ISM} bands on every
 transmitting device (motes and gateways) is also a limiting factor 
@@ -113,24 +113,23 @@ achieve with the duty-cycle limitation.
 % TODO {Add some reference to ISM regulations} 
 
 Link quality also influences LoRaWAN's efficiency. 
-Environmental factor like temperature,
-humidity~\cite{evaluation_of_the_reliability_of_lora}, the topology of the
+Environmental factors like temperature,
+humidity~\cite{evaluation_of_the_reliability_of_lora} and the topology of the
 terrain~\cite{lorajambalaya}, influence the link quality.
 All these factor make the networks coverage typically not uniform 
-as can seen in Fig~\ref{fig:coverage}.
+as in Fig~\ref{fig:coverage}.
 Motes on the border of the gateway coverage area may struggle to
 achieve a full transmission. 
 
-Gateways can restrain the deployment of LoRa networks.
-They may not be deployed everywhere as they require more demanding infrastructure 
+Gateways could restrain the deployment of LoRa networks.
+They might not be deployed everywhere as they require more demanding infrastructure 
 than battery operated motes.
 % TODO Weird next phrase statement about gateways.
-That is the case for pipelines and tunnel~\cite{Abrardo_2019},
-we would prefer to only install motes running on batteries because
-gateways would not have much effect with the linear nature of the installation.
+That is the case for pipelines and tunnels~\cite{Abrardo_2019},
+we would prefer to only install motes running on batteries as in linear
+topology gateways are not of any use.
 They can also be a single point of failure of the network, when a single
-gateway is connecting a portion of the network. 
-The network disconnects on technical issues.
+gateway covers a portion of the network. 
 
 \input{thesis.tex/chapters/1/fig/coverage.tex}
 
@@ -141,17 +140,16 @@ The network disconnects on technical issues.
 %     \node[draw] (Rf) [abstract, rectangle, below=0.2cm of Phy, text justified]{\textbf{Radio Frequency (RF) Layer}};
 % \end{tikzpicture}
 
-\paragraph{}
-
 Multi-hop networks, as represented in Figure~\ref{fig:meshtopology}, can be a solution to
 the LoRaWAN scaling issues~\cite{8115756}.
-These networks does not directly send message to a gateway but instead pass the
-message to neighboring nodes.
-Using multi-hop routing increase the reliability, the range
+Participants of the network do not directly send message to gateways but instead pass
+messages to their neighboring nodes.
+Using a multi-hop routing protocol increase the reliability, the range
 and can adapt to topology changes in the network (because of moving or failing nodes).
 
-Multi-hop is de facto a strong candidate for large areas monitoring application
-where gateways may be hard and costly to deploy and where blind spots often arise.
+Multi-hop routing protocols are de facto a strong candidates for large area monitoring 
+application where gateways may be hard and costly to deploy and where blind
+spots often arise.
 This solution can decrease the energy consumption of bordering nodes that
 usually struggle to achieve a successful communication on non optimal
 conditions.
@@ -169,18 +167,18 @@ A solution to this matter would be to use time-slotted channel access.
 It would suppress collisions and schedule communications between nodes leaving
 the nodes in a sleeping state the rest of the time.
 
-The \emph{IEEE 802.15.4} standard developed TSCH, a Medium Access Control (MAC)
+The \emph{IEEE 802.15.4e} standard developed TSCH, a MAC
 protocol to use with 802.15.4 compliant physical layer.
 TSCH works particularly well where LoRaWAN shows weaknesses. 
-TSCH is resilient to external interference with the use of channel hopping, a
-high density network of node can be run without collision issues.
-It also provide high reliability communications and deterministic delays by 
+TSCH is resilient to external interference with the use of channel hopping.
+Network with high node density can work without collision issues.
+It also provides high reliability communications and deterministic delays by 
 keeping the nodes time-synchronized.
 
 \paragraph{}
 
-This thesis aim to adapt the TSCH MAC protocol for LoRa
-and thus bringing a reliable, long range and low power IPv6 multi-hop
+This thesis aim to adapt the TSCH MAC protocol for LoRa,
+thus bringing a reliable, long ranges and low power IPv6 multi-hop
 solution to the LoRa ecosystem.
 
 Work to adapt TSCH for LoRa in~\cite{8847137} and~\cite{njomgang_2018}, has
@@ -191,13 +189,13 @@ years to adapt \emph{TSCH} for the \emph{Zolertia RE-Mote} and the
 
 \paragraph{}
 
-The Chapter \ref{section:context} will give the background information and context needed to
+Chapter \ref{section:context} will give the background information and context needed to
 understand the building blocks to achieve my end goal.
-The Chapter \ref{section:context} will also give an overview of the related work on the subject of
+It will also give an overview of the related work on the subject of
 LoRa multi-hop communications.
-The Chapter 3 give the implementation details of writing a driver for the
+Chapter 3 gives the implementation details of writing a driver for the
 RN2483 in Contiki OS and the experimentation with the driver.
-Chapter 4 provide design and implementation of bringing TSCH to LoRa as well as
+Chapter 4 provides design and implementation of bringing TSCH to LoRa as well as
 the different testing done on the implementation.
 Finally, Chapter 5 will conclude the work by summarizing it and suggesting
 further research possible on the subject.
