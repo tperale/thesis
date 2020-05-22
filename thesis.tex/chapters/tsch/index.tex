@@ -12,11 +12,12 @@ required to port TSCH to a new LoRa module in Contiki.
 
 Contiki developers have already implemented the parameters for
 platforms using IEEE 802.15.4.
-Adapting the timing to LoRa would mean longer time period because of the long
-transmission time on LoRa, which lead to a set of problems that we will cover in this
+Adapting the timing to LoRa would mean longer time slots because of the long
+transmission duration of LoRa.
+This leads to a set of problems that we will cover in this
 section.
 
-Contiki use the following parameter we need to define in $\mu s$ to time each
+Contiki uses the following parameter we need to define in $\mu s$ to time each
 part of a time slot.
 
 % Guard time precise = better energy usage.
@@ -40,18 +41,18 @@ enum tsch_timeslot_timing_elements {
 \end{lstlisting}
 
 I did not define \lstinline{tsch_ts_cca_offset} and \lstinline{tsch_ts_cca} 
-because \emph{CCA} is implossible with LoRa.
+because \emph{CCA} is impossible with LoRa.
 Also, the parameter \lstinline{tsch_ts_rx_tx} is not used anywhere in the 
 Contiki codebase.
 
 \begin{itemize}
   \item \lstinline{tx_offset} represents the time needed for the packet to get
     prepared before getting transmitted on air. The end of
-    \lstinline{tx_offset} is the moment the packet get transmitted. 
+    \lstinline{tx_offset} is the moment the packet gets transmitted. 
     The parameter is the same as \lstinline{rx_offset}.
     As we saw in~Fig~\ref{fig:sync} the bigger this parameter the bigger the
     clock drift can be between two nodes.
-  \item \lstinline{max_tx} is the maximum transmission time (time on air) using
+  \item \lstinline{max_tx} is the maximum transmission time (time-on-air) using
     LoRa. The parameter depends on the spreading factor and the maximum number
     of bytes transmittable.
   \item \lstinline{rx_ack_delay} buffering time between packet transmission and
@@ -62,25 +63,25 @@ Contiki codebase.
     the acknowledgement packet reception.
 \end{itemize}
 
-Figure~\ref{fig:tstiming} represents the parameters organization during
+Figure~\ref{fig:tstiming} represents the organization of the parameters during
 a time-slot.
 
 \input{thesis.tex/chapters/tsch/fig/timeslots.tex}
 
 \subsection{Timing size issue}
 
-Contiki stored each timing parameter in a 16 bit unsigned integer.
+Contiki stored each timing parameter in a 16-bit unsigned integer.
 
 \begin{lstlisting}
 typedef uint16_t tsch_timeslot_timing_usec[tsch_ts_elements_count];
 \end{lstlisting}
 
-This set the maximum parameter value to $64436\mu s$.
+This sets the maximum parameter value to $64436\mu s$.
 This value is not long enough to store LoRa transmissions at maximum payload.
 It takes 379 ms to transmit a maximum payload packet with the fastest spreading
 factor (SF 7).
 
-I changed the TSCH implementation to use 32 bit integer instead, allowing more
+I changed the TSCH implementation to use 32-bit integer instead, allowing more
 room for the parameters.
 
 \begin{lstlisting}
@@ -172,7 +173,7 @@ I have to take into account this limitation to prevent overflows.
 
 According to the \emph{contiki-ng}
 wiki\footnote{\url{https://github.com/contiki-ng/contiki-ng/wiki/Documentation:-TSCH-and-6TiSCH}}
-on TSCH, porting the MAC protocol to new radio platforms, requires specific
+on TSCH, porting the MAC protocol to new radio platforms requires specific
 configurations parameters.
 
 The radio driver defines PHY layer specific parameters.
@@ -187,9 +188,9 @@ I used the three following channels but the other channels available in LoRaWAN
 could also be implemented.
 
 \begin{itemize}
-  \item 868.1 MHz, 125 KHz BW
-  \item 868.3 MHz, 125 KHz BW
-  \item 868.5 MHz, 125 KHz BW
+  \item 868.1 MHz, 125 kHz BW
+  \item 868.3 MHz, 125 kHz BW
+  \item 868.5 MHz, 125 kHz BW
 \end{itemize}
 
 Three different channels also reduce the time for a node to join the network,
@@ -198,7 +199,7 @@ making the testing faster.
 \subsection{Packet Duration\label{section:transmissiontime}}
 
 LoRa Transmission duration is known with the equation in \ref{eq:tpacket}.
-The current implementation of Contiki calculates the time on air with the
+The current implementation of Contiki calculates the time-on-air with the
 \lstinline{TSCH_PACKET_DURATION(bytes)} macro by using two parameters to do the
 calculation.
 
@@ -217,7 +218,7 @@ of the time on air.
 
 \subsection{Radio delay}
 
-Radio delays are hardware platform dependent values. 
+Radio delays are hardware platform-dependent values. 
 They get accessed from the radio driver.
 
 TSCH uses these three values
@@ -235,13 +236,13 @@ on the transmission length with the RN2483 module, I made them variable.
 
 \subsubsection{Transmission delay}
 
-It represents the time for the module to get messages on air. 
+It represents the time for the module to get messages on the air. 
 This delay is made of three parts
 
 \begin{enumerate}
   \item UART message transmission to the module.
   \item Module message treatment (duration between the ends of $1.$ and the start of $3.$).
-  \item Module sending back acknowledgement.
+  \item Module sending back an acknowledgement.
 \end{enumerate}
 
 The program knows the message length because
@@ -341,7 +342,7 @@ correlation between the number of bytes transmitted and the treatment length.
   \caption{Message treatment delay measurements and variation with the prediction\label{fig:transmissiondelay}}
 \end{figure}
 
-There is a clear linear relation between the number of bytes transmitted and
+There is a clear linear relationship between the number of bytes transmitted and
 the message treatment time.
 Based on these measurements the best matching function is the following.
 
@@ -367,7 +368,7 @@ precisely at the end of \lstinline{TS_TX_OFFSET}.
 
 \subsubsection{Reception delay}
 
-This parameter is hard to really measure with the RN2483.
+This parameter is hard to measure with the RN2483.
 
 It consists of the two following steps.
 
@@ -482,7 +483,7 @@ message transmission to the platform with an oscilloscope.
 \end{figure}
 
 The best matching function I found, used the number of symbols transmitted as
-parameter.
+the parameter.
 
 \begin{equation}
   \label{eq:detectcomp}
@@ -507,9 +508,9 @@ The clock is adjusted when receiving a packet from a time source.
 % Contiki takes the packet timestamps at the moment the transmission starts.
 
 There is no way for the RN2483 module to know when the reception started but
-a timestamp is saved when the packet is fully received by the platform.
+the timestamp is saved when the packet is fully received by the platform.
 On packet reception, I calculate the communication start time with the 
-\emph{detection delay} covered in section~\ref{section:detectiondelay} and the
+\emph{detection delay} covered in section~\ref{section:detectiondelay} and
 equation~\ref{eq:detectdelay}, as well as the transmission time of
 section~\ref{section:transmissiontime} and equation~\ref{eq:tpacket}.
 
@@ -530,25 +531,25 @@ The implementation is available in the appendix~\ref{code:timestampimpl}.
 \section{Drift issues}
 
 During the adaptation of the TSCH protocol for the RN2483, I stumbled upon huge
-clock drift that made me unable to run a reliable network using TSCH.
+clock drifts that made me unable to run a reliable network using TSCH.
 
-After several improvement and research I came to the conclusion that the RN2483
+After several improvement and research, I concluded that the RN2483
 module we were using and the assumption I made in the previous section about it
-computation time were still to imprecise to run with the Contiki TSCH
+computation time were still too imprecise to run with the Contiki TSCH
 implementation out of the box.
 
-The function \ref{eq:transmissiondelay} and \ref{eq:detectcomp} can
-create imprecision of multiple ms.
+The functions \ref{eq:transmissiondelay} and \ref{eq:detectcomp} can
+create imprecisions of multiple ms.
 The original implementation tried to statistically correct the internal clock
 drift of the motes with the function
 \lstinline{tsch_timesync_adaptive_compensate}.
 The function learned from the nodes drift from the time source to predict the
 difference.
 
-The Figure~\ref{fig:driftmeasurement} show how
-\lstinline{tsch_timesync_adaptive_compensate} introduce a lot more drift on the
+Figure~\ref{fig:driftmeasurement} shows how
+\lstinline{tsch_timesync_adaptive_compensate} introduces a lot more drift on the
 receiver timeslot on a network of two nodes running for 10 minutes.
-The lower overall drift explain why I stopped using this function.
+The lower overall drift explains why I stopped using this function.
 Re-using the adaptive compensation should be done with a module that can
 provide.
 
@@ -594,14 +595,14 @@ provide.
 The example is inspired by the same test conducted in~\cite{tschoverlora}.
 The goal is to demonstrate the resilience of transmitting messages with LoRa and
 TSCH over a busy channel.
-To conduct this test, I used two motes running a TSCH network and a third one
+To conduct this test, I used two motes running a TSCH network and the third one
 as a jammer like in Figure~\ref{fig:jammer}.
 
 \input{thesis.tex/chapters/tsch/fig/jamming.tex}
 
 One mote from the TSCH network will send UDP messages to the coordinator
 every 30 seconds.
-Meanwhile, the third mote constantly send messages on the same channel to
+Meanwhile, the third mote constantly sends messages on the same channel to
 simulate a busy channel of the network.
 The test the protocol can deal with interference by retransmitting 
 the message on a different channel.
@@ -610,7 +611,7 @@ the message on a different channel.
 
 I sent 50 packets to the coordinator in the course of my test and all of them
 managed to reach the destination.
-The figure~\ref{fig:retransmission} shows the amount of retransmission for each
+Figure~\ref{fig:retransmission} shows the amount of retransmission for each
 packet transmitted during the test.
 This test could be enhanced by measuring the transmission time of the packet
 with and without the channel jammed but I couldn't get my hand on a digital
@@ -699,9 +700,9 @@ analyzer to measure every transmission.
 
 \subsection{RPL Custom Schedule}
 
-For this example I will create a custom schedule and test if application can
+For this example, I will create a custom schedule and test if the application can
 work on top of the TSCH and LoRa network.
-For this purpose I will run an UDP client and server on each node and will try
+For this purpose, I will run a UDP client and server on each node and will try
 to send a message between two nodes to see the packet get routed correctly with
 RPL and the multi-hop topology.
 
@@ -726,17 +727,17 @@ To run a custom schedule we must first disable the default 6TiSCH minimal schedu
 Custom schedules in Contiki can be done from anywhere with the help of the
 function \lstinline{tsch_schedule_add_link}, the code for the custom schedule
 is available in the appendix (see Appendix~\ref{code:customsched}).
-The schedule I made is schematized in the Figure~\ref{fig:customsched}, the $:2f2a$ 
-node is the network coordinator and it use a single channel.
+The schedule I made is schematized in Figure~\ref{fig:customsched}, the $:2f2a$ 
+node is the network coordinator and it uses a single channel.
 
 \input{thesis.tex/chapters/tsch/fig/schedule.tex}
 
-I used the NETSTACK in the Figure~\ref{fig:tschstack} to run this example.
+I used the NETSTACK in Figure~\ref{fig:tschstack} to run this example.
 
 \input{thesis.tex/chapters/tsch/fig/stack.tex}
 
 My goal to prove the routing and the multi-hop functionality are working
-correctly is to send an UDP message from $:2f09$ to $:2dbc$.
+correctly is to send a UDP message from $:2f09$ to $:2dbc$.
 The message coming from $:2f09$ will have to go through $:2dac$ and $:2f2a$ to
 reach $:2dbc$ (see Fig~\ref{fig:route}).
 
@@ -747,10 +748,10 @@ reach $:2dbc$ (see Fig~\ref{fig:route}).
 
 % TODO talk about network formation time to join it. Graph ?
 
-The $:2f2a$ node is set as network coordinator, it will be the first node to be
+The $:2f2a$ node is set as the network coordinator, it will be the first node to be
 run in the network and the other nodes will join him.
-To send a message to another node from $:2f09$ we must first wait it has
-the knowledge of the root node to send the packet to.
+To send a message to another node from $:2f09$ we must first wait it 
+knows the root node to send the packet to.
 We can check this with the command \lstinline{routes}.
 
 \begin{lstlisting}[language=none]

@@ -7,30 +7,30 @@ I will also give an overview of related work to the topic.
 
 \section{Low Power Wide Area Network (LPWAN)\label{section:lpwan}}
 
-Every IoT project has their own requirements. 
-LPWAN is typically made for sensor network with limited throughput.
-The characteristic of a LPWAN are the following.
+Every IoT project has its own requirements. 
+LPWAN is typically made for sensor networks with limited throughput.
+The characteristics of an LPWAN are the following.
 
 \begin{itemize}
-  \item Low power as the name suggest. The network is made of battery operated
-    motes that must run for year without replacement.
-  \item Long range. Mote should transmit over multiple km without repeiter.
+  \item Low power as the name suggest. The network is made of battery-operated
+    motes that must run for years without replacement.
+  \item Long range. Mote should transmit over multiple km without a repeater.
   \item Low cost devices. No expensive infrastructure requirement and motes
     operate with simple hardware.
   \item Limited data throughput.
 \end{itemize}
 
-LPWAN include LoRa but it's not the only option available. 
+LPWAN includes LoRa but it's not the only option available. 
 Sigfox, NB-IOT are other well known LPWAN options.
 
 \paragraph{IPv6 over Low-Power Wireless Personal Area Networks (6LoWPAN)}
 
-6LoWPAN is an open standard defined in RFc 6282 by the Internet Engineering
+6LoWPAN is an open standard defined in RFC 6282 by the Internet Engineering
 Task Force (IETF).
 The idea of 6LoWPAN is to bring IPv6 packet over the small link layer frame of
 LPWAN with the help of a header compression mechanisms.
-6LoWPAN bring native IP communication to LPWAN.
-This mean each motes of the network can now communicate simply using special
+6LoWPAN brings native IP communication to LPWAN.
+This means each mote of the network can now communicate simply using an
 edge router that handles the data exchange between the 6LoWPAN network and the
 internet.
 
@@ -43,11 +43,11 @@ over TSCH named 6top.
 
 LoRa is a proprietary chirp spread spectrum technology made by Semtech with
 integrated Forward Error Correction (FEC).
-LoRa operates in this sub-GHz unlicensed Industrial, Scientific and Medical
+LoRa operates in this sub-GHz unlicensed Industrial, Scientific, and Medical
 (ISM) bands.
-The main characteristic of LoRa, is that it trades data rate for long range 
-and low power consumption with a maximum data rate of 27 kbps~\cite{8030482}.
-LoRa supports bi-directional communications with maximum payload size of 242
+The main characteristic of LoRa, is that it trades data rate for long-range 
+and low-power consumption with a maximum data rate of 27 kbps~\cite{8030482}.
+LoRa supports bi-directional communications with a maximum payload size of 242
 bytes~\cite{loraalliance:lorawanspecification}.
 
 This section will cover the LoRa physical layer parameters, the packet structure and 
@@ -57,7 +57,7 @@ will explain how all these parameters influence the Time On Air (ToA).
 
 Chirp Spread Spectrum is a spread spectrum technique, developed in 1940 for
 military applications in radars and sonars \cite{semtech:modulationbasics}, but
-has been adopted in the recent years for low power data transmission.
+has been adopted in recent years for low power data transmission.
 Chirps are sinusoidal signals increasing (upchirps) or decreasing (downchirps)
 in frequency over time.
 Figure~\ref{fig:downchirp} shows an example of a downchirp.
@@ -96,7 +96,7 @@ symbols.
   2^{SF} = \frac{R_s}{R_c}
 \end{equation}
 
-The SF can range from 7 to 12, higher SF improve the Signal-to-noise ratio
+The SF can range from 7 to 12, higher SF improves the Signal-to-noise ratio
 (SNR) and receiver sensitivity~\cite{semtech:modemdesign}.
 Increasing the SF trades data rate for transmission range.
 
@@ -153,13 +153,13 @@ Bandwidth(kHz) & Noise Floor (dBm) \\ \midrule
 
 \subsubsection{Coding-Rate (CR)}
 
-The Coding rate represents the proportion between information bits and error
+The CR represents the proportion between information bits and error
 correction bits. 
-Forward Error Correction (FEC) is the process of adding error correction bits to a
+Forward Error Correction (FEC) is the process of adding error correction bits to
 transmission, to help with data restoration in case of bit errors.
 
 Increasing the coding rate will decrease the actual data rate. 
-There is more overhead, but also more reliability.
+It introduces more overhead but is also more reliable.
 
 The next table~\ref{table:cr} show the CR parameter available in LoRa.
 
@@ -186,7 +186,7 @@ parameters I introduced in the previous sections\cite{semtech:modulationbasics}.
   R_{b} = SF \frac{\frac{4}{4 + CR}}{\frac{2^{SF}}{BW}} bits/sec
 \end{equation}
 
-The data rate is highly variable depending on the CR, BW and SF.
+The data rate is highly variable depending on the CR, BW, and SF.
 See table~\ref{table:datarate}.
 
 \begin{table}[h!]
@@ -208,7 +208,7 @@ CR & BW (kHz) & SF7 (bits/sec) & SF8 (bits/sec) & SF10 (bits/sec) \\ \midrule
 
 This section covers the LoRa packet structure. LoRa employs two packet formats: 
 the explicit mode and the implicit mode.
-Three part constitute packets.
+Three parts constitute packets.
 
 \begin{itemize}
   \item Preamble
@@ -243,7 +243,7 @@ Three part constitute packets.
 \end{figure}
 
 \begin{description}
-  \item[Preamble] synchronize the receiver for the incoming data flow. The
+  \item[Preamble] synchronizes the receiver for the incoming data flow. The
     preamble length is configurable.
   \item[Header] Depends on the packet type explicit or implicit.
   \begin{description}
@@ -254,10 +254,10 @@ Three part constitute packets.
       \item The presence or not of the payload cyclic redundancy check (CRC).
     \end{itemize}
     \item[Implicit] mode removes the header from the packet. This mode should be
-      used when payload, coding rate and CRC presence are known and when we want to
+      used when payload, coding rate, and CRC presence are known and when we want to
       reduce the packet length.
   \end{description}
-  \item[Payload] is a variable length field containing the transmitted data as
+  \item[Payload] is a variable-length field containing the transmitted data as
     well as an optional CRC.
 \end{description}
 
@@ -268,7 +268,7 @@ ToA depends on the parameters we introduced previously to count the number of
 symbols that constitute each communication of a payload.
 
 The following formula defines the duration of each symbol~\ref{eq:tsymlong}.
-The equation~\ref{eq:tsym} is equivalent with the relation~\ref{eq:bw}.
+Equation~\ref{eq:tsym} is equivalent to the relation~\ref{eq:bw}.
 
 \begin{equation}
   \label{eq:tsymlong}
@@ -288,7 +288,7 @@ payload.
   T_{packet} = T_{preamble} + T_{payload}
 \end{equation}
 
-The equation~\ref{eq:tpreamble} calculate the preamble time. The $n_{preamble}$
+Equation~\ref{eq:tpreamble} calculate the preamble time. The $n_{preamble}$
 or preamble length is programmable.
 
 \begin{equation}
@@ -298,7 +298,7 @@ or preamble length is programmable.
 
 The following equation~\ref{eq:payloadsymnb} gives the number of symbols in the
 payload of the packet.
-The symbols number depend on the following parameters.
+The symbols number depends on the following parameters.
 
 \begin{description}
   \item[PL] The payload length in bytes.
@@ -313,7 +313,7 @@ The symbols number depend on the following parameters.
   n_{payload} = 8 + \max(ceil(\frac{8PL - 4SF + 28 + 16 - 20H}{4(SF - 2DE)})(CR + 4),0)
 \end{equation}
 
-The payload durations in~\ref{eq:tpayload} give the total packet time on air
+The payload durations in~\ref{eq:tpayload} give the total packet time on-air
 with~\ref{eq:tpacket}.
 
 \begin{equation}
@@ -354,7 +354,7 @@ communications by using the following principles.
     participant in the network avoiding collisions.
   \item[Synchronization] time-synchronized nodes syncing their clock with each
     other for being able to keep the notion of time slot.
-  \item[Channel Hopping] for better band usage, less interference and more
+  \item[Channel Hopping] for better band usage, less interference, and more
     throughput.
 \end{description}
 
@@ -363,7 +363,7 @@ In the following section I will present the TSCH protocol building blocks.
 \subsection{Time Slots}
 
 A time slot in TSCH is a unit of time to execute the network operations. 
-The duration of the time slot is not standardized and depend on the physical 
+The duration of the time slot is not standardized and depends on the physical 
 layer we are using. 
 Time slots should be long enough for the longest frame size to be sent
 between two nodes, together with an acknowledgement~\cite{rfc7554}. 
@@ -390,7 +390,7 @@ Each transmitting or receiving time slot is made of the following parts.
 
 A set of time slots that repeat over time is known as a slotframe.
 A slotframe is made of time slots and empty slots.
-The slotframe length has a direct impact on the network capacity.
+The slotframe length has a direct impact on network capacity.
 Figure~\ref{fig:timeslots} represent how time slots and slotframes are
 organized together. 
 
@@ -450,7 +450,7 @@ four time slot and three channels change channel depending on the ASN.
 
 The TSCH schedule tells each node what to do during a time slot.
 
-Dedicated time slots cell need the following parts to be defined.
+Dedicated time slots cells need the following parts to be defined.
 
 \begin{itemize}
   \item Receive or transmit.
@@ -461,17 +461,17 @@ Dedicated time slots cell need the following parts to be defined.
 % Shared cells multiple nodes can transmit at the same time on the same channel.
 
 To ensure the execution of the same slots, each transmission is an opportunity 
-for neighbor to resynchronize their clocks.
+for the neighbor to resynchronize their clocks.
 Synchronization is important to mitigate each node internal clock drift.
 
 Time source nodes send Enhanced Beacon (EB) packets to synchronize the receiving
-nodes of the network. When nodes don't resynchronize for a long period of time 
-a Keep Alive (KA) is sent and used to adjust the drift at synchronization.
+nodes of the network. When nodes don't resynchronize for a long period
+a Keep-Alive (KA) is sent and used to adjust the drift at synchronization.
 
-Figure~\ref{fig:sync} represent the clock drift that can occur between two
+Figure~\ref{fig:sync} represents the clock drift that can occur between two
 distant time slots.
-As we can see the receiver will know the drift based on the moment he receive
-the data and then adjust its timeslot length to finish earlier.
+As we can see the receiver will know the drift based on the moment he receives
+the data and then adjusts its timeslot length to finish earlier.
 
 \begin{figure}[H]
   \centering
@@ -481,14 +481,14 @@ the data and then adjust its timeslot length to finish earlier.
 
 \section{Contiki OS}
 
-Contiki is a free and open source Real-Time operating system (OS) specifically made
+Contiki is a free and open-source Real-Time operating system (OS) specifically made
 for IoT applications. Contiki ships with a low-power IPv6 communication stack
 and a variety of routing and MAC protocols making the OS particularly well
 suited for Wireless Sensor Networks (WSN).
 
-Contiki uses protothreads, a programming abstraction which Contiki is
+Contiki uses protothreads, a programming abstraction in which Contiki is
 built around.
-They allow to write event-driven programs with little memory overhead, and
+They allow developers to write event-driven programs with little memory overhead and
 claims to reduce the complexity of embedded programs that used to be written 
 like state machines~\cite{10.1145/1182807.1182811}.
 
@@ -501,10 +501,10 @@ with the development of the 6TiSCH stack for the OS~\cite{Duquennoy2017TSCHA6}.
 
 Contiki's Network Protocol stack, also known as \lstinline{NETSTACK}, is a
 feature of the OS.
-It allow to defines parts of the network stack we are using in a Contiki
+It allow developers to defines parts of the network stack we are using in a Contiki
 project (Fig~\ref{fig:netstack}).
 
-NETSTACK implementation allows contiki to communicate between layers without 
+NETSTACK implementation allows Contiki to communicate between layers without 
 knowing the specific implementation of the layer, we communicate with.
 Developers must define the following variable to change the network stack 
 in a Contiki project.
@@ -535,12 +535,11 @@ been done in~\cite{uwbtsch} for the Ultra-Wide Band (UWB).
 
 \paragraph{UWB-TSCH}
 
-Charlier M. in~\cite{uwbtsch} explores the requirements to adapt TSCH for the Ultra
-Wideband (UWB). 
-Similarly to LoRa, UWB do not allow CCA and can not use CSMA for its 
+Charlier M. in~\cite{uwbtsch} explores the requirements to adapt TSCH for the UWB.
+Similarly to LoRa, UWB does not allow CCA and can not use CSMA for its 
 communications.
 His work shows what it takes to adapt TSCH for another radio layer. 
-Its also an evaluation of the performance of TSCH outside of 802.15.4.
+It is also an evaluation of the performance of TSCH outside of 802.15.4.
 
 \paragraph{}
 
@@ -553,7 +552,7 @@ using multi-hop communications for nodes out of the range of the gateway.
 The extension uses beacons to achieve time synchronization, but no channel
 hopping is used.
 
-\paragraph{Distributed Queueing (DQ) LoRa}
+\paragraph{Distributed Queuing (DQ) LoRa}
 
 The authors of~\cite{8856256} extend LoRaWAN
 
@@ -570,18 +569,19 @@ network has been done in~\cite{Abrardo_2019,duong2018}.
 \paragraph{Linear Multihop LoRa}
 
 Abrardo A. and Pozzebon A.~\cite{Abrardo_2019} studied the deployment of a
-large scale LoRa network to monitor the underground medieval aqueducts of city center 
+large scale LoRa network to monitor the underground medieval aqueducts of the city center 
 of Sienna, the \emph{Bottini}.
 
 Because of the large deployment cost induced by the large tunnels, the negative 
 aesthetic impact of a wired network and the risk of flooding, made the author
-opt for a battery operated wireless network.
+opt for a battery-operated wireless network.
+
 
 They propose a multi-hop routing solution for Linear Sensor Network (LSN) based 
 on LoRa by developing their own MAC protocol tailored for their scenario.
 This custom protocol is built around assigning time slots for each node with
 a common schedule for adjacent nodes.
-This allows neighbors to synchronize their clock and broadcast messages to the
+This allows neighbors to synchronize their clock and broadcast messages to
 both ends of the aqueducts.
 
 % Their solution allowed the connection of the Bottini
@@ -594,15 +594,15 @@ His network is made of two periods. The first is the network initialization to
 verify the gateway is reachable and synchronizes the nodes to make them join the 
 data operation period.
 Each node transmits in a different timeslot to their parent node, each hop adds
-their own information to the packet they are relaying until the gateway is
+their information to the packet they are relaying until the gateway is
 reached.
 The clock drift is mitigated by synchronizing on the preamble but the receiver
-do not acknowledge the reception of the packet, making the network sensible to
+does not acknowledge the reception of the packet, making the network sensible to
 interference since it is running on a single channel and SF.
 
 \paragraph{}
 
-The following study look at ways to create fully functioning multi-hop network
+The next studies look at ways to create a fully functioning multi-hop network
 using LoRa without depending on LoRaWAN specifications.
 
 \paragraph{LoRaBlink}
@@ -614,24 +614,24 @@ communication.
 Each node of the network remains in listening mode until a beacon is received.
 Beacons are used for time synchronization of the time slots.
 Each node transmit packets to their parent node that relays it to the gateway.
-There is no scheduling of which node transmits, it can happen that two nodes
+There is no scheduling of which node transmits, two nodes may
 transmit at the same time.
 
 % Every nodes of the network keep track of their distance to the sink
 
-Also, LoRaBlink use fixed SF, BW and channel. This decreases the overall throughput 
-of the network and make it highly sensible to interference.
+Also, LoRaBlink uses fixed SF, BW, and channel. This decreases the overall throughput 
+of the network and makes it highly sensitive to interference.
 
 \paragraph{RPL+LoRa MAC Protocol}
 
 The Authors of~\cite{8115756} from the SmartNet research group of VUB, adapted RPL 
 to enable multihop communications on top of LoRa. 
 The paper presents the modifications of the objective function to take into
-account the SF when computing best routes.
+account the SF when computing the best routes.
 The paper describes a solution for a network of nodes to discover each other.
 It uses a router sending packets on different spreading factors while the joining
 node listens on the spreading factors by starting by the lowest, this way it
-pick the fastest spreading factor available.
+picks the fastest spreading factor available.
 It also describes a custom MAC protocol, \emph{RLMAC}, to allow multi-hop
 routing with LoRa. It manages time-slots between nodes and allows PHY settings
 tuning depending on the links.
@@ -650,11 +650,11 @@ Their work studied the feasibility of porting TSCH to LoRa in Contiki OS using
 SX1272.
 
 The authors proved it was possible to adapt TSCH for LoRa by testing their
-implementation with a variety of routing protocol and applications.
+implementation with a variety of routing protocols and applications.
 Their implementation works on a single SF at a time but they tested it using
 SF7 and SF10.
 
 To demonstrate the resilience of TSCH to interference even with LoRa, the
-authors made a radio jammer that transmit on different channels. Their
+authors made a radio jammer that transmits on different channels. Their
 experimentation proved no packets got lost when using channel hopping with
 LoRa.

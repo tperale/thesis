@@ -336,11 +336,11 @@ RN2483 LoRa module.
 
 \paragraph{}
 
-My work was divided in two parts. 
+My work was divided into two parts. 
 In the first part I successfully implemented a working driver for the RN2483
 module. 
 The section~\ref{section:pingpong} detail how I ran a ping pong
-example based on that driver to proove the driver is fully working with the
+example based on that driver to prove the driver is fully working with the
 rest of the applications.
 
 The second part should have been on paper limited to the adaptations of the
@@ -348,12 +348,12 @@ timing variable of the TSCH protocol to work with LoRa.
 In the end, the long delay in LoRa communication turned out to 
 not work out of the box and the second part became a
 bug hunt with the TSCH implementation detailed in~\ref{section:timingparameters}.
-I finaly managed to bring TSCH to LoRa in~\ref{section:tschtesting} by
-demonstating TSCH and LoRa integrate to the 6TiSCH networking stack.
+I finally managed to bring TSCH to LoRa in~\ref{section:tschtesting} by
+demonstrating TSCH and LoRa integrate into the 6TiSCH networking stack.
 
 \paragraph{}
 
-In his last year master thesis, Roald Van Glabbeek suggested further research
+In his last year's master thesis, Roald Van Glabbeek suggested further research
 should conduct a power analysis on the RN2483 module.
 I responded to this statement in~\ref{section:energyconsumption} about how
 achieving a low power network with TSCH and this module is impossible because
@@ -361,32 +361,32 @@ of a missing feature.
 
 The good news is I'm confident about achieving low power transmission with the
 SX1272 module.
-This thesis showed the way on what it take to adapt TSCH for a new radio
+This thesis showed the way on what it takes to adapt TSCH for a new radio
 driver and re-implementation of this project with a module like SX1272 will then be
-facilitated and would allow to measure meaningful data.
+facilitated and would allow us to measure meaningful data.
 Analysis of the accuracy and reliability of the network will then be possible.
-A study on how longer sleeping period de-synchronize the network or the period
+A study on how longer sleeping periods de-synchronize the network or the period
 needed between EB packets, could be conducted.
 
 \paragraph{}
 
 The ideal implementation would adapt its SF depending on the distance
 between two hops.
-In my implementation even though the different SF are supported, it operate
+In my implementation even though the different SF are supported, it operates
 on a single SF at the time. 
 We miss a lot of LoRa features with the single SF, supporting multiple SF at
-the same time would increase the network troughput and increase the
+the same time would increase the network throughput and increase the
 transmission range for nodes with low reception.
-The litterature don't really talk about using adaptive SF in a multihops
+The literature do not talk about using adaptive SF in a multi-hops
 network except for~\cite{8115756} that could give us indications on the future
 work on the subject.
 
 \paragraph{}
 
-Related work reinveted the wheel by implementing their own multi-hop protocol
+Related work reinvented the wheel by implementing their multi-hop protocol
 on top of LoRa.
 Using TSCH, an already well studied MAC protocol, and its ability to
-communicate over multiple channel with time-slots for better power usage 
+communicate over multiple channels with time-slots for better power usage 
 represent a step forward in the journey to achieve multi-hop communication with
 LoRa.
 Using every SF to use the full LoRa capacity is the future challenge for this
