@@ -64,7 +64,7 @@ Contiki codebase.
 \end{itemize}
 
 Figure~\ref{fig:tstiming} represents the organization of the parameters during
-a time-slot.
+a time slot.
 
 \input{thesis.tex/chapters/tsch/fig/timeslots.tex}
 
@@ -132,9 +132,9 @@ with this new one.
 
 \subsection{Interrupt Priority Clash}
 
-Each time-slot operation is scheduled using \lstinline{rtimer_set}.
-This function schedules the time-slot using the real-time timer from the CC2538.
-It means that the time-slot is run in an interrupt.
+Each time slot operation is scheduled using \lstinline{rtimer_set}.
+This function schedules the time slot using the real-time timer from the CC2538.
+It means that the time slot is run in an interrupt.
 
 This is not an issue in the initial implementation of TSCH, which use the
 CC2536, because the radio driver is internal to the processor.
@@ -500,7 +500,7 @@ The total detection delay is calculated with the following formula.
 
 \subsection{Packet Timestamp}
 
-As we saw in Figure~\ref{fig:sync} each timeslot uses the same offset before 
+As we saw in Figure~\ref{fig:sync} each time slot uses the same offset before 
 starting the transmission.
 Knowing the packet timestamp precisely allows the receiving mote to learn the
 drift from the transmitter. 
@@ -548,10 +548,10 @@ difference.
 
 Figure~\ref{fig:driftmeasurement} shows how
 \lstinline{tsch_timesync_adaptive_compensate} introduces a lot more drift on the
-receiver timeslot on a network of two nodes running for 10 minutes.
+receiver time slot on a network of two nodes running for 10 minutes.
 The lower overall drift explains why I stopped using this function.
 Re-using the adaptive compensation should be done with a module that can
-provide.
+provide an acknowledgement at packet reception.
 
 \begin{figure}[H]
   \centering

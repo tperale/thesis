@@ -28,7 +28,7 @@ wide variety of sectors like \emph{smart farming}, \emph{smart cars},
 
 \paragraph{}
 
-All these applications have in common that they count on devices that
+All these applications have in common that they rely on devices that
 communicate wirelessly.
 % TODO Change not telecom
 Telecoms created new technologies to suit this new domain that can be
@@ -56,13 +56,14 @@ present it in three main categories.
 
 This work focuses only on \emph{LoRa}, a proprietary \emph{chirp spread spectrum}
 modulation technique owned by \emph{Semtech}, operating in the sub-GHz
-unlicensed \emph{ISM} band. I will cover LoRa in more detail in 
-Section~\ref{section:lora}.
+unlicensed \emph{ISM} band\footnote{Semtech also offers a version of LoRa that
+operates in the 2.4GHz band but won't be covered in this text.}. I will cover LoRa 
+in more detail in Section~\ref{section:lora}.
 The main characteristics of \emph{LoRa} are its low power transmission and the
 fact that it can trade throughput for range by fine-tuning the PHY settings.
 The long-range capabilities of the protocol caught the attention of
 many people. 
-Some have succeeded to obtain a record transmission distance of over 700 km with
+Some have succeeded in obtaining a record transmission distance of over 700 km with
 a direct line of sight between the receiver and the
 transmitter\footnote{https://www.thethingsnetwork.org/article/ground-breaking-world-record-lorawan-packet-received-at-702-km-436-miles-distance}.
 However, this case is not a real-world example. The range in urban areas is of
@@ -78,7 +79,7 @@ as we can see in Figure~\ref{fig:startopology}.
 This single-hop topology has been successful because free (as well as paid
 services) LoRaWAN network to connect to already exists
 \footnote{\url{https://www.thethingsnetwork.org/map}} and free private networks are
-deployable in contrast to concurrent LPWAN like \emph{Sigfox} or \emph{NB-IoT}.
+deployable in contrast to other LPWAN like \emph{Sigfox} or \emph{NB-IoT}.
 
 \input{thesis.tex/chapters/1/fig/topology.tex}
 
@@ -143,12 +144,12 @@ gateway covers a portion of the network.
 
 Multi-hop networks, as represented in Figure~\ref{fig:meshtopology}, can be a solution to
 the LoRaWAN scaling issues~\cite{8115756}.
-Participants of the network do not directly send message to gateways but
-instead, pass messages to their neighboring nodes.
-Using a multi-hop routing protocol increase the reliability, the range
+Participants of the network do not directly send message to gateways, but
+instead pass messages to their neighboring nodes.
+Using a multi-hop routing protocol increases the reliability, the range
 and can adapt to topology changes in the network (because of moving or failing nodes).
 
-Multi-hop routing protocols are de facto a strong candidates for large area monitoring 
+Multi-hop routing protocols are de facto a strong candidate for large area monitoring 
 applications where gateways may be hard and costly to deploy and where blind
 spots often arise.
 This solution can decrease the energy consumption of bordering nodes that
@@ -172,7 +173,7 @@ The \emph{IEEE 802.15.4e} standard developed TSCH, a MAC
 protocol to use with 802.15.4 compliant physical layer.
 TSCH works particularly well where LoRaWAN shows weaknesses. 
 TSCH is resilient to external interference with the use of channel hopping.
-Network with high node density can work without collision issues.
+Networks with high node density can work without collision issues.
 It also provides high reliability communications and deterministic delays by 
 keeping the nodes time-synchronized.
 

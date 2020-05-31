@@ -36,7 +36,7 @@ internet.
 
 \paragraph{6TiSCH}
 
-In the same way as with 6LoWPAN, 6TiSCH define an adaptation layer for IPv6
+In the same way as with 6LoWPAN, 6TiSCH defines an adaptation layer for IPv6
 over TSCH named 6top.
 
 \section{LoRa\label{section:lora}}
@@ -93,7 +93,7 @@ symbols.
 
 \begin{equation}
  \label{eq:sf} 
-  2^{SF} = \frac{R_s}{R_c}
+  2^{SF} = \frac{R_c}{R_s}
 \end{equation}
 
 The SF can range from 7 to 12, higher SF improves the Signal-to-noise ratio
@@ -107,7 +107,7 @@ spreading factors~\cite{semtech:modulationbasics}.
 \subsubsection{Bandwidth (BW)}
 
 Bandwidth is the range of frequencies available during modulation.
-LoRa support three bandwidth in the European ISM band.
+LoRa supports three bandwidth in the European ISM band.
 
 \begin{itemize}
     \item 125 kHz
@@ -263,9 +263,9 @@ Three parts constitute packets.
 
 \subsection{Time on Air (ToA)}
 
-The Time on Air is the measure of packet transmission time.
+The Time on Air is the measure for packet transmission time.
 ToA depends on the parameters we introduced previously to count the number of
-symbols that constitute each communication of a payload.
+symbols that constitute each payload.
 
 The following formula defines the duration of each symbol~\ref{eq:tsymlong}.
 Equation~\ref{eq:tsym} is equivalent to the relation~\ref{eq:bw}.
@@ -486,7 +486,7 @@ for IoT applications. Contiki ships with a low-power IPv6 communication stack
 and a variety of routing and MAC protocols making the OS particularly well
 suited for Wireless Sensor Networks (WSN).
 
-Contiki uses protothreads, a programming abstraction in which Contiki is
+Contiki uses protothreads, a programming abstraction which Contiki is
 built around.
 They allow developers to write event-driven programs with little memory overhead and
 claims to reduce the complexity of embedded programs that used to be written 
@@ -494,7 +494,7 @@ like state machines~\cite{10.1145/1182807.1182811}.
 
 The Contiki OS project has been unmaintained since 2017 but its
 successor named Contiki-NG was created as a fork by the same developers since.
-That fork has been the basis for many LPWAN experimentation, for example 
+That fork has been the basis for a lot of LPWAN experimentation, for example 
 with the development of the 6TiSCH stack for the OS~\cite{Duquennoy2017TSCHA6}.
 
 \paragraph{}
@@ -505,8 +505,8 @@ It allow developers to defines parts of the network stack we are using in a Cont
 project (Fig~\ref{fig:netstack}).
 
 NETSTACK implementation allows Contiki to communicate between layers without 
-knowing the specific implementation of the layer, we communicate with.
-Developers must define the following variable to change the network stack 
+knowing the specific implementation of the layer.
+Developers must define the following variables to change the network stack 
 in a Contiki project.
 
 \begin{itemize}
@@ -552,9 +552,9 @@ using multi-hop communications for nodes out of the range of the gateway.
 The extension uses beacons to achieve time synchronization, but no channel
 hopping is used.
 
-\paragraph{Distributed Queuing (DQ) LoRa}
+% \paragraph{Distributed Queuing (DQ) LoRa}
 
-The authors of~\cite{8856256} extend LoRaWAN
+% The authors of~\cite{8856256} extend LoRaWAN
 
 % \subsection{RS LoRa}
 % [18] in roald similar to lorawan extension
@@ -647,7 +647,7 @@ In the course of my work, a new study from Haubro M., Orfanadis C.,
 Oikonomou G. and Fafoutis X.~\cite{tschoverlora} came out on the exact 
 same subject as mine. 
 Their work studied the feasibility of porting TSCH to LoRa in Contiki OS using
-SX1272.
+SX1272 radio module.
 
 The authors proved it was possible to adapt TSCH for LoRa by testing their
 implementation with a variety of routing protocols and applications.
