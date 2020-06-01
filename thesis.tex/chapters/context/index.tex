@@ -12,7 +12,7 @@ LPWAN is typically made for sensor networks with limited throughput.
 The characteristics of an LPWAN are the following.
 
 \begin{itemize}
-  \item Low power as the name suggest. The network is made of battery-operated
+  \item Low power as the name suggests. The network is made of battery-operated
     motes that must run for years without replacement.
   \item Long range. Mote should transmit over multiple km without a repeater.
   \item Low cost devices. No expensive infrastructure requirement and motes
@@ -21,7 +21,7 @@ The characteristics of an LPWAN are the following.
 \end{itemize}
 
 LPWAN includes LoRa but it's not the only option available. 
-Sigfox, NB-IOT are other well known LPWAN options.
+Sigfox, NB-IoT are other well known LPWAN options.
 
 \paragraph{IPv6 over Low-Power Wireless Personal Area Networks (6LoWPAN)}
 
@@ -45,8 +45,9 @@ LoRa is a proprietary chirp spread spectrum technology made by Semtech with
 integrated Forward Error Correction (FEC).
 LoRa operates in this sub-GHz unlicensed Industrial, Scientific, and Medical
 (ISM) bands.
-The main characteristic of LoRa, is that it trades data rate for long-range 
-and low-power consumption with a maximum data rate of 27 kbps~\cite{8030482}.
+The main characteristic of LoRa is that it trades data rate for long-range 
+transmission and low-power consumption with a maximum data rate of 
+27 kbps~\cite{8030482}.
 LoRa supports bi-directional communications with a maximum payload size of 242
 bytes~\cite{loraalliance:lorawanspecification}.
 
@@ -58,13 +59,13 @@ will explain how all these parameters influence the Time On Air (ToA).
 Chirp Spread Spectrum is a spread spectrum technique, developed in 1940 for
 military applications in radars and sonars \cite{semtech:modulationbasics}, but
 has been adopted in recent years for low power data transmission.
-Chirps are sinusoidal signals increasing (upchirps) or decreasing (downchirps)
+Chirps are sinusoidal signals increasing (up-chirps) or decreasing (down-chirps)
 in frequency over time.
-Figure~\ref{fig:downchirp} shows an example of a downchirp.
+Figure~\ref{fig:downchirp} shows an example of a down-chirp.
 
 Using CSS has the advantage of offering equivalent timing and frequency offset
 between the receiver and transmitter and robustness to channel degradation
-mechanisms (multipath, fading, Doppler, in-band jamming
+mechanisms (multipath fading, Doppler, in-band jamming
 interference)~\cite{semtech:modulationbasics}.
 
 \tikzset{declare function={f(\x)=sin(540*\x);}}
@@ -76,19 +77,22 @@ interference)~\cite{semtech:modulationbasics}.
   \draw[thick,-latex] (-1,0) -- (10,0)node[below] {t};
   \draw[domain=0.1:9.5,variable=\x,samples=500] plot ({0.10*\x*\x}, {f(\x)});
 \end{tikzpicture} 
-\caption{Downchirp example\label{fig:downchirp}}
+\caption{Down-chirp example\label{fig:downchirp}}
 \end{figure}
 
-\subsection{PHY Parameters}
+\subsection{Physical Layer Parameters (PHY)}
 
-% TODO remainder of why we do this ? explain those characteristics will be
-% important in the TSCH implementation
+The physical layer parameters are what constitute LoRa. 
+Understanding those parameters are important to understand how to use the
+protocol.
+Chapter~\ref{section:radio}~and~\ref{section:tsch} will use these concepts.
+This section will cover all parameters we can tweak in LoRa.
 
 \subsubsection{Spreading Factor (SF)}
 
 The spreading factor, a parameter of the LoRa modulation, represents the
-relation~(\ref{eq:sf}) between the symbol rate ($R_{s}$) and chirp rate ($R_{c}$)
-(see~\cite{semtech:modemdesign}) where $2^{SF}$ equals to the number of chirps per
+relation~(\ref{eq:sf}) between chip rate ($R_{c}$) and the symbol rate ($R_{s}$)
+(see~\cite{semtech:modemdesign}) where $2^{SF}$ equals to the number of chips per
 symbols.
 
 \begin{equation}
@@ -104,6 +108,27 @@ The LoRa modulation uses orthogonal spreading factors to enable concurrent
 packet transmission at the same time with different
 spreading factors~\cite{semtech:modulationbasics}.
 
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  arr/.style={help lines,black!70,<->},
+]
+  \draw[thick,-latex] (0,-2) -- (0,2)node[left] {frequency};
+  \draw[thick,-latex] (-1,0) -- (11.5,0)node[below] {time};
+  \draw[dashed] (1.5,-2) -- (1.5,2);
+  \draw[dashed] (4.5,-2) -- (4.5,2);
+  \draw[dashed] (10.5,-2) -- (10.5,2);
+  \draw[] (0,-1.8) -- (1.5,1.8);
+  \draw[] (1.5,-1.8) -- (4.5,1.8);
+  \draw[] (4.5,-1.8) -- (10.5,1.8);
+
+  \draw[arr] (0.1, -2.2) -- node[fill=white] {$SF7$} (1.4, -2.2);
+  \draw[arr] (1.6, -2.2) -- node[fill=white] {$SF8$} (4.4, -2.2);
+  \draw[arr] (4.6, -2.2) -- node[fill=white] {$SF9$} (10.4, -2.2);
+\end{tikzpicture} 
+\caption{Comparison of the transmission time between different SF\label{fig:sfcomp}}
+\end{figure}
+
 \subsubsection{Bandwidth (BW)}
 
 Bandwidth is the range of frequencies available during modulation.
@@ -118,7 +143,7 @@ LoRa supports three bandwidth in the European ISM band.
 Available bandwidth depends on the region. % See limit of lora wan
 % Europe only use 125 and 250 kHz. source needed
 
-The BW is interchangeable with the chirp rate, to do the symbols rate
+The BW is interchangeable with the chip rate, to do the symbols rate
 calculation.
 Increasing the BW increases the symbols rate, and thus, the data rate.
 
@@ -130,7 +155,7 @@ Increasing the BW increases the symbols rate, and thus, the data rate.
 
 According to~\cite{semtech:modulationbasics}, increasing the
 bandwidth increases the noise floor (\ref{eq:noisefloorbw}), reducing the
-range of the communication.
+range of transmission.
 
 \begin{equation}
  \label{eq:noisefloorbw} 
@@ -161,7 +186,7 @@ transmission, to help with data restoration in case of bit errors.
 Increasing the coding rate will decrease the actual data rate. 
 It introduces more overhead but is also more reliable.
 
-The next table~\ref{table:cr} show the CR parameter available in LoRa.
+The next table~\ref{table:cr} shows the CR parameter available in LoRa.
 
 \begin{table}[h!]
 \centering
@@ -201,7 +226,7 @@ CR & BW (kHz) & SF7 (bits/sec) & SF8 (bits/sec) & SF10 (bits/sec) \\ \midrule
 \multirow{2}{*}{$\frac{4}{8}$} & 125000   & 3417           & 1954           & 660             \\
   & 250000   & 6835           & 3906           & 1220            \\ \bottomrule
 \end{tabular}
-\caption{Data rates depending on CR, BW and SF\label{table:datarate}}
+\caption{Data rates depending on CR, BW, and SF\label{table:datarate}}
 \end{table}
 
 \subsection{Packet Structure}
@@ -224,11 +249,11 @@ Three parts constitute packets.
   arr/.style={help lines,black!70,<->},
 ]
 \begin{scope}[xshift=0cm,yshift=0cm,inner sep=0pt, outer sep=0pt]
-  \node (desc0) [description, fit={(0,0) (4,2)}, label=center:{Preamble}] {};
-  \node (desc1) [description, fit={(4,0) (7,2)}, label=center:{Header}] {};
-  \node (desc2) [description, fit={(7,0) (8,2)}, label=center:{CRC}] {};
-  \node (desc4) [description, fit={(8,0) (13,2)}, label=center:{Payload}] {};
-  \node (desc5) [description, fit={(13,0) (16,2)}, label=center:{Payload CRC}] {};
+  \node (desc0) [description, fit={(0,0) (3.5,2)}, label=center:{Preamble}] {};
+  \node (desc1) [description, fit={(3.5,0) (6,2)}, label=center:{Header}] {};
+  \node (desc2) [description, fit={(6,0) (7,2)}, label=center:{CRC}] {};
+  \node (desc4) [description, fit={(7,0) (11.5,2)}, label=center:{Payload}] {};
+  \node (desc5) [description, fit={(11.5,0) (14.5,2)}, label=center:{Payload CRC}] {};
 \end{scope}
 
 \draw[arr]
@@ -254,7 +279,7 @@ Three parts constitute packets.
       \item The presence or not of the payload cyclic redundancy check (CRC).
     \end{itemize}
     \item[Implicit] mode removes the header from the packet. This mode should be
-      used when payload, coding rate, and CRC presence are known and when we want to
+      used when payload, coding rate, and CRC presence are known, and when we want to
       reduce the packet length.
   \end{description}
   \item[Payload] is a variable-length field containing the transmitted data as
@@ -288,7 +313,7 @@ payload.
   T_{packet} = T_{preamble} + T_{payload}
 \end{equation}
 
-Equation~\ref{eq:tpreamble} calculate the preamble time. The $n_{preamble}$
+Equation~\ref{eq:tpreamble} calculates the preamble time. The $n_{preamble}$
 or preamble length is programmable.
 
 \begin{equation}
@@ -350,10 +375,10 @@ Time synchronization aims to achieve low power and highly reliable
 communications by using the following principles.
 
 \begin{description}
-  \item[Time-division multiple access] or (TDMA) by assigning time-slots for each
+  \item[Time-division multiple access] or (TDMA) by assigning time slots for each
     participant in the network avoiding collisions.
   \item[Synchronization] time-synchronized nodes syncing their clock with each
-    other for being able to keep the notion of time slot.
+    other for being able to keep the notion of \emph{time slot}.
   \item[Channel Hopping] for better band usage, less interference, and more
     throughput.
 \end{description}
@@ -391,7 +416,7 @@ Each transmitting or receiving time slot is made of the following parts.
 A set of time slots that repeat over time is known as a slotframe.
 A slotframe is made of time slots and empty slots.
 The slotframe length has a direct impact on network capacity.
-Figure~\ref{fig:timeslots} represent how time slots and slotframes are
+Figure~\ref{fig:timeslots} represents how time slots and slotframes are
 organized together. 
 
 \input{thesis.tex/chapters/context/fig/timeslots.tex}
@@ -401,7 +426,7 @@ organized together.
 The absolute slot number is a shared counter between all the devices that
 define the number of time slots elapsed since the start of the
 network (see Fig~\ref{fig:asn}).
-ASN increases after each time-slot and is calculated with \ref{eq:asn} where $k$
+ASN increases after each time slot and is calculated with \ref{eq:asn} where $k$
 is the slotframe offset.
 
 \begin{equation}
@@ -415,7 +440,7 @@ is the slotframe offset.
 
 \emph{Channel Hopping} increases the network capacity with frequency diversity
 to mitigate interferences.
-Multiple device can share time-slots to transmit at the same time on different
+Multiple devices can share time slots to transmit at the same time on different
 channels.
 
 Links are the conjunction of a time slot and a channel~\cite{Chen2013PerformanceAO}.
@@ -442,7 +467,7 @@ compute the same channel offset~\cite{rfc7554}.
 If the slotframe length is a prime number, even with the static schedule,
 with known channel offset, the time slot will use a different channel every time.
 Figure~\ref{fig:channelhopping} shows how scheduled cells in a TSCH network of
-four time slot and three channels change channel depending on the ASN.
+four time slots and three channels change channel depending on the ASN.
 
 \input{thesis.tex/chapters/context/fig/channel_hopping.tex}
 
@@ -471,13 +496,15 @@ a Keep-Alive (KA) is sent and used to adjust the drift at synchronization.
 Figure~\ref{fig:sync} represents the clock drift that can occur between two
 distant time slots.
 As we can see the receiver will know the drift based on the moment he receives
-the data and then adjusts its timeslot length to finish earlier.
+the data and then adjusts its time slot length to finish earlier.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{thesis.tex/chapters/context/fig/sync.png}
-  \caption{Synchronization in a TSCH timeslot\cite{TELESHERMETO201784}\label{fig:sync}}
+  \caption{Synchronization in a TSCH time slot\cite{TELESHERMETO201784}\label{fig:sync}}
 \end{figure}
+
+\section{Routing}
 
 \section{Contiki OS}
 
@@ -501,7 +528,7 @@ with the development of the 6TiSCH stack for the OS~\cite{Duquennoy2017TSCHA6}.
 
 Contiki's Network Protocol stack, also known as \lstinline{NETSTACK}, is a
 feature of the OS.
-It allow developers to defines parts of the network stack we are using in a Contiki
+It allows developers to defines parts of the network stack we are using in a Contiki
 project (Fig~\ref{fig:netstack}).
 
 NETSTACK implementation allows Contiki to communicate between layers without 
@@ -517,8 +544,6 @@ in a Contiki project.
 \end{itemize}
 
 \input{thesis.tex/chapters/driver/fig/netstack.tex}
-
-\section{Routing}
 
 \section{Related work}
 
@@ -593,7 +618,7 @@ networks.
 His network is made of two periods. The first is the network initialization to
 verify the gateway is reachable and synchronizes the nodes to make them join the 
 data operation period.
-Each node transmits in a different timeslot to their parent node, each hop adds
+Each node transmits in a different time slot to their parent node, each hop adds
 their information to the packet they are relaying until the gateway is
 reached.
 The clock drift is mitigated by synchronizing on the preamble but the receiver
@@ -613,7 +638,7 @@ communication.
 
 Each node of the network remains in listening mode until a beacon is received.
 Beacons are used for time synchronization of the time slots.
-Each node transmit packets to their parent node that relays it to the gateway.
+Each node transmits packets to their parent node that relays it to the gateway.
 There is no scheduling of which node transmits, two nodes may
 transmit at the same time.
 
@@ -633,7 +658,7 @@ It uses a router sending packets on different spreading factors while the joinin
 node listens on the spreading factors by starting by the lowest, this way it
 picks the fastest spreading factor available.
 It also describes a custom MAC protocol, \emph{RLMAC}, to allow multi-hop
-routing with LoRa. It manages time-slots between nodes and allows PHY settings
+routing with LoRa. It manages time slots between nodes and allows PHY settings
 tuning depending on the links.
 
 The protocol proposed focused on having the fastest delivery time with LoRa
@@ -647,7 +672,7 @@ In the course of my work, a new study from Haubro M., Orfanadis C.,
 Oikonomou G. and Fafoutis X.~\cite{tschoverlora} came out on the exact 
 same subject as mine. 
 Their work studied the feasibility of porting TSCH to LoRa in Contiki OS using
-SX1272 radio module.
+the SX1272 radio module.
 
 The authors proved it was possible to adapt TSCH for LoRa by testing their
 implementation with a variety of routing protocols and applications.

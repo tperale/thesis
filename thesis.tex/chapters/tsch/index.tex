@@ -182,7 +182,7 @@ The radio driver defines PHY layer specific parameters.
 
 Channel hopping is one of the main features of TSCH that needs to be implemented
 at the driver level.
-For my experimentation I only implemented three channels that can be selected
+For my experimentation, I only implemented three channels that can be selected
 with the \lstinline{RADIO_PARAM_CHANNEL} argument.
 I used the three following channels but the other channels available in LoRaWAN
 could also be implemented.
@@ -248,7 +248,7 @@ This delay is made of three parts
 The program knows the message length because
 \lstinline{NETSTACK_RADIO.prepare()} is executed before getting this parameter.
 The acknowledgement length is constant. 
-I can then calculate parameter $1.$ and $3.$ with the equation~\ref{eq:baudrate}.
+I can then calculate parameter $1.$ and $3.$ with equation~\ref{eq:baudrate}.
 
 \begin{equation}
   \label{eq:baudrate}
@@ -352,7 +352,7 @@ Based on these measurements the best matching function is the following.
 \end{equation}
 
 The parameter returns the total transmission delay with the following
-the~equation~\ref{eq:transmissiondelay}.
+equation~\ref{eq:transmissiondelay}.
 
 \begin{gather}
   \label{eq:transmissiondelay}
@@ -514,7 +514,7 @@ On packet reception, I calculate the communication start time with the
 equation~\ref{eq:detectdelay}, as well as the transmission time of
 section~\ref{section:transmissiontime} and equation~\ref{eq:tpacket}.
 
-The implementation is available in the appendix~\ref{code:timestampimpl}.
+The implementation is available in appendix~\ref{code:timestampimpl}.
 
 % \subsection{Mitigating the drift}
 
@@ -771,7 +771,7 @@ Node IPv6 neighbors:
 \end{lstlisting}
 
 To send a 'ping' message to another node, I made a custom shell 
-command \lstinline{msg_to} that send a UDP message to the IPv6 address 
+command \lstinline{msg_to} that sends a UDP message to the IPv6 address 
 passed in argument.
 Each node of the network is running a UDP server on port 8765.
 
@@ -782,7 +782,7 @@ Sending message to fd00::212:4b00:14d5:2dbc
 [INFO:TSCH] {asn 00.00001eca link  0   7   0  0  0 ch  1} uc-1-0 tx LL-2f09->LL-2f2a, len  51, seq  46, st 2  1
 \end{lstlisting}
 
-The \lstinline{:2f2a} node receive the following message on reception of the
+The \lstinline{:2f2a} node receives the following message on the reception of the
 request.
 
 \begin{lstlisting}[language=none]
@@ -790,7 +790,7 @@ request.
 [INFO:MAIN] Received request 'ping' from fd00::212:4b00:14d5:2f09
 \end{lstlisting}
 
-This show my network is able to send and receive UDP messages using RPL.
+This shows my network can send and receive UDP messages using RPL.
 
 \subsection{Orchestra}
 
@@ -801,7 +801,7 @@ the TSCH implementation for LoRa is compatible with the stacks previously used.
 
 \paragraph{}
 
-I ran a three node network made of the following addresses.
+I ran a three nodes network made of the following addresses.
 
 \begin{enumerate}
   \item $:2dac$ (coordinator)
@@ -852,7 +852,7 @@ Figure~\ref{fig:orchestra} is in use.
 
 The node $:2f2a$ has no route to $:2dac$, I will send a message to between
 those two nodes to prove the multihop function is correctly working.
-The coordinator has full knowledge of all the route in the network.
+The coordinator has full knowledge of all the routes in the network.
 
 \begin{lstlisting}
 Routing links (3 in total):
@@ -866,7 +866,7 @@ intermediate node $:2dbc$.
 
 \section{Energy consumption\label{section:energyconsumption}}
 
-Because of the missing feature of the RN2483 module a real-world measurement of
+Because of the missing feature of the RN2483 module, a real-world measurement of
 the energy consumption is not relevant.
 The module is wasting energy in two places.
 
@@ -874,7 +874,7 @@ The module is wasting energy in two places.
   \item The slow UART communication between the platform and the module. A max 
     payload transmission to the module takes $86 ms$.  That's $86 ms$ of wasted 
     energy where the radio is on receive mode.
-  \item Because we can't receive a feedback from the module when it detects a
+  \item Because we can't receive feedback from the module when it detects a
     preamble each timeslot must wait for the maximum transmission time. This could
     be avoided.
 \end{itemize}

@@ -2,29 +2,27 @@
 
 With new companies jumping into the Internet of Things (IoT), 
 major \emph{IT actors} investing in the development of new
-products\footnote{\url{https://www.fortunebusinessinsights.com/industry-reports/internet-of-things-iot-market-100307}},
- telecoms building infrastructure for this new 
+products~\cite{fortuneiot2019}, telecoms building infrastructure for this new 
 demand\footnote{\url{https://www.proximus.be/en/id_cl_iot/companies-and-public-sector/it-services/iot/internet-of-things.html}}.
 IoT technology allows the gathering of data and the control of actuators via
 the Internet without any human interaction.
 The field has been developed during the last decade and has maintained a
 consistent growth since.
 Business analysts agree that we can expect to reach at least 40 billion
-installed \emph{IoT} devices by
-2027\footnote{\url{https://www.businessinsider.com/internet-of-things-report}}. 
+installed \emph{IoT} devices by 2027~\cite{businessinsider2020}.
 We are already familiar with the traditional \emph{IoT} products
-we use in our households. Those products allow to connect our light bulbs, fridge and
-washing machine to the Internet.
-Meanwhile, we have less knowledge on the industrial usage of \emph{IoT}, also
-known as industrial IoT (IIoT). \emph{IIoT} is one of the fastest growing
-segment of the market.
+we use in our households. Those products allow us to connect our light bulbs,
+fridge, and washing machine to the Internet.
+Meanwhile, we have less knowledge of the industrial usage of \emph{IoT}, also
+known as industrial IoT (IIoT). \emph{IIoT} is one of the fastest-growing
+segments of the market.
 More and more industries are adopting IIoT to consolidate their productions
 with \emph{real-time monitoring}, to organize predictive maintenance on their
 assets and products to connect their supply chains, etc \ldots
 
 All of this is enabled with the help of sensor networks, and actuators, in a
 wide variety of sectors like \emph{smart farming}, \emph{smart cars},
-\emph{smart cities}, \emph{energy managements}, \ldots
+\emph{smart cities}, \emph{energy management}, \ldots
 
 \paragraph{}
 
@@ -42,14 +40,15 @@ classified by three different characteristics
 
 % From these characteristics you can only chose two according to the physical
 % law. % TODO Explanation needed with the exact law reference explaining this
-Figure~\ref{fig:commrangegraph} show the classification
+Figure~\ref{fig:commrangegraph} shows the classification
 of the existing wireless communication protocol used in the \emph{IoT} and
-present it in three main categories.
+presents it in three main categories.
 
 \begin{itemize}
-    \item \emph{Short-Range wireless} communication Short range, high data-rate
-    \item \emph{Cellular} communication Long range, high data-rate
-    \item \emph{Low-power wide-area network (LPWAN)} communication Long range, low power and low data-rate
+    \item \emph{Short-Range wireless} communication Short-range, high data-rate
+    \item \emph{Cellular} communication Long-range, high data-rate
+    \item \emph{Low-power wide-area network (LPWAN)} communication Long range,
+        low power, and low data-rate
 \end{itemize}
 
 \input{thesis.tex/chapters/1/fig/comparaison.tex}
@@ -60,13 +59,14 @@ unlicensed \emph{ISM} band\footnote{Semtech also offers a version of LoRa that
 operates in the 2.4GHz band but won't be covered in this text.}. I will cover LoRa 
 in more detail in Section~\ref{section:lora}.
 The main characteristics of \emph{LoRa} are its low power transmission and the
-fact that it can trade throughput for range by fine-tuning the PHY settings.
+fact that it can trade throughput for range by fine-tuning the physical layer
+(PHY) settings.
 The long-range capabilities of the protocol caught the attention of
 many people. 
 Some have succeeded in obtaining a record transmission distance of over 700 km with
 a direct line of sight between the receiver and the
-transmitter\footnote{https://www.thethingsnetwork.org/article/ground-breaking-world-record-lorawan-packet-received-at-702-km-436-miles-distance}.
-However, this case is not a real-world example. The range in urban areas is of
+transmitter~\cite{network_2017}.
+However, this case is not a real-world example. The range in urban areas is
 around \emph{2 to 5 km} and around \emph{15 km} in suburban
 areas~\cite{8030482}.
 
@@ -145,7 +145,7 @@ gateway covers a portion of the network.
 Multi-hop networks, as represented in Figure~\ref{fig:meshtopology}, can be a solution to
 the LoRaWAN scaling issues~\cite{8115756}.
 Participants of the network do not directly send message to gateways, but
-instead pass messages to their neighboring nodes.
+instead, pass messages to their neighboring nodes.
 Using a multi-hop routing protocol increases the reliability, the range
 and can adapt to topology changes in the network (because of moving or failing nodes).
 
@@ -153,7 +153,7 @@ Multi-hop routing protocols are de facto a strong candidate for large area monit
 applications where gateways may be hard and costly to deploy and where blind
 spots often arise.
 This solution can decrease the energy consumption of bordering nodes that
-usually struggle to achieve a successful communication on non-optimal
+usually struggle to achieve successful communication on non-optimal
 conditions.
 
 \paragraph{}
@@ -180,7 +180,7 @@ keeping the nodes time-synchronized.
 \paragraph{}
 
 This thesis aims to adapt the TSCH MAC protocol for LoRa,
-thus bringing a reliable, long range and low power IPv6 multi-hop
+thus bringing a reliable, long-range and low power IPv6 multi-hop
 solution to the LoRa ecosystem.
 
 Work to adapt TSCH for LoRa in~\cite{8847137} and~\cite{njomgang_2018}, has
@@ -197,7 +197,7 @@ It will also give an overview of the related work on the subject of
 LoRa multi-hop communications.
 Chapter 3 gives the implementation details of writing a driver for the
 RN2483 in Contiki OS and the experimentation with the driver.
-Chapter 4 provides the design and implementation of bringing TSCH to LoRa as well as
-the different testing I conducted.
+Chapter 4 gives instructions for adapting and operating TSCH with LoRa on
+Contiki OS as well as the different testing I conducted.
 Finally, Chapter 5 will conclude the work by summarizing it and suggesting
 further research possible on the subject.

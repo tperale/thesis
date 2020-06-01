@@ -62,7 +62,7 @@ different functions~\cite{microchip:reference}.
   \item \emph{mac} to access the LoRaWAN protocol stack configurations and
     commands. This command set will be used less because our implementation
     requires low-level transceiver access.
-  \item \emph{sys} for the module specific configurations such as the module
+  \item \emph{sys} for the module-specific configurations such as the module
     GPIOs state, \emph{sleep}, EEPROM memory access, \ldots
 \end{itemize}
 
@@ -96,7 +96,7 @@ My implementation structure took inspiration from the work
 in~\cite{8847137} and the \emph{RIOT-OS}
 project\footnote{\url{https://github.com/RIOT-OS/RIOT}}. 
 
-Following, is a listing of the different files I created and their
+Following is a listing of the different files I created and their
 usage. % \improvement{I don't like this phrase}
 
 \begin{description}
@@ -128,7 +128,7 @@ Acknowledgements from commands avoid
 clashes when trying to use the module at the same time.
 The previous implementation in~\cite{8847137} used fixed time delays to 
 wait for the command to full execution on the module. This method 
-quickly showed its limitation, each command has their delay, and
+quickly showed its limitation, each command has its delay, and
 fixed delays slow the global execution.
 
 % TODO Maybe sequence diagram with a clash
@@ -264,7 +264,7 @@ structure that must implement the following functions.
 \subsection{Device Configuration}
 
 The module can be configured through the following structure.
-It allow programmers to access LoRa different parameters from the code without
+It allows programmers to access LoRa different parameters from the code without
 having to interact with the module.
 
 \begin{lstlisting}[language=C]
@@ -288,7 +288,7 @@ This structure has a default definition but can be redefined from anywhere
 by redefining \lstinline{RN2483_DEV_CONF}.
 The currently used parameters are accessed with \lstinline{RN2483_DEV}.
 
-We will see in Chapter~\ref{section:tsch} how those variable are used for
+We will see in Chapter~\ref{section:tsch} how those variables are used for
 calculations.
 
 \section{Validation test}
