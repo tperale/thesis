@@ -506,6 +506,48 @@ the data and then adjusts its time slot length to finish earlier.
 
 \section{Routing}
 
+Because I will use two different routing protocols in
+Chapter~\ref{section:tsch} to prove my implementation worked, I will introduce
+in this section RPL and Orchestra.
+This section is not meant to be an in depth explanation of the protocols.
+Giving such details would be out of the scope of my work as I don't modify any
+of the components of those protocols.
+
+\subsection{Routing Protocol for Low-Power and Lossy Networks (RPL)}
+
+RPL is a routing protocol for constrained device networks.
+It means RPL can work on network with high data loss rates, low data rates and
+instability~\cite{rfc6550}.
+
+The routing in RPL is based on Destination Oriented Directed Acyclic Graphs (DODAG).
+All the nodes of the DODAG are routed toward the \emph{root} node. 
+If the root node is connected to internet it can be used as a \emph{border
+router}.
+RPL give each node a rank based on the distance from the root node, calculated
+with an \emph{objective function}.
+The routing between nodes in RPL is based by sending packets up to a smaller 
+ranked parent until it reach a common ancestor and then sending the packet down
+to the destination~\cite{duquennoy2015}.
+
+\subsection{Orchestra}
+
+Orchestra is a scheduler that work on top of TSCH+RPL
+networks where each node autonomously compute their own schedules without the
+need of a scheduler~\cite{duquennoy2015}.
+Each node maintain their own schedule and keep track of their neighbor solely
+on the network information from RPL.
+Orchestra maintain different slotframes for these different network operations
+
+\begin{itemize}
+  \item Application data
+  \item RPL traffic
+  \item TSCH beacon
+\end{itemize}
+
+By using mutually prime slotframe length to avoid overlap and computing time
+and channel offset using the sender and receiver identification as parameter,
+Orchestra achieve very low level of collisions~\cite{duquennoy2015}.
+
 \section{Contiki OS}
 
 Contiki is a free and open-source Real-Time operating system (OS) specifically made

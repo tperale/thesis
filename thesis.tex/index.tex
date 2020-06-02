@@ -268,8 +268,7 @@
 }
 
 
-\title{Master Thesis}
-\subtitle{Reliable and energy efficient LoRa multi-hop networks with TSCH}
+\title{Reliable and energy efficient LoRa multi-hop networks with TSCH}
 \author{Perale Thomas}
 \faculty{Science and Bio-Engineering Sciences}
 \promotors{Promotors: Prof. Dr. Ir. Kris Steenhaut, Prof. Dr. Eliza
@@ -389,8 +388,12 @@ timing variable of the TSCH protocol to work with LoRa.
 In the end, the long delay in LoRa communication turned out to 
 not work out of the box and the second part became a
 bug hunt with the TSCH implementation detailed in~\ref{section:timingparameters}.
-I finally managed to bring TSCH to LoRa in~\ref{section:tschtesting} by
-demonstrating TSCH and LoRa integrate into the 6TiSCH networking stack.
+The parameters I used with TSCH were more used to achieve a working version of
+the protocol than to achieve an optimal version of TSCH with LoRa.
+I finally managed to make LoRa work with TSCH in~\ref{section:tschtesting} by
+demonstrating my work integrate into the 6TiSCH networking stack.
+I addressed my concerns about the reliability of my implementation
+because of the drift issues caused by the hardware in~\ref{section:driftissues}.
 
 \paragraph{}
 
@@ -398,16 +401,26 @@ In his last year's master thesis, Roald Van Glabbeek suggested further research
 should conduct a power analysis on the RN2483 module.
 I responded to this statement in~\ref{section:energyconsumption} about how
 achieving a low power network with TSCH and this module is impossible because
-of a missing feature.
+of the design of the module.
 
-The good news is I'm confident about achieving low power transmission with the
-SX1272 module.
-This thesis showed the way on what it takes to adapt TSCH for a new radio
-driver and re-implementation of this project with a module like SX1272 will then be
-facilitated and would allow us to measure meaningful data.
-Analysis of the accuracy and reliability of the network will then be possible.
-A study on how longer sleeping periods de-synchronize the network or the period
-needed between EB packets, could be conducted.
+The good news is I'm confident that achieving low power multi-hop network with 
+a radio module like the SX1272 is possible.
+This thesis explained what it takes to adapt TSCH for a new LoRa radio
+module and the possible re-implementation of this project on a new radio module 
+will then be facilitated. 
+
+This would create the stable testing device that would allow to measure meaningful 
+data for the analysis of power consumption and reliability of the network.
+The following tasks could be conducted
+
+\begin{itemize}
+  \item Determining the optimal TSCH parameters for LoRa. 
+  \item Finding the optimal period between EB packets to keep a balance between
+    a low power usage and maintaining synchronization.
+  \item Compare how it perform in regards of LoRaWAN. Is the TSCH overhead
+    worth it.
+  \item The network capacity and transmission delay.
+\end{itemize}
 
 \paragraph{}
 
@@ -427,11 +440,10 @@ work on the subject.
 Related work reinvented the wheel by implementing their multi-hop protocol
 on top of LoRa.
 Using TSCH, an already well studied MAC protocol, and its ability to
-communicate over multiple channels with time-slots for better power usage 
-represent a step forward in the journey to achieve multi-hop communication with
-LoRa.
-Using every SF to use the full LoRa capacity is the future challenge for this
-kind of work.
+communicates over multiple channels with time-slots for better power usage 
+represents a step forward in LoRa multi-hop network research.
+Reliable implementation, deeper tests, as well as using every SF to use the full 
+LoRa capacity is the future challenge of the subject.
 
 \newpage
 

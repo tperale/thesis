@@ -528,7 +528,7 @@ The implementation is available in appendix~\ref{code:timestampimpl}.
 % the detection time that could lead to miss the time frame for sending the
 % acknowledgement.
 
-\section{Drift issues}
+\section{Drift issues\label{section:driftissues}}
 
 During the adaptation of the TSCH protocol for the RN2483, I stumbled upon huge
 clock drifts that made me unable to run a reliable network using TSCH.
@@ -797,7 +797,7 @@ This shows my network can send and receive UDP messages using RPL.
 Similarly to the previous example, in this section, I use Orchestra autonomous
 scheduler on top of my TSCH network.
 Transmitting a message between two nodes by the mean of a hop would again show
-the TSCH implementation for LoRa is compatible with the stacks previously used.
+the TSCH implementation for LoRa is compatible with this network stack.
 
 \paragraph{}
 
@@ -813,46 +813,13 @@ Orchestra is simply enabled on Contiki by adding the next line in the project
 \lstinline{Makefile}.
 
 \begin{lstlisting}
-MODULES += \$(CONTIKI_NG_SERVICES_DIR)/orchestra
+MODULES += (CONTIKI_NG_SERVICES_DIR)/orchestra
 \end{lstlisting}
 
 The network formation and route building take more time to be created than with
 the RPL custom schedule.
-But after giving the network some time to organize the structure in
-Figure~\ref{fig:orchestra} is in use.
-
-% \begin{lstlisting}
-% TSCH schedule:
-% -- Slotframe: handle 0, size 397, links:
-% ---- Options 01, type 2, timeslot 42, channel offset 0, address ffff.ffff.ffff.ffff
-% ---- Options 02, type 2, timeslot 188, channel offset 0, address ffff.ffff.ffff.ffff
-% -- Slotframe: handle 1, size 17, links:
-% ---- Options 05, type 0, timeslot 0, channel offset 44, address ffff.ffff.ffff.ffff
-% ---- Options 05, type 0, timeslot 1, channel offset 44, address ffff.ffff.ffff.ffff
-% ---- Options 05, type 0, timeslot 2, channel offset 44, address ffff.ffff.ffff.ffff
-% ---- Options 05, type 0, timeslot 3, channel offset 44, address ffff.ffff.ffff.ffff
-% ---- Options 05, type 0, timeslot 4, channel offset 44, address ffff.ffff.ffff.ffff
-% ---- Options 05, type 0, timeslot 5, channel offset 44, address ffff.ffff.ffff.ffff
-% ---- Options 05, type 0, timeslot 6, channel offset 44, address ffff.ffff.ffff.ffff
-% ---- Options 05, type 0, timeslot 7, channel offset 44, address ffff.ffff.ffff.ffff
-% ---- Options 07, type 0, timeslot 8, channel offset 44, address ffff.ffff.ffff.ffff
-% ---- Options 05, type 0, timeslot 9, channel offset 44, address ffff.ffff.ffff.ffff
-% ---- Options 05, type 0, timeslot 10, channel offset 44, address ffff.ffff.ffff.ffff
-% ---- Options 05, type 0, timeslot 11, channel offset 44, address ffff.ffff.ffff.ffff
-% ---- Options 05, type 0, timeslot 12, channel offset 44, address ffff.ffff.ffff.ffff
-% ---- Options 05, type 0, timeslot 13, channel offset 44, address ffff.ffff.ffff.ffff
-% ---- Options 05, type 0, timeslot 14, channel offset 44, address ffff.ffff.ffff.ffff
-% ---- Options 05, type 0, timeslot 15, channel offset 44, address ffff.ffff.ffff.ffff
-% ---- Options 05, type 0, timeslot 16, channel offset 44, address ffff.ffff.ffff.ffff
-% -- Slotframe: handle 2, size 31, links:
-% ---- Options 07, type 0, timeslot 0, channel offset 1, address ffff.ffff.ffff.ffff
-% \end{lstlisting}
-
-\input{thesis.tex/chapters/tsch/fig/orchestra.tex}
-
-The node $:2f2a$ has no route to $:2dac$, I will send a message to between
-those two nodes to prove the multihop function is correctly working.
-The coordinator has full knowledge of all the routes in the network.
+But after giving the network some time to organize itself, the coordinator get
+the full knowledge of all the routes available in the network.
 
 \begin{lstlisting}
 Routing links (3 in total):
@@ -861,24 +828,45 @@ Routing links (3 in total):
 -- fd00::212:4b00:14d5:2f2a  to fd00::212:4b00:14d5:2dbc
 \end{lstlisting}
 
+This mean the DODAG in Figure~\ref{fig:orchestra} is created by using Orchestra.
+
+\input{thesis.tex/chapters/tsch/fig/orchestra.tex}
+
+The node $:2f2a$ has no direct route to $:2dac$. 
+To prove the multi-hop routing is also correctly working with Orchestra, I will
+send a message between those two nodes.
+
+\paragraph{}
+
 Sending a UDP message to $:2dac$ worked seamlessly by passing by the
 intermediate node $:2dbc$.
+This shows the TSCH adaptation for LoRa can work with a scheduler specifically
+made for TSCH and RPL proving the characteristics of TSCH were not lost by
+adapting the protocol.
 
 \section{Energy consumption\label{section:energyconsumption}}
 
-Because of the missing feature of the RN2483 module, a real-world measurement of
-the energy consumption is not relevant.
+% Because of the missing functionality of the RN2483 module which allows to
+% receive a signal at the start of the reception.
+Because of the design of the RN2483 which gives priority to the ease of use.
+A real-world measurement of the energy consumption is not relevant.
 The module is wasting energy in two places.
 
 \begin{itemize}
   \item The slow UART communication between the platform and the module. A max 
     payload transmission to the module takes $86 ms$.  That's $86 ms$ of wasted 
-    energy where the radio is on receive mode.
+    energy with the module powered on. The same goes for every other commands
+    used by my driver.
   \item Because we can't receive feedback from the module when it detects a
-    preamble each timeslot must wait for the maximum transmission time. This could
-    be avoided.
+    preamble each timeslot must wait for the maximum transmission time to be
+    sure there is no ongoing transmission during the timeslot.
 \end{itemize}
+
+The first issue could be solved with module that uses faster communication
+protocol like SPI and not focus on human readable command format.
+The second can be solved by using a module that saves the timestamp at the start
+of the reception or acknowledge it with one of its pin.
 
 Because I knew I would not be able to measure meaningful data from my
 implementation, I did not take time to experiment with the sleep feature of the
-module.
+module and did not proceed to do further energy consumption analysis.

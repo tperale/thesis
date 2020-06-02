@@ -2,8 +2,9 @@
 
 With new companies jumping into the Internet of Things (IoT), 
 major \emph{IT actors} investing in the development of new
-products~\cite{fortuneiot2019}, telecoms building infrastructure for this new 
-demand\footnote{\url{https://www.proximus.be/en/id_cl_iot/companies-and-public-sector/it-services/iot/internet-of-things.html}}.
+products~\cite{fortuneiot2019}, and telecoms operator building infrastructure 
+for the growing demand\footnote{\url{https://www.proximus.be/en/id_cl_iot/companies-and-public-sector/it-services/iot/internet-of-things.html}}.
+IoT caught the attention of many people and researcher in the last years.
 IoT technology allows the gathering of data and the control of actuators via
 the Internet without any human interaction.
 The field has been developed during the last decade and has maintained a
@@ -29,8 +30,8 @@ wide variety of sectors like \emph{smart farming}, \emph{smart cars},
 All these applications have in common that they rely on devices that
 communicate wirelessly.
 % TODO Change not telecom
-Telecoms created new technologies to suit this new domain that can be
-classified by three different characteristics
+A number of businesses created new technologies to suit this new domain 
+that can be classified by three different characteristics
 
 \begin{itemize}
     \item Long or Short \emph{range}
@@ -85,9 +86,6 @@ deployable in contrast to other LPWAN like \emph{Sigfox} or \emph{NB-IoT}.
 
 The issue with \emph{LoRaWAN}, as studied 
 in~\cite{8030482}~\cite{10.1145/2988287.2989163} is its inability to scale. 
-% This occurs especially 
-% with dense networks, like in urban environments, where collisions can
-% happen on transmission.
 
 Channel sensing is impossible in LoRa because \emph{Channel Activity Detection}
 (CAD) only detects the packet preamble. % TODO reference needed
@@ -107,10 +105,6 @@ transmitting device (motes and gateways) is also a limiting factor
 for \emph{LoRaWAN} (\cite{8030482}).
 The European ISM band has set a duty-cycle of \emph{1\%} meaning that each node 
 and gateway can transmit \emph{36 sec/hour} maximum. 
-% Increasing the retransmission is impossible.
-% TODO This next phrase should go after
-% In a high node density network, packet retransmissions quickly become impossible to
-% achieve with the duty-cycle limitation.
 
 % TODO {Add some reference to ISM regulations} 
 
@@ -126,7 +120,6 @@ achieve a full transmission.
 Gateways could restrain the deployment of LoRa networks.
 They might not be deployed everywhere as they require more demanding infrastructure 
 than battery-operated motes.
-% TODO Weird next phrase statement about gateways.
 That is the case for pipelines and tunnels~\cite{Abrardo_2019},
 we would prefer to only install motes running on batteries as in linear
 topology gateways are not of any use.
@@ -134,13 +127,6 @@ They can also be a single point of failure of the network, when a single
 gateway covers a portion of the network. 
 
 \input{thesis.tex/chapters/1/fig/coverage.tex}
-
-% \begin{tikzpicture}
-%     \node[draw] (Application) [abstract, rectangle]{\textbf{Application Layer}};
-%     \node[draw] (MAC) [abstract, rectangle, below=0.2cm of Application, text justified]{\textbf{Media Access Control (MAC) Layer}};
-%     \node[draw] (Phy) [abstract, rectangle, below=0.2cm of MAC, text justified]{\textbf{Physical (PHY) Layer}};
-%     \node[draw] (Rf) [abstract, rectangle, below=0.2cm of Phy, text justified]{\textbf{Radio Frequency (RF) Layer}};
-% \end{tikzpicture}
 
 Multi-hop networks, as represented in Figure~\ref{fig:meshtopology}, can be a solution to
 the LoRaWAN scaling issues~\cite{8115756}.
