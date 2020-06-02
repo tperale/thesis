@@ -269,7 +269,7 @@
 
 
 \title{Master Thesis}
-\subtitle{Toward Energy Efficient LoRa Multihop networks}
+\subtitle{Reliable and energy efficient LoRa multi-hop networks with TSCH}
 \author{Perale Thomas}
 \faculty{Science and Bio-Engineering Sciences}
 \promotors{Promotors: Prof. Dr. Ir. Kris Steenhaut, Prof. Dr. Eliza
@@ -284,6 +284,11 @@ Gonzalez Boix\newline Supervisor: Roald Van Glabbeek}
 
 \pagenumbering{roman}
 
+
+\clearpage
+\vspace*{\fill}
+\begin{center}
+\begin{minipage}{.6\textwidth}
 This master's thesis came about (in part) during the period in which higher
 education was subjected to  a  lockdown  and  protective  measures  to  prevent
 the  spread  of  the  COVID-19  virus.  The  process  of formatting, data
@@ -291,14 +296,50 @@ collection, the research method and/or other scientific work the thesis
 involved could therefore not always be carried out in the usual manner. The
 reader should bear this context in mind when reading this Master's thesis, and
 also in the event that some conclusions are taken on board.
+\end{minipage}
+\end{center}
+\vfill % equivalent to \vspace{\fill}
+\clearpage
 
 \newpage
 
 \section*{Abstract}
 
+LoRa and its inherent MAC protocol LoRaWAN is known to scale badly and suffer
+from range issue.
+Research has shown that in large LoRaWAN networks collisions often occur which
+makes it impossible to achieve a complete transmission.
+Also gateways are not always in the motes range.
+One of the solution to solve these problem would be to use a multi-hop routing
+protocol with LoRa to increase the realiability and range of the network.
+Because little research has been done on multi-hop application in LoRa,
+this thesis has for objective to adapt 6TiSCH network stack to work with LoRa 
+and thus bringing realiable and low power multi-hop communication for LoRa.
+
+In order to do that, I will implement a radio driver for the RN2483 LoRa radio
+module and adapt the current implementation of TSCH in Contiki to work with
+this specific radio module.
+Based on my work I will show my implementation can correctly work with standard
+routing protocols like RPL or Orchestra.
+
+The result shows it's possible to have a reliable multi-hop network using LoRa 
+and TSCH but will still require more testing to proove its energy efficiency.
+
 \newpage
 
 \section*{Acknowledgement}
+
+I would first like to thank my supervisor Roald Van Glabbeek that introduced me
+to the subject and allowed me to catch up with the missing knowledge I had at
+the start of the year.
+I am especially grateful for his availability and helpfullness that gave me the
+right tools to achieve this work.
+I would also like to thanks my promotors Prof. Dr. Ir. Kris Steehaut and Prof.
+Dr. Eliza Gonzalez Boix that provided me with this great subject and helped me 
+during the year.
+
+I would also like to thanks the Urlab hackerspace that sparked my interest for
+embedded devices and low power communication protocols over the years.
 
 \newpage
 
