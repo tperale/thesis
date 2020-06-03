@@ -4,7 +4,8 @@ With new companies jumping into the Internet of Things (IoT),
 major \emph{IT actors} investing in the development of new
 products~\cite{fortuneiot2019}, and telecoms operator building infrastructure 
 for the growing demand\footnote{\url{https://www.proximus.be/en/id_cl_iot/companies-and-public-sector/it-services/iot/internet-of-things.html}}.
-IoT caught the attention of many people and researcher in the last years.
+It is fair to say that IoT caught the attention of many people and researcher
+in the last years.
 IoT technology allows the gathering of data and the control of actuators via
 the Internet without any human interaction.
 The field has been developed during the last decade and has maintained a
@@ -29,9 +30,8 @@ wide variety of sectors like \emph{smart farming}, \emph{smart cars},
 
 All these applications have in common that they rely on devices that
 communicate wirelessly.
-% TODO Change not telecom
-A number of businesses created new technologies to suit this new domain 
-that can be classified by three different characteristics
+To suits this new demand, new communication protocol were created.
+They can be classified by three different characteristics
 
 \begin{itemize}
     \item Long or Short \emph{range}
@@ -39,26 +39,29 @@ that can be classified by three different characteristics
     \item Low or high \emph{power usage} 
 \end{itemize}
 
-% From these characteristics you can only chose two according to the physical
-% law. % TODO Explanation needed with the exact law reference explaining this
 Figure~\ref{fig:commrangegraph} shows the classification
-of the existing wireless communication protocol used in the \emph{IoT} and
+of the existing wireless communication protocol used for the \emph{IoT} and
 presents it in three main categories.
 
-\begin{itemize}
-    \item \emph{Short-Range wireless} communication Short-range, high data-rate
-    \item \emph{Cellular} communication Long-range, high data-rate
-    \item \emph{Low-power wide-area network (LPWAN)} communication Long range,
+\begin{description}
+    \item[Short-Range wireless communication] Short-range, high
+        data-rate, low power
+    \item[WiFi] relatively Short-range, high
+        data-rate, high power consumption
+    \item[Cellular communication] Long-range, high data-rate, high power
+        consumption
+    \item[Low-power wide-area network (LPWAN)] communication Long range,
         low power, and low data-rate
-\end{itemize}
+\end{description}
 
 \input{thesis.tex/chapters/1/fig/comparaison.tex}
 
 This work focuses only on \emph{LoRa}, a proprietary \emph{chirp spread spectrum}
 modulation technique owned by \emph{Semtech}, operating in the sub-GHz
-unlicensed \emph{ISM} band\footnote{Semtech also offers a version of LoRa that
-operates in the 2.4GHz band but won't be covered in this text.}. I will cover LoRa 
-in more detail in Section~\ref{section:lora}.
+unlicensed \emph{ISM} band\footnote{It's worth noting that Semtech also developed a version of LoRa that
+operates in the 2.4GHz band but won't be covered in this text. When I will talk
+about LoRa I will only talk about the version that operates on the ISM band.}. 
+I will cover LoRa in more detail in Section~\ref{section:lora}.
 The main characteristics of \emph{LoRa} are its low power transmission and the
 fact that it can trade throughput for range by fine-tuning the physical layer
 (PHY) settings.
@@ -146,22 +149,30 @@ conditions.
 
 Work to create a multi-hop routing protocol with LoRa has already been
 done~\cite{8115756, DIAS2018424, 8856256, Abrardo_2019, duong2018}, 
-but some of them did not take into account the energy consumption of the nodes
-with always-on radio to listen to incoming communication.
-This is completely contrary to the benefit of using LPWAN networks typically
-based on sleeping nodes.
+but two main problem stand out from these similar work.
 
-A solution to this matter would be to use time-slotted channel access.
-It would suppress collisions and schedule communications between nodes leaving
-the nodes in a sleeping state the rest of the time.
+The first one is that some of them did not took into account the energy
+consumption by using always-on modes. 
+LPWAN were designed to be used with battery operated motes that spend most of
+his time sleeping and always-on motes goes against that.
+A solution to this first matter would be to use time-slotted channel access.
+Synchronized nodes would know when to wake-up to transmit of receive a packet.
+This will put nodes in sleeping mode the rest of the time and avoid collisions
+on transmission between nodes.
 
-The \emph{IEEE 802.15.4e} standard developed TSCH, a MAC
-protocol to use with 802.15.4 compliant physical layer.
-TSCH works particularly well where LoRaWAN shows weaknesses. 
-TSCH is resilient to external interference with the use of channel hopping.
-Networks with high node density can work without collision issues.
-It also provides high reliability communications and deterministic delays by 
-keeping the nodes time-synchronized.
+The second issue is most protocols only use a single channel. 
+This issue obviously reduces network capacity and increases the risk of 
+interference.
+
+The \emph{IEEE 802.15.4e} standard developed Time-Slotted Channel Hopping
+(TSCH), a MAC protocol to use with 802.15.4 compliant physical layer.
+Using TSCH could actually solve the two previous issues I just addressed.
+TSCH use channel hopping, making it resilient to external interference and
+channel jamming. 
+Also, TSCH is based around the concept of synchronized time slots between the
+nodes.
+This allow low power network, reliable and collision free high density network,
+and deterministic delays.
 
 \paragraph{}
 
@@ -177,13 +188,13 @@ years to adapt \emph{TSCH} for the \emph{Zolertia RE-Mote} and the
 
 \paragraph{}
 
-Chapter \ref{section:context} will give the background information and context needed to
+The next chapter will give the background information and context needed to
 understand the building blocks to achieve my end goal.
 It will also give an overview of the related work on the subject of
 LoRa multi-hop communications.
-Chapter 3 gives the implementation details of writing a driver for the
+Chapter \ref{section:radio} gives the implementation details of writing a driver for the
 RN2483 in Contiki OS and the experimentation with the driver.
-Chapter 4 gives instructions for adapting and operating TSCH with LoRa on
+Chapter \ref{section:tsch} gives instructions for adapting and operating TSCH with LoRa on
 Contiki OS as well as the different testing I conducted.
-Finally, Chapter 5 will conclude the work by summarizing it and suggesting
+Finally, Chapter \ref{section:conclusion} will conclude the work by summarizing it and suggesting
 further research possible on the subject.
