@@ -1,38 +1,39 @@
 \chapter{Context\label{section:context}}
 
-% As of today little work has been done on creating a multihop LoRa Network (see Kris Paper on RPL LoRa in context section)
 I will introduce in this chapter all the concepts needed for the understanding
 of the experiment I conducted in this thesis.
-I will also give an overview of related work to the topic.
+I will also give an overview of works related to the topic.
 
 \section{Low Power Wide Area Network (LPWAN)\label{section:lpwan}}
 
-Every IoT project has its own requirements. 
-LPWAN is typically made for sensor networks with limited throughput.
+Every IoT project has its requirements. 
+The LPWAN network family is typically made for sensor networks that require
+limited throughput.
 The characteristics of an LPWAN are the following.
 
-\begin{itemize}
-  \item Low power as the name suggests. The network is made of battery-operated
+\begin{description}
+  \item[Low power] The network is made of battery-operated
     motes that must run for years without replacement.
-  \item Long range. Mote should transmit over multiple km without a repeater.
-  \item Low cost devices. No expensive infrastructure requirement and motes
+  \item[Long range] Mote should transmit over multiple km without a repeater.
+  \item[Low cost devices] No expensive infrastructure requirement and motes
     operate with simple hardware.
-  \item Limited data throughput.
-\end{itemize}
+  \item[Limited data throughput]
+\end{description}
 
 LPWAN includes LoRa but it's not the only option available. 
 Sigfox, NB-IoT are other well known LPWAN options.
 
 \paragraph{IPv6 over Low-Power Wireless Personal Area Networks (6LoWPAN)}
 
-6LoWPAN is an open standard defined in RFC 6282 by the Internet Engineering
+6LoWPAN is an open standard defined in RFC~6282 by the Internet Engineering
 Task Force (IETF).
-The idea of 6LoWPAN is to bring IPv6 packet over the small link layer frame of
-LPWAN with the help of a header compression mechanisms.
+The idea of 6LoWPAN is to bring IPv6 packet over LPWAN and its limited payload
+size with the help of a header compression mechanisms.
 6LoWPAN brings native IP communication to LPWAN.
-This means each mote of the network can now communicate simply using an
-edge router that handles the data exchange between the 6LoWPAN network and the
-internet.
+Each mote of the network can communicate with the Internet by passing its
+traffic through an edge router.
+Edge routers are special devices that handle the data exchange between the 
+6LoWPAN network and the internet.
 
 \paragraph{6TiSCH}
 
@@ -45,7 +46,7 @@ LoRa is a proprietary chirp spread spectrum technology made by Semtech with
 integrated Forward Error Correction (FEC).
 LoRa operates in this sub-GHz unlicensed Industrial, Scientific, and Medical
 (ISM) bands.
-The main characteristic of LoRa is that it trades data rate for long-range 
+The main characteristic of LoRa is that it trades data rates for long-range 
 transmission and low-power consumption with a maximum data rate of 
 27 kbps~\cite{8030482}.
 LoRa supports bi-directional communications with a maximum payload size of 242
@@ -85,8 +86,8 @@ interference)~\cite{semtech:modulationbasics}.
 The physical layer parameters are what constitute LoRa. 
 Understanding those parameters are important to understand how to use the
 protocol.
-Chapter~\ref{section:radio}~and~\ref{section:tsch} will use these concepts.
-This section will cover all parameters we can tweak in LoRa.
+Chapters~\ref{section:radio}~and~\ref{section:tsch} will use these concepts.
+This section will cover the major parameters we can tweak in LoRa.
 
 \subsubsection{Spreading Factor (SF)}
 
@@ -126,7 +127,8 @@ spreading factors~\cite{semtech:modulationbasics}.
   \draw[arr] (1.6, -2.2) -- node[fill=white] {$SF8$} (4.4, -2.2);
   \draw[arr] (4.6, -2.2) -- node[fill=white] {$SF9$} (10.4, -2.2);
 \end{tikzpicture} 
-\caption{Comparison of the transmission time between different SF\label{fig:sfcomp}}
+\caption{Comparison of the transmission time for a symbol between different SF
+  using the same BW\label{fig:sfcomp}}
 \end{figure}
 
 \subsubsection{Bandwidth (BW)}
@@ -140,9 +142,6 @@ LoRa supports three bandwidth in the European ISM band.
     \item 500 kHz
 \end{itemize}
 
-Available bandwidth depends on the region. % See limit of lora wan
-% Europe only use 125 and 250 kHz. source needed
-
 The BW is interchangeable with the chip rate, to do the symbols rate
 calculation.
 Increasing the BW increases the symbols rate, and thus, the data rate.
@@ -154,7 +153,7 @@ Increasing the BW increases the symbols rate, and thus, the data rate.
 \end{gather}
 
 According to~\cite{semtech:modulationbasics}, increasing the
-bandwidth increases the noise floor (\ref{eq:noisefloorbw}), reducing the
+bandwidth increases the noise floor (\ref{eq:noisefloorbw})which reduce the
 range of transmission.
 
 \begin{equation}
@@ -231,7 +230,7 @@ CR & BW (kHz) & SF7 (bits/sec) & SF8 (bits/sec) & SF10 (bits/sec) \\ \midrule
 
 \subsection{Packet Structure}
 
-This section covers the LoRa packet structure. LoRa employs two packet formats: 
+LoRa employs two packet formats: 
 the explicit mode and the implicit mode.
 Three parts constitute packets.
 
@@ -383,7 +382,7 @@ communications by using the following principles.
     throughput.
 \end{description}
 
-In the following section I will present the TSCH protocol building blocks.
+In the following section, I will present the TSCH protocol building blocks.
 
 \subsection{Time Slots}
 
@@ -450,10 +449,9 @@ Links are the conjunction of a time slot and a channel~\cite{Chen2013Performance
   link = (TimeSlot_{number}, Channel_{offset})
 \end{equation}
 
-Multiple links constitute a time slot (dependent on the number of channels
-available). Devices can transmit on different links during the same time slot.
-
-% TODO Topology example multiple timeslot same time TX on different channels
+Multiple links constitute a time slot and devices can transmit on different 
+links during the same time slot.
+This is dependent on the number of channels available.
 
 The channel offset is computed by the transmitter and the receiver with the
 function~\ref{eq:channel}. Both nodes know the $ASN$ and the schedule and can
@@ -467,23 +465,21 @@ compute the same channel offset~\cite{rfc7554}.
 If the slotframe length is a prime number, even with the static schedule,
 with known channel offset, the time slot will use a different channel every time.
 Figure~\ref{fig:channelhopping} shows how scheduled cells in a TSCH network of
-four time slots and three channels change channel depending on the ASN.
+four time slots and three channels change channel after each slotframe depending 
+on the ASN.
 
 \input{thesis.tex/chapters/context/fig/channel_hopping.tex}
 
 \subsection{Scheduling}
 
-The TSCH schedule tells each node what to do during a time slot.
-
-Dedicated time slots cells need the following parts to be defined.
+The TSCH schedule tells each node what to do during a time slot and defines the
+following parameters for each time slot cell.
 
 \begin{itemize}
   \item Receive or transmit.
   \item The channel offset.
   \item Address of the node to communicate with.
 \end{itemize}
-
-% Shared cells multiple nodes can transmit at the same time on the same channel.
 
 To ensure the execution of the same slots, each transmission is an opportunity 
 for the neighbor to resynchronize their clocks.
@@ -509,32 +505,32 @@ the data and then adjusts its time slot length to finish earlier.
 Because I will use two different routing protocols in
 Chapter~\ref{section:tsch} to prove my implementation worked, I will introduce
 in this section RPL and Orchestra.
-This section is not meant to be an in depth explanation of the protocols.
+This section is not meant to be an in-depth explanation of the protocols.
 Giving such details would be out of the scope of my work as I don't modify any
 of the components of those protocols.
 
 \subsection{Routing Protocol for Low-Power and Lossy Networks (RPL)}
 
 RPL is a routing protocol for constrained device networks.
-It means RPL can work on network with high data loss rates, low data rates and
+RPL is designed to work on networks with high data loss rates, low data rates, and
 instability~\cite{rfc6550}.
 
 The routing in RPL is based on Destination Oriented Directed Acyclic Graphs (DODAG).
 All the nodes of the DODAG are routed toward the \emph{root} node. 
-If the root node is connected to internet it can be used as a \emph{border
+If the root node is connected to the internet it can be used as a \emph{border
 router}.
-RPL give each node a rank based on the distance from the root node, calculated
-with an \emph{objective function}.
-The routing between nodes in RPL is based by sending packets up to a smaller 
-ranked parent until it reach a common ancestor and then sending the packet down
+RPL give each node a rank based on the distance from the root node. 
+The distance is calculated with an \emph{objective function}.
+The routing between nodes in RPL is based on sending packets up to a smaller 
+ranked parent until it reaches a common ancestor and then sending the packet down
 to the destination~\cite{duquennoy2015}.
 
 \subsection{Orchestra}
 
-Orchestra is a scheduler that work on top of TSCH+RPL
-networks where each node autonomously compute their own schedules without the
+Orchestra is a scheduler that works on top of TSCH+RPL
+networks where each node autonomously compute their schedules without the
 need of a scheduler~\cite{duquennoy2015}.
-Each node maintain their own schedule and keep track of their neighbor solely
+Each node maintains their schedule and keep track of their neighbor solely
 on the network information from RPL.
 Orchestra maintain different slotframes for these different network operations
 
@@ -545,8 +541,8 @@ Orchestra maintain different slotframes for these different network operations
 \end{itemize}
 
 By using mutually prime slotframe length to avoid overlap and computing time
-and channel offset using the sender and receiver identification as parameter,
-Orchestra achieve very low level of collisions~\cite{duquennoy2015}.
+and channel offset using the sender and receiver identification as parameters,
+Orchestra achieve a very low level of collisions~\cite{duquennoy2015}.
 
 \section{Contiki OS}
 

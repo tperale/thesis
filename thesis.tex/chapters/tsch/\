@@ -40,7 +40,7 @@ enum tsch_timeslot_timing_elements {
 
 Among these parameters, I did not define \lstinline{tsch_ts_cca_offset} and 
 \lstinline{tsch_ts_cca} because \emph{CCA} is impossible with LoRa.
-Also, \lstinline{tsch_ts_rx_tx} is not used anywhere in the Contiki codebase.
+Also \lstinline{tsch_ts_rx_tx} is not used anywhere in the Contiki codebase.
 
 \begin{itemize}
   \item \lstinline{tx_offset} represents the time needed for the packet to get
@@ -78,7 +78,7 @@ This value is not long enough to store LoRa transmissions at maximum payload.
 It takes 379 ms to transmit a maximum payload packet with the fastest spreading
 factor (SF 7).
 
-I changed the TSCH implementation to use a 32-bit integer instead, allowing more
+I changed the TSCH implementation to use 32-bit integer instead, allowing more
 room for the parameters.
 
 \begin{lstlisting}
@@ -136,7 +136,7 @@ It means that the time slot is run in an interrupt.
 This is not an issue in the initial implementation of TSCH, which use the
 CC2536, because the radio driver is internal to the processor.
 The radio driver needs to also use interrupts to receive messages from the UART.
-By default, the real-time timer, \lstinline{SMT_IRQn}, has the same priority as
+By default the real-time timer, \lstinline{SMT_IRQn}, has the same priority as
 the UART1 interruption. 
 This is why I changed the \lstinline{rtimer_arch_schedule} implementation with
 the following line to set a lower priority.
@@ -172,8 +172,6 @@ According to the \emph{contiki-ng}
 wiki\footnote{\url{https://github.com/contiki-ng/contiki-ng/wiki/Documentation:-TSCH-and-6TiSCH}}
 on TSCH, porting the MAC protocol to new radio platforms requires specific
 configurations parameters.
-This section document all the parameter needed to use TSCH with Contiki and how
-I implemented them for LoRa.
 
 \subsection{Channels}
 
@@ -190,8 +188,8 @@ could also be implemented.
   \item 868.5 MHz, 125 kHz BW
 \end{itemize}
 
-Using only three different channels also reduce the time for a node to join the 
-network, making the testing faster.
+Three different channels also reduce the time for a node to join the network,
+making the testing faster.
 
 \subsection{Packet Duration\label{section:transmissiontime}}
 
@@ -217,6 +215,7 @@ of the time on air.
 
 Radio delays are hardware platform-dependent values. 
 They get accessed from the radio driver.
+
 TSCH uses these three values
 
 \begin{itemize}
@@ -241,18 +240,20 @@ This delay is made of three parts
   \item Module sending back an acknowledgement.
 \end{enumerate}
 
-The program knows the message length and the acknowledgement length is constant. 
-The parameters $1.$ and $3.$ are then known with equation~\ref{eq:baudrate}.
+The program knows the message length because
+\lstinline{NETSTACK_RADIO.prepare()} is executed before getting this parameter.
+The acknowledgement length is constant. 
+I can then calculate parameter $1.$ and $3.$ with equation~\ref{eq:baudrate}.
 
 \begin{equation}
   \label{eq:baudrate}
   UART(x) = \frac{x . (bit_{start} + bits_{data} + bit_{stop})}{baudrate}
 \end{equation}
 
-The parameter $2.$ is unknown, and the datasheet does not give any meaningful
+The second parameter is unknown, and the datasheet does not give any meaningful
 information about the timing of the module.
 
-I did measurement\footnote{The poor resolution of the oscilloscope introduced
+I did measurement\footnote{The poor resolution of my oscilloscope introduced
 some accuracy errors in the longer measures} of the time between message
 transmission and acknowledgement with an oscilloscope to try to find a
 correlation between the number of bytes transmitted and the treatment length.
@@ -354,12 +355,15 @@ equation~\ref{eq:transmissiondelay}.
   Delay_{TX}(x) = T_{TX}(x) + UART(msg_{length}(x)) + UART(length("ok \backslash r\backslash n"))
 \end{gather}
 
+The spreading factor does not influence the transmission delay.
+
 The precision of this parameter is essential for synchronized communication
-with TSCH. 
-It indicates to TSCH when to start its radio transmission precisely at the
-end of \lstinline{TS_TX_OFFSET}.
+with TSCH. It will indicate to TSCH how to conduct its radio transmission
+precisely at the end of \lstinline{TS_TX_OFFSET}.
 
 \subsubsection{Reception delay}
+
+This parameter is hard to measure with the RN2483.
 
 It consists of the two following steps.
 
@@ -496,11 +500,11 @@ starting the transmission.
 Knowing the packet timestamp precisely allows the receiving mote to learn the
 drift from the transmitter. 
 The clock is adjusted when receiving a packet from a time source.
+% Contiki takes the packet timestamps at the moment the transmission starts.
 
-Since there is no way for the RN2483 module to know when the reception started
-precisely so a timestamp is saved when the packet is fully received on 
-the platform.
-I calculate the real timestamp (the communication start) with the 
+There is no way for the RN2483 module to know when the reception started but
+the timestamp is saved when the packet is fully received by the platform.
+On packet reception, I calculate the communication start time with the 
 \emph{detection delay} covered in section~\ref{section:detectiondelay} and
 equation~\ref{eq:detectdelay}, as well as the transmission time of
 section~\ref{section:transmissiontime} and equation~\ref{eq:tpacket}.
@@ -531,7 +535,7 @@ implementation out of the box.
 
 The functions \ref{eq:transmissiondelay} and \ref{eq:detectcomp} can
 create imprecisions of multiple ms.
-The original Contiki implementation statistically corrected the internal clock
+The original implementation tried to statistically correct the internal clock
 drift of the motes with the function
 \lstinline{tsch_timesync_adaptive_compensate}.
 The function learned from the nodes drift from the time source to predict the
@@ -595,7 +599,7 @@ One mote from the TSCH network will send UDP messages to the coordinator
 every 30 seconds.
 Meanwhile, the third mote constantly sends messages on the same channel to
 simulate a busy channel of the network.
-This test shows how the protocol can deal with interference by retransmitting 
+The test the protocol can deal with interference by retransmitting 
 the message on a different channel.
 
 \paragraph{}
@@ -605,8 +609,8 @@ managed to reach the destination.
 Figure~\ref{fig:retransmission} shows the amount of retransmission for each
 packet transmitted during the test.
 This test could be enhanced by measuring the transmission time of the packet
-with and without the channel jammed to show how latency is affected
-but I couldn't get my hand on a digital analyzer to do measurements.
+with and without the channel jammed but I couldn't get my hand on a digital
+analyzer to measure every transmission.
 
 \begin{figure}[H]
   \centering
@@ -691,7 +695,7 @@ but I couldn't get my hand on a digital analyzer to do measurements.
 
 \subsection{RPL Custom Schedule}
 
-For this example, I will create a custom schedule and test if an application can
+For this example, I will create a custom schedule and test if the application can
 work on top of the TSCH and LoRa network.
 For this purpose, I will run a UDP client and server on each node and will try
 to send a message between two nodes to see the packet get routed correctly with
@@ -809,7 +813,7 @@ MODULES += (CONTIKI_NG_SERVICES_DIR)/orchestra
 
 The network formation and route building take more time to be created than with
 the RPL custom schedule.
-But after giving the network some time to organize itself, the coordinator gets
+But after giving the network some time to organize itself, the coordinator get
 the full knowledge of all the routes available in the network.
 
 \begin{lstlisting}
@@ -819,7 +823,7 @@ Routing links (3 in total):
 -- fd00::212:4b00:14d5:2f2a  to fd00::212:4b00:14d5:2dbc
 \end{lstlisting}
 
-This means the DODAG in Figure~\ref{fig:orchestra} is created by using Orchestra.
+This mean the DODAG in Figure~\ref{fig:orchestra} is created by using Orchestra.
 
 \input{thesis.tex/chapters/tsch/fig/orchestra.tex}
 
@@ -832,7 +836,7 @@ send a message between those two nodes.
 Sending a UDP message to $:2dac$ worked seamlessly by passing by the
 intermediate node $:2dbc$.
 This shows the TSCH adaptation for LoRa can work with a scheduler specifically
-made for TSCH and RPL proving the characteristics of TSCH were not lost when
+made for TSCH and RPL proving the characteristics of TSCH were not lost by
 adapting the protocol.
 
 \section{Energy consumption\label{section:energyconsumption}}
@@ -844,23 +848,19 @@ A real-world measurement of the energy consumption is not relevant.
 The module is wasting energy in two places.
 
 \begin{itemize}
-  \item The slow UART communication between the platform and the module. For
-    instance a max payload transmission to the module takes $86 ms$.  
-    That's $86 ms$ of wasted energy with the module powered on. The same goes
-    for every other command used by my driver.
+  \item The slow UART communication between the platform and the module. A max 
+    payload transmission to the module takes $86 ms$.  That's $86 ms$ of wasted 
+    energy with the module powered on. The same goes for every other commands
+    used by my driver.
   \item Because we can't receive feedback from the module when it detects a
     preamble each timeslot must wait for the maximum transmission time to be
     sure there is no ongoing transmission during the timeslot.
 \end{itemize}
 
-% TODO There is also a third place: the huge tx_offset i set intentionaly to
-% mitigate the effect of the drift from the module. It's a lot of waster energy
-% that could be avoided.
-
-The first issue could be solved with a module that uses a faster communication
-protocol like SPI and not focuses on human-readable command format.
+The first issue could be solved with module that uses faster communication
+protocol like SPI and not focus on human readable command format.
 The second can be solved by using a module that saves the timestamp at the start
-of the reception or acknowledge it with one of its pins.
+of the reception or acknowledge it with one of its pin.
 
 Because I knew I would not be able to measure meaningful data from my
 implementation, I did not take time to experiment with the sleep feature of the

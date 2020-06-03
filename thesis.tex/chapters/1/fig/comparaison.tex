@@ -24,7 +24,7 @@
     \draw[] (-0.1,7)--(0.1,7);
     
     \node[draw] at (8,1.5) (lora) {LoRa};
-    \node[draw] at (9.0,0.8) (sigfox) {SigFox};
+    \node[draw] at (8.7,0.8) (sigfox) {SigFox};
     \node[draw] at (7.4,2.2) (nb) {NB-IOT};
     \node[draw,dotted,fit=(lora) (sigfox) (nb), label=above:{LPWAN}] {};
 
@@ -33,7 +33,7 @@
     \node[draw] at (2.7,2.5) (zigbee) {ZigBee};
     \node[draw] at (2.0,1.8) (ble) {BLE};
     \node[draw] at (3,5) (wifi) {WiFi};
-    \node[draw,dotted,fit=(bluetooth) (zigbee) (ble) (wifi), label=above:{Short-range}] {};
+    \node[draw,dotted,fit=(bluetooth) (zigbee) (ble), label=above:{Short-range}] {};
 
     \node[draw] at (6.8,5) (lte) {LTE};
     \node[draw] at (5.8,6) (5g) {5G};

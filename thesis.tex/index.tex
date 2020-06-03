@@ -268,7 +268,7 @@
 }
 
 
-\title{Reliable and energy efficient LoRa multi-hop networks with TSCH}
+\title{Enabling IPv6 multi-hop networks with Time Slotted Channel Hopping and long range LoRA radios}
 \author{Perale Thomas}
 \faculty{Science and Bio-Engineering Sciences}
 \promotors{Promotors: Prof. Dr. Ir. Kris Steenhaut, Prof. Dr. Eliza
@@ -304,25 +304,25 @@ also in the event that some conclusions are taken on board.
 
 \section*{Abstract}
 
-LoRa and its inherent MAC protocol LoRaWAN is known to scale badly and suffer
-from range issue.
-Research has shown that in large LoRaWAN networks collisions often occur which
-makes it impossible to achieve a complete transmission.
-Also gateways are not always in the motes range.
-One of the solution to solve these problem would be to use a multi-hop routing
-protocol with LoRa to increase the realiability and range of the network.
-Because little research has been done on multi-hop application in LoRa,
-this thesis has for objective to adapt 6TiSCH network stack to work with LoRa 
-and thus bringing realiable and low power multi-hop communication for LoRa.
+% LoRa and its inherent MAC protocol LoRaWAN is known to scale badly and suffer
+% from range issue.
+% Research has shown that in large LoRaWAN networks collisions often occur which
+% makes it impossible to achieve a complete transmission.
+% Also gateways are not always in the motes range.
+% One of the solution to solve these problems would be to use a multi-hop routing
+% protocol with LoRa to increase the realiability and range of the network.
+% Because little research has been done on LoRa multi-hop network,
+% this thesis has for objective to adapt 6TiSCH network stack to work with LoRa 
+% and thus bringing realiable and low power multi-hop communication for LoRa.
 
-In order to do that, I will implement a radio driver for the RN2483 LoRa radio
-module and adapt the current implementation of TSCH in Contiki to work with
-this specific radio module.
-Based on my work I will show my implementation can correctly work with standard
-routing protocols like RPL or Orchestra.
+% In order to do that, I will implement a radio driver for the RN2483 LoRa radio
+% module and adapt the current implementation of TSCH in Contiki to work with
+% this specific radio module.
+% Based on my work I will show my implementation can correctly work with standard
+% routing protocols like RPL or Orchestra.
 
-The result shows it's possible to have a reliable multi-hop network using LoRa 
-and TSCH but will still require more testing to proove its energy efficiency.
+% The result shows it's possible to have a reliable multi-hop network using LoRa 
+% and TSCH but will still require more testing to proove its energy efficiency.
 
 \newpage
 
@@ -337,8 +337,8 @@ I would also like to thanks my promotors Prof. Dr. Ir. Kris Steehaut and Prof.
 Dr. Eliza Gonzalez Boix that provided me with this great subject and helped me 
 during the year.
 
-I would also like to thanks the Urlab hackerspace that sparked my interest for
-embedded devices and low power communication protocols over the years.
+% I would also like to thanks the Urlab hackerspace that sparked my interest for
+% embedded devices and low power communication protocols over the years.
 
 \newpage
 
@@ -366,13 +366,11 @@ embedded devices and low power communication protocols over the years.
 
 \input{thesis.tex/chapters/tsch/index.tex}
 
-\chapter{Conclusion and further work}
+\chapter{Conclusion and further work\label{section:conclusion}}
 
 The goal of the thesis was to adapt TSCH to work with LoRa to achieve power
 efficient and reliable multihop networking with LoRa on Contiki OS with the 
 RN2483 LoRa module.
-% My work was built upon the previous work of student conducted in VUB but
-% didn't achieved a fully working TSCH protocol working with LoRa.
 
 \paragraph{}
 
@@ -385,13 +383,14 @@ rest of the applications.
 
 The second part should have been on paper limited to the adaptations of the
 timing variable of the TSCH protocol to work with LoRa.
-In the end, the long delay in LoRa communication turned out to 
-not work out of the box and the second part became a
-bug hunt with the TSCH implementation detailed in~\ref{section:timingparameters}.
-The parameters I used with TSCH were more used to achieve a working version of
-the protocol than to achieve an optimal version of TSCH with LoRa.
-I finally managed to make LoRa work with TSCH in~\ref{section:tschtesting} by
-demonstrating my work integrate into the 6TiSCH networking stack.
+In the end, the long delay induced by LoRa communication turned out to 
+not work seamlessly with Contiki. 
+The second part of my work became a bug hunt with the TSCH implementation 
+I detailed in section~\ref{section:timingparameters}.
+The TSCH parameters I used were used as a mean to achieve a working version of
+the protocol rather than getting the optimal version of TSCH with LoRa.
+I finally managed to make LoRa work with TSCH in section~\ref{section:tschtesting} by
+demonstrating my work integrates into the 6TiSCH networking stack.
 I addressed my concerns about the reliability of my implementation
 because of the drift issues caused by the hardware in~\ref{section:driftissues}.
 
@@ -403,22 +402,22 @@ I responded to this statement in~\ref{section:energyconsumption} about how
 achieving a low power network with TSCH and this module is impossible because
 of the design of the module.
 
-The good news is I'm confident that achieving low power multi-hop network with 
+The good news is I'm confident that achieving a low power multi-hop network with 
 a radio module like the SX1272 is possible.
 This thesis explained what it takes to adapt TSCH for a new LoRa radio
 module and the possible re-implementation of this project on a new radio module 
 will then be facilitated. 
 
-This would create the stable testing device that would allow to measure meaningful 
+This would create a stable testing device that would allow us to measure meaningful 
 data for the analysis of power consumption and reliability of the network.
 The following tasks could be conducted
 
 \begin{itemize}
   \item Determining the optimal TSCH parameters for LoRa. 
   \item Finding the optimal period between EB packets to keep a balance between
-    a low power usage and maintaining synchronization.
-  \item Compare how it perform in regards of LoRaWAN. Is the TSCH overhead
-    worth it.
+    low power usage and maintaining synchronization.
+  \item Compare how it performs in regards to LoRaWAN. Is the TSCH overhead
+    worth it ?
   \item The network capacity and transmission delay.
 \end{itemize}
 
@@ -426,7 +425,7 @@ The following tasks could be conducted
 
 The ideal implementation would adapt its SF depending on the distance
 between two hops.
-In my implementation even though the different SF are supported, it operates
+In my implementation even though the different SF are supported, only operates
 on a single SF at the time. 
 We miss a lot of LoRa features with the single SF, supporting multiple SF at
 the same time would increase the network throughput and increase the
@@ -437,13 +436,14 @@ work on the subject.
 
 \paragraph{}
 
-Related work reinvented the wheel by implementing their multi-hop protocol
-on top of LoRa.
-Using TSCH, an already well studied MAC protocol, and its ability to
-communicates over multiple channels with time-slots for better power usage 
-represents a step forward in LoRa multi-hop network research.
-Reliable implementation, deeper tests, as well as using every SF to use the full 
-LoRa capacity is the future challenge of the subject.
+Related work reinvented the wheel by implementing their multi-hop solution
+using their own MAC protocol on top of LoRa.
+Using TSCH, an already well studied MAC protocol,
+and prooving it can work with the existing multi-hop routing solutions,
+represents a step forward in the LoRa multi-hop networking research.
+Reliable implementation, performance, and energy consumption tests, as well as 
+using every SF to use the full LoRa capacity is the future challenge of the
+subject.
 
 \newpage
 

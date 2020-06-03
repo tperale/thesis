@@ -4,7 +4,7 @@ With new companies jumping into the Internet of Things (IoT),
 major \emph{IT actors} investing in the development of new
 products~\cite{fortuneiot2019}, and telecoms operator building infrastructure 
 for the growing demand\footnote{\url{https://www.proximus.be/en/id_cl_iot/companies-and-public-sector/it-services/iot/internet-of-things.html}}.
-It is fair to say that IoT caught the attention of many people and researcher
+It is fair to say that IoT caught the attention of many people and researchers
 in the last years.
 IoT technology allows the gathering of data and the control of actuators via
 the Internet without any human interaction.
@@ -30,7 +30,7 @@ wide variety of sectors like \emph{smart farming}, \emph{smart cars},
 
 All these applications have in common that they rely on devices that
 communicate wirelessly.
-To suits this new demand, new communication protocol were created.
+To suits this new demand, new communication protocols were created.
 They can be classified by three different characteristics
 
 \begin{itemize}
@@ -126,7 +126,7 @@ than battery-operated motes.
 That is the case for pipelines and tunnels~\cite{Abrardo_2019},
 we would prefer to only install motes running on batteries as in linear
 topology gateways are not of any use.
-They can also be a single point of failure of the network, when a single
+They can also be a single point of failure of the network when a single
 gateway covers a portion of the network. 
 
 \input{thesis.tex/chapters/1/fig/coverage.tex}
@@ -149,29 +149,30 @@ conditions.
 
 Work to create a multi-hop routing protocol with LoRa has already been
 done~\cite{8115756, DIAS2018424, 8856256, Abrardo_2019, duong2018}, 
-but two main problem stand out from these similar work.
+but two main problems stand out from these similar work.
 
-The first one is that some of them did not took into account the energy
+The first one is that some of them did not take into account energy
 consumption by using always-on modes. 
 LPWAN were designed to be used with battery operated motes that spend most of
-his time sleeping and always-on motes goes against that.
+his time sleeping and always-on motes go against that.
 A solution to this first matter would be to use time-slotted channel access.
-Synchronized nodes would know when to wake-up to transmit of receive a packet.
+Synchronized nodes would know when to wake-up to transmit or receive a packet.
 This will put nodes in sleeping mode the rest of the time and avoid collisions
 on transmission between nodes.
 
 The second issue is most protocols only use a single channel. 
-This issue obviously reduces network capacity and increases the risk of 
+This issue reduces network capacity and increases the risk of 
 interference.
 
 The \emph{IEEE 802.15.4e} standard developed Time-Slotted Channel Hopping
 (TSCH), a MAC protocol to use with 802.15.4 compliant physical layer.
 Using TSCH could actually solve the two previous issues I just addressed.
-TSCH use channel hopping, making it resilient to external interference and
+TSCH uses channel hopping, making it resilient to external interference and
 channel jamming. 
 Also, TSCH is based around the concept of synchronized time slots between the
 nodes.
-This allow low power network, reliable and collision free high density network,
+This allows low power networks, reliable and collision-free high-density
+networks,
 and deterministic delays.
 
 \paragraph{}
