@@ -1,6 +1,6 @@
 \chapter{Context\label{section:context}}
 
-I will introduce in this chapter all the concepts needed for the understanding
+In this chapter, I will introduce all the concepts needed for the understanding
 of the experiment I conducted in this thesis.
 I will also give an overview of works related to the topic.
 
@@ -20,7 +20,7 @@ The characteristics of an LPWAN are the following.
   \item[Limited data throughput]
 \end{description}
 
-LPWAN includes LoRa but it's not the only option available. 
+LPWAN includes LoRa but it is not the only option available. 
 Sigfox, NB-IoT are other well known LPWAN options.
 
 \paragraph{IPv6 over Low-Power Wireless Personal Area Networks (6LoWPAN)}
@@ -83,8 +83,8 @@ interference)~\cite{semtech:modulationbasics}.
 
 \subsection{Physical Layer Parameters (PHY)}
 
-The physical layer parameters are what constitute LoRa. 
-Understanding those parameters are important to understand how to use the
+The physical layer parameters are what constitutes LoRa. 
+Understanding those parameters is important to understand how to use the
 protocol.
 Chapters~\ref{section:radio}~and~\ref{section:tsch} will use these concepts.
 This section will cover the major parameters we can tweak in LoRa.
@@ -153,7 +153,7 @@ Increasing the BW increases the symbols rate, and thus, the data rate.
 \end{gather}
 
 According to~\cite{semtech:modulationbasics}, increasing the
-bandwidth increases the noise floor (\ref{eq:noisefloorbw})which reduce the
+bandwidth increases the noise floor (\ref{eq:noisefloorbw}) which reduces the
 range of transmission.
 
 \begin{equation}
@@ -185,7 +185,7 @@ transmission, to help with data restoration in case of bit errors.
 Increasing the coding rate will decrease the actual data rate. 
 It introduces more overhead but is also more reliable.
 
-The next table~\ref{table:cr} shows the CR parameter available in LoRa.
+Table~\ref{table:cr} shows the CR parameters available in LoRa.
 
 \begin{table}[h!]
 \centering
@@ -202,7 +202,7 @@ CR & Proportion ($\frac{4}{4 + CR}$) \\ \midrule
 
 \subsubsection{Data Rate}
 
-The following equation~\ref{eq:bitrate} calculates the bit rate depending on the
+Equation~\ref{eq:bitrate} calculates the bit rate depending on the
 parameters I introduced in the previous sections\cite{semtech:modulationbasics}.
 
 \begin{equation}
@@ -393,7 +393,7 @@ Time slots should be long enough for the longest frame size to be sent
 between two nodes, together with an acknowledgement~\cite{rfc7554}. 
 Every time slot in a TSCH network has the same duration.
 
-For each time slot operation, a schedule orchestrates what each
+For each time slot, a schedule orchestrates what each
 node of the network will use his time-slot for.
 
 \begin{description}
@@ -413,7 +413,6 @@ Each transmitting or receiving time slot is made of the following parts.
 \paragraph{}
 
 A set of time slots that repeat over time is known as a slotframe.
-A slotframe is made of time slots and empty slots.
 The slotframe length has a direct impact on network capacity.
 Figure~\ref{fig:timeslots} represents how time slots and slotframes are
 organized together. 
@@ -423,7 +422,7 @@ organized together.
 \subsection{Absolute Slot Number (ASN)}
 
 The absolute slot number is a shared counter between all the devices that
-define the number of time slots elapsed since the start of the
+defines the number of time slots elapsed since the start of the
 network (see Fig~\ref{fig:asn}).
 ASN increases after each time slot and is calculated with \ref{eq:asn} where $k$
 is the slotframe offset.
@@ -473,7 +472,7 @@ on the ASN.
 \subsection{Scheduling}
 
 The TSCH schedule tells each node what to do during a time slot and defines the
-following parameters for each time slot cell.
+following parameters for each time slot.
 
 \begin{itemize}
   \item Receive or transmit.
@@ -483,10 +482,10 @@ following parameters for each time slot cell.
 
 To ensure the execution of the same slots, each transmission is an opportunity 
 for the neighbor to resynchronize their clocks.
-Synchronization is important to mitigate each node internal clock drift.
+Synchronization is important to mitigate each node's internal clock drift.
 
 Time source nodes send Enhanced Beacon (EB) packets to synchronize the receiving
-nodes of the network. When nodes don't resynchronize for a long period
+nodes of the network. When nodes do not resynchronize for a long period
 a Keep-Alive (KA) is sent and used to adjust the drift at synchronization.
 
 Figure~\ref{fig:sync} represents the clock drift that can occur between two
@@ -503,10 +502,10 @@ the data and then adjusts its time slot length to finish earlier.
 \section{Routing}
 
 Because I will use two different routing protocols in
-Chapter~\ref{section:tsch} to prove my implementation worked, I will introduce
-in this section RPL and Orchestra.
+Chapter~\ref{section:tsch} to demonstrate that my implementation works, I will 
+introduce in this section RPL and Orchestra.
 This section is not meant to be an in-depth explanation of the protocols.
-Giving such details would be out of the scope of my work as I don't modify any
+Giving such details would be out of the scope of my work as I do not modify any
 of the components of those protocols.
 
 \subsection{Routing Protocol for Low-Power and Lossy Networks (RPL)}
@@ -516,10 +515,10 @@ RPL is designed to work on networks with high data loss rates, low data rates, a
 instability~\cite{rfc6550}.
 
 The routing in RPL is based on Destination Oriented Directed Acyclic Graphs (DODAG).
-All the nodes of the DODAG are routed toward the \emph{root} node. 
+All the nodes of the DODAG route toward the \emph{root} node. 
 If the root node is connected to the internet it can be used as a \emph{border
 router}.
-RPL give each node a rank based on the distance from the root node. 
+RPL gives each node a rank based on the distance from the root node. 
 The distance is calculated with an \emph{objective function}.
 The routing between nodes in RPL is based on sending packets up to a smaller 
 ranked parent until it reaches a common ancestor and then sending the packet down
@@ -528,33 +527,35 @@ to the destination~\cite{duquennoy2015}.
 \subsection{Orchestra}
 
 Orchestra is a scheduler that works on top of TSCH+RPL
-networks where each node autonomously compute their schedules without the
-need of a scheduler~\cite{duquennoy2015}.
-Each node maintains their schedule and keep track of their neighbor solely
+networks where each node autonomously computes its schedule without the
+need of a centralised scheduler~\cite{duquennoy2015}.
+Each node maintains its schedule and keeps track of its neighbors solely
 on the network information from RPL.
-Orchestra maintain different slotframes for these different network operations
+Orchestra maintains different slotframes for these different network operations
 
 \begin{itemize}
   \item Application data
-  \item RPL traffic
+  \item RPL control traffic
   \item TSCH beacon
 \end{itemize}
 
-By using mutually prime slotframe length to avoid overlap and computing time
-and channel offset using the sender and receiver identification as parameters,
-Orchestra achieve a very low level of collisions~\cite{duquennoy2015}.
+Using mutually prime slotframe lengths avoids overlap between active slots in
+the slotframes. 
+Also, by computing time and channel offset using the sender and receiver
+identification as parameters, Orchestra can achieve a very low level of
+collisions~\cite{duquennoy2015}.
 
 \section{Contiki OS}
 
 Contiki is a free and open-source Real-Time operating system (OS) specifically made
 for IoT applications. Contiki ships with a low-power IPv6 communication stack
 and a variety of routing and MAC protocols making the OS particularly well
-suited for Wireless Sensor Networks (WSN).
+suited for Wireless Sensor Networks (WSNs).
 
 Contiki uses protothreads, a programming abstraction which Contiki is
 built around.
 They allow developers to write event-driven programs with little memory overhead and
-claims to reduce the complexity of embedded programs that used to be written 
+reduce the complexity of embedded programs that used to be written 
 like state machines~\cite{10.1145/1182807.1182811}.
 
 The Contiki OS project has been unmaintained since 2017 but its

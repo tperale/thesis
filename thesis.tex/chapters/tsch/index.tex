@@ -190,7 +190,7 @@ could also be implemented.
   \item 868.5 MHz, 125 kHz BW
 \end{itemize}
 
-Using only three different channels also reduce the time for a node to join the 
+Using only three different channels also reduces the time for a node to join the 
 network, making the testing faster.
 
 \subsection{Packet Duration\label{section:transmissiontime}}
@@ -832,23 +832,23 @@ send a message between those two nodes.
 Sending a UDP message to $:2dac$ worked seamlessly by passing by the
 intermediate node $:2dbc$.
 This shows the TSCH adaptation for LoRa can work with a scheduler specifically
-made for TSCH and RPL proving the characteristics of TSCH were not lost when
+made for TSCH and RPL prooving the characteristics of TSCH were not lost when
 adapting the protocol.
 
 \section{Energy consumption\label{section:energyconsumption}}
 
 % Because of the missing functionality of the RN2483 module which allows to
 % receive a signal at the start of the reception.
-Because of the design of the RN2483 which gives priority to the ease of use.
-A real-world measurement of the energy consumption is not relevant.
+Because of the design of the RN2483 which gives priority to the ease of use,
+a real-world measurement of the energy consumption is not relevant.
 The module is wasting energy in two places.
 
 \begin{itemize}
   \item The slow UART communication between the platform and the module. For
     instance a max payload transmission to the module takes $86 ms$.  
-    That's $86 ms$ of wasted energy with the module powered on. The same goes
+    That is $86 ms$ of wasted energy with the module powered on. The same goes
     for every other command used by my driver.
-  \item Because we can't receive feedback from the module when it detects a
+  \item Because we can not receive feedback from the module when it detects a
     preamble each timeslot must wait for the maximum transmission time to be
     sure there is no ongoing transmission during the timeslot.
 \end{itemize}
@@ -858,10 +858,11 @@ The module is wasting energy in two places.
 % that could be avoided.
 
 The first issue could be solved with a module that uses a faster communication
-protocol like SPI and not focuses on human-readable command format.
+protocol like SPI and that does not focus on human-readable command format.
 The second can be solved by using a module that saves the timestamp at the start
-of the reception or acknowledge it with one of its pins.
+of the reception or trigger an interruption on reception.
 
 Because I knew I would not be able to measure meaningful data from my
-implementation, I did not take time to experiment with the sleep feature of the
-module and did not proceed to do further energy consumption analysis.
+implementation concerning energy consumption, I did not take time to experiment 
+with the sleep feature of the module and did not proceed to do further energy 
+consumption analysis.

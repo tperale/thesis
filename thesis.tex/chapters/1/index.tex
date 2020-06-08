@@ -3,8 +3,9 @@
 With new companies jumping into the Internet of Things (IoT), 
 major \emph{IT actors} investing in the development of new
 products~\cite{fortuneiot2019}, and telecoms operator building infrastructure 
-for the growing demand\footnote{\url{https://www.proximus.be/en/id_cl_iot/companies-and-public-sector/it-services/iot/internet-of-things.html}}.
-It is fair to say that IoT caught the attention of many people and researchers
+for the growing
+demand\footnote{\url{https://www.proximus.be/en/id_cl_iot/companies-and-public-sector/it-services/iot/internet-of-things.html}},
+it is fair to say that IoT caught the attention of many people and researchers
 in the last years.
 IoT technology allows the gathering of data and the control of actuators via
 the Internet without any human interaction.
@@ -30,7 +31,7 @@ wide variety of sectors like \emph{smart farming}, \emph{smart cars},
 
 All these applications have in common that they rely on devices that
 communicate wirelessly.
-To suits this new demand, new communication protocols were created.
+To suit this new demand, new communication protocols were created.
 They can be classified by three different characteristics
 
 \begin{itemize}
@@ -58,9 +59,9 @@ presents it in three main categories.
 
 This work focuses only on \emph{LoRa}, a proprietary \emph{chirp spread spectrum}
 modulation technique owned by \emph{Semtech}, operating in the sub-GHz
-unlicensed \emph{ISM} band\footnote{It's worth noting that Semtech also developed a version of LoRa that
-operates in the 2.4GHz band but won't be covered in this text. When I will talk
-about LoRa I will only talk about the version that operates on the ISM band.}. 
+unlicensed \emph{ISM} band\footnote{It is worth noting that Semtech also developed a version of LoRa that
+operates in the 2.4GHz band but will not be covered in this text. When I will talk
+about LoRa I will only talk about the version that operates on the sub-GHz ISM band.}. 
 I will cover LoRa in more detail in Section~\ref{section:lora}.
 The main characteristics of \emph{LoRa} are its low power transmission and the
 fact that it can trade throughput for range by fine-tuning the physical layer
@@ -116,43 +117,44 @@ Environmental factors like temperature,
 humidity~\cite{evaluation_of_the_reliability_of_lora}, and the topology of the
 terrain~\cite{lorajambalaya}, influence the link quality.
 All these factors make network coverage typically not uniform 
-as in Fig~\ref{fig:coverage}.
+as shown in Fig~\ref{fig:coverage}.
 Motes on the border of the gateway coverage area may struggle to
 achieve a full transmission. 
 
 Gateways could restrain the deployment of LoRa networks.
 They might not be deployed everywhere as they require more demanding infrastructure 
 than battery-operated motes.
-That is the case for pipelines and tunnels~\cite{Abrardo_2019},
-we would prefer to only install motes running on batteries as in linear
-topology gateways are not of any use.
+That is the case for the monitoring of pipelines and tunnels~\cite{Abrardo_2019},
+for which one could prefer to only install motes running on batteries 
+which organise in a linear topology and can work without the help of gateways.
 They can also be a single point of failure of the network when a single
 gateway covers a portion of the network. 
 
 \input{thesis.tex/chapters/1/fig/coverage.tex}
 
-Multi-hop networks, as represented in Figure~\ref{fig:meshtopology}, can be a solution to
+Multi-hop networks, as represented in Fig~\ref{fig:meshtopology}, can be a solution to
 the LoRaWAN scaling issues~\cite{8115756}.
 Participants of the network do not directly send message to gateways, but
 instead, pass messages to their neighboring nodes.
-Using a multi-hop routing protocol increases the reliability, the range
-and can adapt to topology changes in the network (because of moving or failing nodes).
+The use of a multi-hop routing protocol increases the reliability, the coverage
+and allows to adapt to changes in the network (because of moving or failing nodes).
 
-Multi-hop routing protocols are de facto a strong candidate for large area monitoring 
+Multi-hop routing protocols are de facto strongs candidates for filling in the
+routing tables for nodes deployed for large area monitoring 
 applications where gateways may be hard and costly to deploy and where blind
 spots often arise.
 This solution can decrease the energy consumption of bordering nodes that
-usually struggle to achieve successful communication on non-optimal
+usually struggle to achieve successful communication in non-optimal
 conditions.
 
 \paragraph{}
 
 Work to create a multi-hop routing protocol with LoRa has already been
 done~\cite{8115756, DIAS2018424, 8856256, Abrardo_2019, duong2018}, 
-but two main problems stand out from these similar work.
+but two main problems stand out from this similar work.
 
-The first one is that some of them did not take into account energy
-consumption by using always-on modes. 
+The first one is that most studies consider that the motes are always-on and
+neglect the problem of probable energy depletion. 
 LPWAN were designed to be used with battery operated motes that spend most of
 his time sleeping and always-on motes go against that.
 A solution to this first matter would be to use time-slotted channel access.
@@ -160,7 +162,7 @@ Synchronized nodes would know when to wake-up to transmit or receive a packet.
 This will put nodes in sleeping mode the rest of the time and avoid collisions
 on transmission between nodes.
 
-The second issue is most protocols only use a single channel. 
+The second issue is that most protocols only use a single channel. 
 This issue reduces network capacity and increases the risk of 
 interference.
 
@@ -181,8 +183,8 @@ This thesis aims to adapt the TSCH MAC protocol for LoRa,
 thus bringing a reliable, long-range and low power IPv6 multi-hop
 solution to the LoRa ecosystem.
 
-Work to adapt TSCH for LoRa in~\cite{8847137} and~\cite{njomgang_2018}, has
-already been done in the previous year at \emph{VUB}.
+Progress toward adapting TSCH for LoRa in~\cite{8847137} and~\cite{njomgang_2018}, 
+has already been conducted in the previous year at \emph{VUB}.
 This thesis builds on the combined efforts of the previous
 years to adapt \emph{TSCH} for the \emph{Zolertia RE-Mote} and the
 \emph{RN2483} LoRa shield.
