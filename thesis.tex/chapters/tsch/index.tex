@@ -866,3 +866,29 @@ Because I knew I would not be able to measure meaningful data from my
 implementation concerning energy consumption, I did not take time to experiment 
 with the sleep feature of the module and did not proceed to do further energy 
 consumption analysis.
+
+\section{Conclusion}
+
+This chapter covered the main elements to bring TSCH for the LoRa communication
+protocol.
+The concept and problems I have stumbled upon during my implementations for the
+RN2483 can be used for any LoRa radio driver implementation.
+The two main elements to take into account when porting TSCH are the TSCH timing
+parameters and the driver's parameters.
+They were both covered in their own section where I detailed the steps I went
+through giving the reader the key to understand what these parameters do.
+I demonstrated that channel hopping is working by jamming one of
+the channel.
+In another example, I tested the multi-hop routing capability of my
+implementation by running respectively RPL and Orchestra on top of TSCH and
+LoRa.
+
+\paragraph{}
+
+I could not achieve optimal timing parameters and did not detailed the ones
+I used because of the clock drift I encountered in my
+implementation.
+I attributed this issue to the lack of precise timestamp when the reception of
+a communication start.
+Also, because of the inherent issues of the RN2483 module, I did not conduct
+a power analysis on my work.

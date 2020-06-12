@@ -1,7 +1,7 @@
 \chapter{Introduction}
 
 With new companies jumping into the Internet of Things (IoT), 
-major \emph{IT actors} investing in the development of new
+major IT actors investing in the development of new
 products~\cite{fortuneiot2019}, and telecoms operator building infrastructure 
 for the growing
 demand\footnote{\url{https://www.proximus.be/en/id_cl_iot/companies-and-public-sector/it-services/iot/internet-of-things.html}},
@@ -12,20 +12,18 @@ the Internet without any human interaction.
 The field has been developed during the last decade and has maintained a
 consistent growth since.
 Business analysts agree that we can expect to reach at least 40 billion
-installed \emph{IoT} devices by 2027~\cite{businessinsider2020}.
-We are already familiar with the traditional \emph{IoT} products
+installed IoT devices by 2027~\cite{businessinsider2020}.
+We are already familiar with the traditional IoT products
 we use in our households. Those products allow us to connect our light bulbs,
 fridge, and washing machine to the Internet.
-Meanwhile, we have less knowledge of the industrial usage of \emph{IoT}, also
-known as industrial IoT (IIoT). \emph{IIoT} is one of the fastest-growing
-segments of the market.
+Meanwhile, the industrial usage of IoT, also known as industrial IoT (IIoT) is
+one of the fastest-growing segments of the market.
 More and more industries are adopting IIoT to consolidate their productions
-with \emph{real-time monitoring}, to organize predictive maintenance on their
-assets and products to connect their supply chains, etc \ldots
-
+with real-time monitoring, to organize predictive maintenance on their
+assets and products to connect their supply chains, etc.
 All of this is enabled with the help of sensor networks, and actuators, in a
-wide variety of sectors like \emph{smart farming}, \emph{smart cars},
-\emph{smart cities}, \emph{energy management}, \ldots
+wide variety of sectors like smart farming, smart cars,
+smart cities, and energy management.
 
 \paragraph{}
 
@@ -35,7 +33,7 @@ To suit this new demand, new communication protocols were created.
 They can be classified by three different characteristics
 
 \begin{itemize}
-    \item Long or Short \emph{range}
+    \item Long or Short \emph{communication range}
     \item High or low \emph{data-rate}
     \item Low or high \emph{power usage} 
 \end{itemize}
@@ -64,11 +62,11 @@ operates in the 2.4GHz band but will not be covered in this text. When I will ta
 about LoRa I will only talk about the version that operates on the sub-GHz ISM band.}. 
 I will cover LoRa in more detail in Section~\ref{section:lora}.
 The main characteristics of \emph{LoRa} are its low power transmission and the
-fact that it can trade throughput for range by fine-tuning the physical layer
+fact that it can trade data rate for range by fine-tuning the physical layer
 (PHY) settings.
 The long-range capabilities of the protocol caught the attention of
 many people. 
-Some have succeeded in obtaining a record transmission distance of over 700 km with
+Hobbyists have succeeded in obtaining a record transmission distance of over 700 km with
 a direct line of sight between the receiver and the
 transmitter~\cite{network_2017}.
 However, this case is not a real-world example. The range in urban areas is
@@ -88,13 +86,18 @@ deployable in contrast to other LPWAN like \emph{Sigfox} or \emph{NB-IoT}.
 
 \input{thesis.tex/chapters/1/fig/topology.tex}
 
-The issue with \emph{LoRaWAN}, as studied 
-in~\cite{8030482}~\cite{10.1145/2988287.2989163} is its inability to scale. 
 
+\section{Problem Statement}
+
+The issue with \emph{LoRaWAN}, as studied 
+in~\cite{8030482}~\cite{10.1145/2988287.2989163} is its inability to scale
+because of the addition of the following factors.
+
+The first factor is channel sensing.
 Channel sensing is impossible in LoRa because \emph{Channel Activity Detection}
 (CAD) only detects the packet preamble. % TODO reference needed
 This leads to collision when motes transmit at the same time.
-On collision, the transmission has to be re-done using a back-off strategy till the
+On collision, packet is retransmitted using a back-off strategy till the
 message has been correctly received or the number of trials has reached its
 maximum.
 This implies a higher energy consumption for the motes and more radio 
@@ -104,15 +107,15 @@ increasingly significant with little to no packets received by gateways.
 
 % TODO Figure from the paper about received packets ?
 
-The \emph{duty-cycle} regulations in place for the \emph{ISM} bands on every
+Second, the European ISM band has set a duty-cycle of \emph{1\%} meaning that 
+each node and gateway can transmit \emph{36 sec/hour} maximum. 
+The duty-cycle regulations in place for the ISM bands on every
 transmitting device (motes and gateways) is also a limiting factor 
-for \emph{LoRaWAN} (\cite{8030482}).
-The European ISM band has set a duty-cycle of \emph{1\%} meaning that each node 
-and gateway can transmit \emph{36 sec/hour} maximum. 
+for LoRaWAN (\cite{8030482}).
 
 % TODO {Add some reference to ISM regulations} 
 
-Link quality also influences LoRaWAN's efficiency. 
+Finally, Link quality also influences LoRaWAN's efficiency. 
 Environmental factors like temperature,
 humidity~\cite{evaluation_of_the_reliability_of_lora}, and the topology of the
 terrain~\cite{lorajambalaya}, influence the link quality.
@@ -121,7 +124,7 @@ as shown in Fig~\ref{fig:coverage}.
 Motes on the border of the gateway coverage area may struggle to
 achieve a full transmission. 
 
-Gateways could restrain the deployment of LoRa networks.
+Also, gateways could restrain the deployment of LoRa networks.
 They might not be deployed everywhere as they require more demanding infrastructure 
 than battery-operated motes.
 That is the case for the monitoring of pipelines and tunnels~\cite{Abrardo_2019},
@@ -143,8 +146,8 @@ Multi-hop routing protocols are de facto strongs candidates for filling in the
 routing tables for nodes deployed for large area monitoring 
 applications where gateways may be hard and costly to deploy and where blind
 spots often arise.
-This solution can decrease the energy consumption of bordering nodes that
-usually struggle to achieve successful communication in non-optimal
+This solution can potentially decrease the energy consumption of bordering 
+nodes that usually struggle to achieve successful communication in non-optimal
 conditions.
 
 \paragraph{}
@@ -153,7 +156,7 @@ Work to create a multi-hop routing protocol with LoRa has already been
 done~\cite{8115756, DIAS2018424, 8856256, Abrardo_2019, duong2018}, 
 but two main problems stand out from this similar work.
 
-The first one is that most studies consider that the motes are always-on and
+First, most studies consider that the motes are always-on and
 neglect the problem of probable energy depletion. 
 LPWAN were designed to be used with battery operated motes that spend most of
 his time sleeping and always-on motes go against that.
@@ -162,34 +165,56 @@ Synchronized nodes would know when to wake-up to transmit or receive a packet.
 This will put nodes in sleeping mode the rest of the time and avoid collisions
 on transmission between nodes.
 
-The second issue is that most protocols only use a single channel. 
-This issue reduces network capacity and increases the risk of 
+Second, these protocols only use a single channel. 
+This reduces network capacity and increases the risk of 
 interference.
 
+\section{Approach}
+
+Multi-hop routing solution already exists and can work on top of LoRa.
+But until now LoRa lacked of a reliable and power efficient MAC protocol 
+to use in conjunction of routing protocols like RPL or Orchestra.
+
 The \emph{IEEE 802.15.4e} standard developed Time-Slotted Channel Hopping
-(TSCH), a MAC protocol to use with 802.15.4 compliant physical layer.
-Using TSCH could actually solve the two previous issues I just addressed.
-TSCH uses channel hopping, making it resilient to external interference and
-channel jamming. 
-Also, TSCH is based around the concept of synchronized time slots between the
-nodes.
-This allows low power networks, reliable and collision-free high-density
-networks,
-and deterministic delays.
+(TSCH) MAC protocol, but no implementation exist for LoRa.
+Using TSCH could actually solve the two previous issues aforementioned.
+First, TSCH uses channel hopping, making it resilient to external interference and
+channel jamming making it reliable.
+Second, TSCH uses synchronized time slots between the nodes to achieve low
+power communication by diminishing the time the nodes spends with their radio
+on.
+Adapting the TSCH protocol for LoRa would allows low power, 
+reliable and collision-free high-density networks, running over standards
+multi-hop routing protocols.
 
 \paragraph{}
 
-This thesis aims to adapt the TSCH MAC protocol for LoRa,
-thus bringing a reliable, long-range and low power IPv6 multi-hop
+This thesis aims to adapt the TSCH MAC protocol for LoRa.
+thus bringing a reliable, long-range, and low power IPv6 multi-hop
 solution to the LoRa ecosystem.
+
+In order to achieve this I will tweak the current TSCH implementation of
+the Contiki operating system (OS) (originally developed for 802.15.4 compliant radio protocol)
+to work with the longer delay induced by a low data-rate protocol like LoRa.
+I will also implement a radio driver for the RN2483 in Contiki to have a
+reliable LoRa radio driver working on the platform that I can tweak for my
+needs.
+In the end, I will have a fully working modified version of TSCH running on a 
+\emph{Zolertia RE-Mote} development board.
+
+Testing my implementation in conjunction of RPL and Orchestra will successfully
+achieve multi-hop routing and thus proving longer ranger can be achieved with
+LoRa.
+And a test ran over a jammed radio channel will show the reliability of 
+TSCH with LoRa.
+
+\paragraph{}
 
 Progress toward adapting TSCH for LoRa in~\cite{8847137} and~\cite{njomgang_2018}, 
 has already been conducted in the previous year at \emph{VUB}.
-This thesis builds on the combined efforts of the previous
-years to adapt \emph{TSCH} for the \emph{Zolertia RE-Mote} and the
-\emph{RN2483} LoRa shield.
+This thesis builds on the combined efforts of their previous work.
 
-\paragraph{}
+\section{Thesis Outline}
 
 The next chapter will give the background information and context needed to
 understand the building blocks to achieve my end goal.

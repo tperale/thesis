@@ -1,7 +1,5 @@
 \chapter{Radio Driver for Zolertia with the RN2483 module\label{section:radio}}
 
-% Most of the LoRaWAN features were not implemented or tested since this was out of the scope of this project.
-
 The \emph{Zolertia RE-Mote REV-B} platform does not support \emph{LoRa} out of
 the box. This chapter covers the implementation of a radio driver on
 \emph{Contiki-NG} for the \emph{RN2483}, a LoRa module from Microchip,
@@ -305,9 +303,6 @@ To verify the implementation of the radio driver two examples are available.
     is correctly working with the upper layers of the network stack.
 \end{itemize}
 
-% For each Contiki project, \emph{Contiki's Network Protocol stack}, also known
-% as \lstinline{NETSTACK}, defines the different OSI layers implementations we 
-% want to use in our project (Fig~\ref{fig:netstack}).
 Each project is bundled with a \lstinline{project-conf.h}
 configuration file in which we can define the parameters of our project. 
 To set my LoRa driver as the physical layer implementation we must add the
@@ -364,3 +359,24 @@ example folder.
 \end{itemize}
 
 \input{thesis.tex/chapters/driver/fig/pingpongsequence.tex}
+
+\section{Conclusion}
+
+This chapter detailed the RN2483 driver implementation I made for Contiki OS.
+I went through the steps to write a new radio driver in Contiki but also
+detailed the implementation architecture for future use of the driver.
+I included the explanation of a shell I made to directly interact with the
+RN2483 for testing purposes.
+I explained how I overcome the design issue of Contiki to achieve
+synchronized UART communication.
+And finally, I used a simple example to prove the driver can work seamlessly
+with the other layers of the network stack.
+
+\paragraph{}
+
+This chapter could be the basis of a future driver implementation that would
+also require the use of UART.
+I made sure to decouple my code and some parts can be potentially used in
+other future LoRa driver implementations.
+This driver will be used in the next chapter where it will be directly
+manipulated by the TSCH code.
