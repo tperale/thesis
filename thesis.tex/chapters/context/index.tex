@@ -6,10 +6,13 @@ I will also give an overview of works related to the topic.
 
 \section{Low Power Wide Area Network (LPWAN)\label{section:lpwan}}
 
-Every IoT project has its requirements. 
+% Every IoT project has its requirements.
+My work is based on the LoRa radio protocol which belongs to the LPWAN network
+family.
+Sigfox, NB-IoT are other well known LPWAN radio protocol.
 The LPWAN network family is typically made for sensor networks that require
 limited throughput.
-The characteristics of an LPWAN are the following.
+The next four characteristics are what constitute an LPWAN.
 
 \begin{description}
   \item[Low power] The network is made of battery-operated
@@ -17,93 +20,190 @@ The characteristics of an LPWAN are the following.
   \item[Long range] Mote should transmit over multiple km without a repeater.
   \item[Low cost devices] No expensive infrastructure requirement and motes
     operate with simple hardware.
-  \item[Limited data throughput]
+  \item[Limited data rate] Not suited for data intensive applications.
 \end{description}
 
-LPWAN includes LoRa but it is not the only option available. 
-Sigfox, NB-IoT are other well known LPWAN options.
+To keep the energy consumption of motes as low as possible, LPWAN are typically
+based on a star topology with a central always-on internet gateway that listens
+for incoming messages.
+This keep the radio of the motes off as much as possible where multi-hop routing
+would require motes to listen for potential incoming messages and
+re-transmit them.
+Using such a scheme, considerably increase the power consumption of each
+participant, this goes against the principles of LPWAN.
+My work explore solution based on a different MAC protocol to keep intact the
+four characteristics of LPWAN while adding multi-hop routing capability to LoRa.
 
-\paragraph{IPv6 over Low-Power Wireless Personal Area Networks (6LoWPAN)}
+\paragraph{}
+
+My work is part of a larger context that aims to bring IPv6 over Low-Power
+Wireless Personal Area Networks (6LoWPAN) for LoRa.
 
 6LoWPAN is an open standard defined in RFC~6282 by the Internet Engineering
 Task Force (IETF).
 The idea of 6LoWPAN is to bring IPv6 packet over LPWAN and its limited payload
 size with the help of a header compression mechanisms.
-6LoWPAN brings native IP communication to LPWAN.
+6LoWPAN brings native IP communication to LPWAN making the Internet protocols
+work on those low power devices.
 Each mote of the network can communicate with the Internet by passing its
 traffic through an edge router.
-Edge routers are special devices that handle the data exchange between the 
+Edge routers are special devices that handle the data exchange between the
 6LoWPAN network and the internet.
 
-\paragraph{6TiSCH}
-
-In the same way as with 6LoWPAN, 6TiSCH defines an adaptation layer for IPv6
-over TSCH named 6top.
+% \paragraph{6TiSCH}
+% TODO later in TSCH section
+% In the same way as with 6LoWPAN, 6TiSCH defines an adaptation layer for IPv6
+% over TSCH named 6top.
 
 \section{LoRa\label{section:lora}}
+
+My whole work is based around using LoRa as a communication I will address in
+this section a proper introduction to the protocol.
+
+\paragraph{}
 
 LoRa is a proprietary chirp spread spectrum technology made by Semtech with
 integrated Forward Error Correction (FEC).
 LoRa operates in this sub-GHz unlicensed Industrial, Scientific, and Medical
 (ISM) bands.
-The main characteristic of LoRa is that it trades data rates for long-range 
-transmission and low-power consumption with a maximum data rate of 
+The main characteristic of LoRa is that it trades data rates for long-range
+transmission and low-power consumption with a maximum data rate of
 27 kbps~\cite{8030482}.
 LoRa supports bi-directional communications with a maximum payload size of 242
 bytes~\cite{loraalliance:lorawanspecification}.
 
-This section will cover the LoRa physical layer parameters, the packet structure and 
-will explain how all these parameters influence the Time On Air (ToA).
+\paragraph{}
+
+This section will cover the LoRa physical layer parameters, the packet
+structure and finally I will explain how all these parameters influence the
+Time On Air (ToA).
+The physical layer parameters are what constitutes LoRa and
+and these parameters will be used throughout
+chapters~\ref{section:radio}~and~\ref{section:tsch}.
+understanding how changes in these parameters will impact LoRa's performance
+is important for understanding my work and how LoRa behave.
 
 \subsection{Chirp Spread Spectrum (CSS) modulation}
 
-Chirp Spread Spectrum is a spread spectrum technique, developed in 1940 for
-military applications in radars and sonars \cite{semtech:modulationbasics}, but
-has been adopted in recent years for low power data transmission.
-Chirps are sinusoidal signals increasing (up-chirps) or decreasing (down-chirps)
-in frequency over time.
+LoRa is based on a modified CSS modulation technique.
+In telecommunication modulation techniques are used to transmit information (bits in digital communication like we are using)
+with a waveform by varying its property (freqency or amplitude for instance).
+Chirp Spread Spectrum modulation, which LoRa is based on, transmit information
+by using sinusoidal signals that increase (up-chirps) or decrease (down-chirps)
+in frequency over time called \emph{chirps}.
 Figure~\ref{fig:downchirp} shows an example of a down-chirp.
+In CSS each chirp represent a symbol where each them can hold a variable number
+of bits depending on the modulation parameters.
+The \emph{chip} rate is the number of time the phase is shifted per second.
+In CSS modulation phase shift is the way information get transmitted so having
+an higher chip rate leads to an higher data rate.
 
-Using CSS has the advantage of offering equivalent timing and frequency offset
-between the receiver and transmitter and robustness to channel degradation
-mechanisms (multipath fading, Doppler, in-band jamming
-interference)~\cite{semtech:modulationbasics}.
+The rules LoRa obey to modify the phase of the chirps to transmit information
+is the proprietary part of the protocol.
+
+\paragraph{}
+
+Each modulation technique have their own physical advantages and
+CSS has the advantage of offering robustness to channel degradation
+mechanisms like multipath fading, Doppler effect, and in-band jamming
+interference~\cite{semtech:modulationbasics}, partly explaining the great long
+range performance of LoRa.
 
 \tikzset{declare function={f(\x)=sin(540*\x);}}
-
 \begin{figure}[H]
 \centering
 \begin{tikzpicture}
   \draw[thick,-latex] (0,-2) -- (0,2)node[right] {};
   \draw[thick,-latex] (-1,0) -- (10,0)node[below] {t};
   \draw[domain=0.1:9.5,variable=\x,samples=500] plot ({0.10*\x*\x}, {f(\x)});
-\end{tikzpicture} 
+\end{tikzpicture}
 \caption{Down-chirp example\label{fig:downchirp}}
 \end{figure}
 
 \subsection{Physical Layer Parameters (PHY)}
 
-The physical layer parameters are what constitutes LoRa. 
-Understanding those parameters is important to understand how to use the
-protocol.
-Chapters~\ref{section:radio}~and~\ref{section:tsch} will use these concepts.
 This section will cover the major parameters we can tweak in LoRa.
+The physical layer parameters are the parameters of the modulations.
+Understanding those parameters is important to understand how they modify
+the physical property of the modulation and at what costs.
+Chapters~\ref{section:radio}~and~\ref{section:tsch} will use these concepts.
+
+\subsubsection{Bandwidth (BW)\label{section:bw}}
+
+Bandwidth is the range of frequencies available during modulation.
+LoRa supports three bandwidth in the European ISM band.
+
+\begin{itemize}
+    \item 125 kHz
+    \item 250 kHz
+    \item 500 kHz
+\end{itemize}
+
+The BW is equivalent to the chip rate. If we are using a $125 kHz$ bandwidth
+for our modulation this means $125000 chips / sec$ are transmitted or one chip
+each $8 \mu s$.
+
+\begin{equation}
+  BW = R_c (chips/s)
+\end{equation}
+
+Increasing the BW will then result in an increases in the number of chips sent
+per second, directly increasing the quantity of information sent and thus the
+data-rate.
+
+\paragraph{}
+
+According to~\cite{semtech:modulationbasics}, increasing the
+bandwidth also increases the noise floor (\ref{eq:noisefloorbw}) which reduces
+the range of transmission.
 
 \subsubsection{Spreading Factor (SF)}
 
-The spreading factor, a parameter of the LoRa modulation, represents the
-relation~(\ref{eq:sf}) between chip rate ($R_{c}$) and the symbol rate ($R_{s}$)
-(see~\cite{semtech:modemdesign}) where $2^{SF}$ equals to the number of chips per
-symbols.
+The spreading factor is a parameter of the LoRa modulation that can range from 7 to 12.
+Spreading factors represents two Things.
+
+First, the $SF$ value is the number of bit of information that get transmitted
+per symbols.
 
 \begin{equation}
- \label{eq:sf} 
-  2^{SF} = \frac{R_c}{R_s}
+ \label{eq:sf1}
+  SF = \frac{R_b}{R_s}
 \end{equation}
 
-The SF can range from 7 to 12, higher SF improves the Signal-to-noise ratio
+Second, $2^{SF}$ equals to the number of chips per symbols.
+
+\begin{equation}
+ \label{eq:sf2}
+  2^{SF} = \frac{chips}{symbols}
+\end{equation}
+
+Because the number of chips transmitted per second is constant depending on the BW,
+as we saw in the previous section, increasing the SF result in an increase of
+time to transmit the a symbol.
+We can see the effect of the SF in Fig~\ref{fig:sfcomp},
+increasing the SF by one double time to send a single chirp because it hold
+twice as much chips.
+
+We can write the following equation that shows how SF and BW affect the
+bit-rate~\cite{semtech:modemdesign} with the comparaison table available in
+Appendix~\ref{table:bitrate}.
+
+\begin{gather}
+ \label{eq:bitrate}
+  R_{bit} = SF \frac{BW}{2^{SF}}
+\end{gather}
+
+% TODO plot graph with equation.
+
+\paragraph{}
+
+Also, higher SF improves the Signal-to-noise ratio
 (SNR) and receiver sensitivity~\cite{semtech:modemdesign}.
-Increasing the SF trades data rate for transmission range.
+This lead to an increase in transmission range.
+
+\paragraph{}
+
+% TODO revoir ca pour être plus explicite
 
 The LoRa modulation uses orthogonal spreading factors to enable concurrent
 packet transmission at the same time with different
@@ -126,111 +226,50 @@ spreading factors~\cite{semtech:modulationbasics}.
   \draw[arr] (0.1, -2.2) -- node[fill=white] {$SF7$} (1.4, -2.2);
   \draw[arr] (1.6, -2.2) -- node[fill=white] {$SF8$} (4.4, -2.2);
   \draw[arr] (4.6, -2.2) -- node[fill=white] {$SF9$} (10.4, -2.2);
-\end{tikzpicture} 
+\end{tikzpicture}
 \caption{Comparison of the transmission time for a symbol between different SF
   using the same BW\label{fig:sfcomp}}
 \end{figure}
 
-\subsubsection{Bandwidth (BW)}
-
-Bandwidth is the range of frequencies available during modulation.
-LoRa supports three bandwidth in the European ISM band.
-
-\begin{itemize}
-    \item 125 kHz
-    \item 250 kHz
-    \item 500 kHz
-\end{itemize}
-
-The BW is interchangeable with the chip rate, to do the symbols rate
-calculation.
-Increasing the BW increases the symbols rate, and thus, the data rate.
-
-\begin{gather}
- \label{eq:bw} 
-  BW = R_c (chips/s) \\
-  R_s = \frac{BW}{2^{SF}} (symbols / sec)
-\end{gather}
-
-According to~\cite{semtech:modulationbasics}, increasing the
-bandwidth increases the noise floor (\ref{eq:noisefloorbw}) which reduces the
-range of transmission.
-
-\begin{equation}
- \label{eq:noisefloorbw} 
-  Noise Floor = -174 + 10 \log_{10}(BW)
-\end{equation}
-
-% TODO Table with calculation
-
-\begin{table}[h!]
-\centering
-\begin{tabular}{@{}ll@{}}
-Bandwidth(kHz) & Noise Floor (dBm) \\ \midrule
-125            & -123              \\
-250            & -120              \\
-500            & -117              \\ \bottomrule
-\end{tabular}
-\caption{Noise floor variation\label{table:bw}}
-\end{table}
-
-
 \subsubsection{Coding-Rate (CR)}
 
 The CR represents the proportion between information bits and error
-correction bits. 
-Forward Error Correction (FEC) is the process of adding error correction bits to
-transmission, to help with data restoration in case of bit errors.
+correction bits to help with data restoration in case of bit errors
+during transmission.
 
-Increasing the coding rate will decrease the actual data rate. 
-It introduces more overhead but is also more reliable.
+The CR parameter can range from 1 to 4 and stand for the number of correction
+bits added every 4 bits of data.
+For instance the parameter CR1 will add 1 correction bit every 4 bits of data
+for a total of 5 bits.
 
-Table~\ref{table:cr} shows the CR parameters available in LoRa.
-
-\begin{table}[h!]
-\centering
-\begin{tabular}{@{}ll@{}}
-\hline
-CR & Proportion ($\frac{4}{4 + CR}$) \\ \midrule
-1                                                & $\frac{4}{5}$\\
-2                                                & $\frac{4}{6}$\\
-3                                                & $\frac{4}{7}$\\
-4                                                & $\frac{4}{8}$\\ \bottomrule
-\end{tabular}
-\caption{Existing Coding Rates\label{table:cr}}
-\end{table}
-
-\subsubsection{Data Rate}
-
-Equation~\ref{eq:bitrate} calculates the bit rate depending on the
-parameters I introduced in the previous sections\cite{semtech:modulationbasics}.
+Increasing the coding rate will decrease the actual data rate by using the
+equation~\ref{eq:bitrate} we can know the real data rate of a LoRa transmission.
 
 \begin{equation}
- \label{eq:bitrate} 
-  R_{b} = SF \frac{\frac{4}{4 + CR}}{\frac{2^{SF}}{BW}} bits/sec
+ \label{eq:datarate}
+  R_{b} = SF \frac{4}{4 + CR} \frac{BW}{2^{SF}} bits/sec
 \end{equation}
 
-The data rate is highly variable depending on the CR, BW, and SF.
-See table~\ref{table:datarate}.
+The CR introduces more overhead which decrease the data-rate but also
+provide more reliable communications.
+Table~\ref{table:datarate} available in appendix for comparaison.
 
-\begin{table}[h!]
-\centering
-\begin{tabular}{@{}lllll@{}}
-\toprule
-CR & BW (kHz) & SF7 (bits/sec) & SF8 (bits/sec) & SF10 (bits/sec) \\ \midrule
-\multirow{2}{*}{$\frac{4}{5}$} & 125000   & 5469           & 3125           & 976             \\
-  & 250000   & 10937          & 6250           & 1953            \\
-\multirow{2}{*}{$\frac{4}{6}$} & 125000   & 4557           & 2604           & 813             \\
-  & 250000   & 9114           & 5208           & 1627            \\
-\multirow{2}{*}{$\frac{4}{8}$} & 125000   & 3417           & 1954           & 660             \\
-  & 250000   & 6835           & 3906           & 1220            \\ \bottomrule
-\end{tabular}
-\caption{Data rates depending on CR, BW, and SF\label{table:datarate}}
-\end{table}
+% \begin{table}[h!]
+% \centering
+% \begin{tabular}{@{}ll@{}}
+% \hline
+% CR & Proportion ($\frac{4}{4 + CR}$) \\ \midrule
+% 1                                                & $\frac{4}{5}$\\
+% 2                                                & $\frac{4}{6}$\\
+% 3                                                & $\frac{4}{7}$\\
+% 4                                                & $\frac{4}{8}$\\ \bottomrule
+% \end{tabular}
+% \caption{Existing Coding Rates\label{table:cr}}
+% \end{table}
 
 \subsection{Packet Structure}
 
-LoRa employs two packet formats: 
+LoRa employs two packet formats:
 the explicit mode and the implicit mode.
 Three parts constitute packets.
 
@@ -292,7 +331,7 @@ ToA depends on the parameters we introduced previously to count the number of
 symbols that constitute each payload.
 
 The following formula defines the duration of each symbol~\ref{eq:tsymlong}.
-Equation~\ref{eq:tsym} is equivalent to the relation~\ref{eq:bw}.
+% Equation~\ref{eq:tsym} is equivalent to the relation~\ref{eq:bw}.
 
 \begin{equation}
   \label{eq:tsymlong}
@@ -348,10 +387,9 @@ with~\ref{eq:tpacket}.
 
 \subsection{Channels}
 
-% See 'Understanding the limits of LoRaWAN' the 3 channels definition in Europe
-% The channels available is dependant on the country rules we are transmitting from.
 The Things Network~\cite{ttnfrequencyplans} did a summary of the available
-channels available depending on your frequency plan.
+channels available depending on the frequency plan of the country the motes is
+operating in.
 
 Figure~\ref{fig:channels} presents each LoRaWAN channel available in the
 European ISM band (863-870 MHz)~\cite{Polonelli_2019}.
@@ -362,16 +400,31 @@ European ISM band (863-870 MHz)~\cite{Polonelli_2019}.
   \caption{LoRaWAN Channels in Europe\cite{Polonelli_2019}\label{fig:channels}}
 \end{figure}
 
-% TODO Talk about 1% duty cycle
+% TODO explain what is a channel in radio comm and in LoRa and which one we
+% will use.
 
 \section{Time-Slotted Channel Hopping (TSCH)}
+
+As I already addressed this issue in section~\ref{section:lpwan}, it can be
+difficult to provide a multi-hop routing protocol that keep the energy
+consumption of your LPWAN as low as possible.
+The MAC protocol of the network stack is the key to ensure the lowest energy
+consumption possible as it will regulate the access to the medium of
+communication.
+The aim of TSCH is to provide a low power and reliable MAC layer for
+multi-hop routing protocols that need frequent access to the radio.
+The goal of my work is to achieve a low power and reliable multi-hop networks
+based on LoRa and using TSCH is the missing link to ensure a low power network.
+In the following section, I will present the TSCH protocol building blocks.
+
+\paragraph{}
 
 TSCH is a Medium Access Control (MAC) layer protocol defined by the IEEE
 802.15.4e standard~\cite{rfc7554}.
 The design is inherited from WirelessHART and
 ISA100.11a~\cite{Duquennoy2017TSCHA6}.
-Time synchronization aims to achieve low power and highly reliable
-communications by using the following principles.
+TSCH use the following principles to achieve low power consumption and
+reliability.
 
 \begin{description}
   \item[Time-division multiple access] or (TDMA) by assigning time slots for each
@@ -382,15 +435,23 @@ communications by using the following principles.
     throughput.
 \end{description}
 
-In the following section, I will present the TSCH protocol building blocks.
+\subsection{Multiplexing}
+
+To share the same radio communication medium between multiple participant of
+the network, MAC protocol has to implement a sort of channel access method
+based on multiplexing
+
+% TODO Continue
 
 \subsection{Time Slots}
 
-A time slot in TSCH is a unit of time to execute the network operations. 
-The duration of the time slot is not standardized and depends on the physical 
-layer we are using. 
+Time slots in TSCH are a way to achieve TDMA for the protocol.
+
+A time slot in TSCH is a unit of time to execute the network operations.
+The duration of the time slot is not standardized and depends on the physical
+layer we are using.
 Time slots should be long enough for the longest frame size to be sent
-between two nodes, together with an acknowledgement~\cite{rfc7554}. 
+between two nodes, together with an acknowledgement~\cite{rfc7554}.
 Every time slot in a TSCH network has the same duration.
 
 For each time slot, a schedule orchestrates what each
@@ -415,7 +476,7 @@ Each transmitting or receiving time slot is made of the following parts.
 A set of time slots that repeat over time is known as a slotframe.
 The slotframe length has a direct impact on network capacity.
 Figure~\ref{fig:timeslots} represents how time slots and slotframes are
-organized together. 
+organized together.
 
 \input{thesis.tex/chapters/context/fig/timeslots.tex}
 
@@ -448,7 +509,7 @@ Links are the conjunction of a time slot and a channel~\cite{Chen2013Performance
   link = (TimeSlot_{number}, Channel_{offset})
 \end{equation}
 
-Multiple links constitute a time slot and devices can transmit on different 
+Multiple links constitute a time slot and devices can transmit on different
 links during the same time slot.
 This is dependent on the number of channels available.
 
@@ -464,7 +525,7 @@ compute the same channel offset~\cite{rfc7554}.
 If the slotframe length is a prime number, even with the static schedule,
 with known channel offset, the time slot will use a different channel every time.
 Figure~\ref{fig:channelhopping} shows how scheduled cells in a TSCH network of
-four time slots and three channels change channel after each slotframe depending 
+four time slots and three channels change channel after each slotframe depending
 on the ASN.
 
 \input{thesis.tex/chapters/context/fig/channel_hopping.tex}
@@ -480,7 +541,7 @@ following parameters for each time slot.
   \item Address of the node to communicate with.
 \end{itemize}
 
-To ensure the execution of the same slots, each transmission is an opportunity 
+To ensure the execution of the same slots, each transmission is an opportunity
 for the neighbor to resynchronize their clocks.
 Synchronization is important to mitigate each node's internal clock drift.
 
@@ -501,9 +562,13 @@ the data and then adjusts its time slot length to finish earlier.
 
 \section{Routing}
 
-Because I will use two different routing protocols in
-Chapter~\ref{section:tsch} to demonstrate that my implementation works, I will 
-introduce in this section RPL and Orchestra.
+This work is about achieving multi-hop routing with LoRa, in conjunction of a
+working MAC protocol we can use already existing low power multi-hop routing
+protocol that don't need to be implemented.
+I will use two different existing routing protocols on top of TSCH in
+Chapter~\ref{section:tsch} to test that the adaptation of TSCH I made worked
+with LoRa.
+I will introduce in this section RPL and Orchestra.
 This section is not meant to be an in-depth explanation of the protocols.
 Giving such details would be out of the scope of my work as I do not modify any
 of the components of those protocols.
@@ -515,12 +580,12 @@ RPL is designed to work on networks with high data loss rates, low data rates, a
 instability~\cite{rfc6550}.
 
 The routing in RPL is based on Destination Oriented Directed Acyclic Graphs (DODAG).
-All the nodes of the DODAG route toward the \emph{root} node. 
+All the nodes of the DODAG route toward the \emph{root} node.
 If the root node is connected to the internet it can be used as a \emph{border
 router}.
-RPL gives each node a rank based on the distance from the root node. 
+RPL gives each node a rank based on the distance from the root node.
 The distance is calculated with an \emph{objective function}.
-The routing between nodes in RPL is based on sending packets up to a smaller 
+The routing between nodes in RPL is based on sending packets up to a smaller
 ranked parent until it reaches a common ancestor and then sending the packet down
 to the destination~\cite{duquennoy2015}.
 
@@ -540,7 +605,7 @@ Orchestra maintains different slotframes for these different network operations
 \end{itemize}
 
 Using mutually prime slotframe lengths avoids overlap between active slots in
-the slotframes. 
+the slotframes.
 Also, by computing time and channel offset using the sender and receiver
 identification as parameters, Orchestra can achieve a very low level of
 collisions~\cite{duquennoy2015}.
@@ -555,12 +620,12 @@ suited for Wireless Sensor Networks (WSNs).
 Contiki uses protothreads, a programming abstraction which Contiki is
 built around.
 They allow developers to write event-driven programs with little memory overhead and
-reduce the complexity of embedded programs that used to be written 
+reduce the complexity of embedded programs that used to be written
 like state machines~\cite{10.1145/1182807.1182811}.
 
 The Contiki OS project has been unmaintained since 2017 but its
 successor named Contiki-NG was created as a fork by the same developers since.
-That fork has been the basis for a lot of LPWAN experimentation, for example 
+That fork has been the basis for a lot of LPWAN experimentation, for example
 with the development of the 6TiSCH stack for the OS~\cite{Duquennoy2017TSCHA6}.
 
 \paragraph{}
@@ -570,9 +635,9 @@ feature of the OS.
 It allows developers to defines parts of the network stack we are using in a Contiki
 project (Fig~\ref{fig:netstack}).
 
-NETSTACK implementation allows Contiki to communicate between layers without 
+NETSTACK implementation allows Contiki to communicate between layers without
 knowing the specific implementation of the layer.
-Developers must define the following variables to change the network stack 
+Developers must define the following variables to change the network stack
 in a Contiki project.
 
 \begin{itemize}
@@ -592,7 +657,7 @@ multi-hop routing in LoRa.
 
 \paragraph{}
 
-Work to port TSCH and the 6LoWPAN stack to a new radio protocol has already 
+Work to port TSCH and the 6LoWPAN stack to a new radio protocol has already
 been done in~\cite{uwbtsch} for the Ultra-Wide Band (UWB).
 
 % \paragraph{BLEach}
@@ -600,9 +665,9 @@ been done in~\cite{uwbtsch} for the Ultra-Wide Band (UWB).
 \paragraph{UWB-TSCH}
 
 Charlier M. in~\cite{uwbtsch} explores the requirements to adapt TSCH for the UWB.
-Similarly to LoRa, UWB does not allow CCA and can not use CSMA for its 
+Similarly to LoRa, UWB does not allow CCA and can not use CSMA for its
 communications.
-His work shows what it takes to adapt TSCH for another radio layer. 
+His work shows what it takes to adapt TSCH for another radio layer.
 It is also an evaluation of the performance of TSCH outside of 802.15.4.
 
 \paragraph{}
@@ -612,7 +677,7 @@ the current LoRaWAN MAC protocol to allow multi-hop communications.
 
 \paragraph{Multihop LoRaWAN Extension} Dias J., Grilo A. in \cite{DIAS2018424}
 design a routing protocol that can interoperate with LoRaWAN gateways while
-using multi-hop communications for nodes out of the range of the gateway.  
+using multi-hop communications for nodes out of the range of the gateway.
 The extension uses beacons to achieve time synchronization, but no channel
 hopping is used.
 
@@ -633,15 +698,15 @@ network has been done in~\cite{Abrardo_2019,duong2018}.
 \paragraph{Linear Multihop LoRa}
 
 Abrardo A. and Pozzebon A.~\cite{Abrardo_2019} studied the deployment of a
-large scale LoRa network to monitor the underground medieval aqueducts of the city center 
+large scale LoRa network to monitor the underground medieval aqueducts of the city center
 of Sienna, the \emph{Bottini}.
 
-Because of the large deployment cost induced by the large tunnels, the negative 
+Because of the large deployment cost induced by the large tunnels, the negative
 aesthetic impact of a wired network and the risk of flooding, made the author
 opt for a battery-operated wireless network.
 
 
-They propose a multi-hop routing solution for Linear Sensor Network (LSN) based 
+They propose a multi-hop routing solution for Linear Sensor Network (LSN) based
 on LoRa by developing their own MAC protocol tailored for their scenario.
 This custom protocol is built around assigning time slots for each node with
 a common schedule for adjacent nodes.
@@ -653,9 +718,9 @@ both ends of the aqueducts.
 \paragraph{Multi-Hop Linear Network Based on LoRa}
 
 Duong T. in~\cite{duong2018} proposes a multi-hop protocol for LoRa linear
-networks. 
+networks.
 His network is made of two periods. The first is the network initialization to
-verify the gateway is reachable and synchronizes the nodes to make them join the 
+verify the gateway is reachable and synchronizes the nodes to make them join the
 data operation period.
 Each node transmits in a different time slot to their parent node, each hop adds
 their information to the packet they are relaying until the gateway is
@@ -683,13 +748,13 @@ transmit at the same time.
 
 % Every nodes of the network keep track of their distance to the sink
 
-Also, LoRaBlink uses fixed SF, BW, and channel. This decreases the overall throughput 
+Also, LoRaBlink uses fixed SF, BW, and channel. This decreases the overall throughput
 of the network and makes it highly sensitive to interference.
 
 \paragraph{RPL+LoRa MAC Protocol}
 
-The Authors of~\cite{8115756} from the SmartNet research group of VUB, adapted RPL 
-to enable multihop communications on top of LoRa. 
+The Authors of~\cite{8115756} from the SmartNet research group of VUB, adapted RPL
+to enable multihop communications on top of LoRa.
 The paper presents the modifications of the objective function to take into
 account the SF when computing the best routes.
 The paper describes a solution for a network of nodes to discover each other.
@@ -707,22 +772,21 @@ Reducing the power consumption was not a concern in this paper.
 
 \paragraph{TSCH-over-LoRa}
 
-In the course of my work, a new study from Haubro M., Orfanadis C.,
-Oikonomou G. and Fafoutis X.~\cite{tschoverlora} came out on the exact 
-same subject as mine. 
-Their work studied the feasibility of porting TSCH to LoRa in Contiki OS using
-the SX1272 radio module.
+Haubro M., Orfanadis C., Oikonomou G. and Fafoutis X.~\cite{tschoverlora}
+have recently published a work studying the feasibility of porting TSCH to LoRa
+in Contiki OS using the SX1272 radio module.
 
-The authors proved it was possible to adapt TSCH for LoRa by testing their
+The authors has shown it was possible to adapt TSCH for LoRa by testing their
 implementation with a variety of routing protocols and applications.
-Their implementation works on a single SF at a time but they tested it using
+Their implementation works on a single SF at a time and tested it using
 SF7 and SF10.
 
 To demonstrate the resilience of TSCH to interference even with LoRa, the
 authors made a radio jammer that transmits on different channels. Their
-experimentation proved no packets got lost when using channel hopping with
+experimentation showed no packets got lost when using channel hopping with
 LoRa.
 
-% \section{Conclusion}
-% This chapter covered the main concept the reader need to understand for the
-% next chapters.
+\section{Conclusion}
+
+This chapter covered the main concept the reader need to understand for the
+next chapters.

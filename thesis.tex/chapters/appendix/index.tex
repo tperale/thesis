@@ -1,12 +1,52 @@
 \chapter{Table}
 
+\section{LoRa}
+
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{@{}lll@{}}
+\toprule
+BW (kHz) & SF & bit rate (bits/sec) \\ \midrule
+125     & 7 & 6836 \\
+125     & 8 & 3906 \\
+125     & 9 & 2197 \\
+125     & 10 & 1220 \\
+125     & 11 & 671 \\
+125     & 12 & 366 \\
+250     & 7 & 13671 \\
+250     & 8 & 7812 \\
+250     & 9 & 4394 \\
+250     & 10 & 2441 \\
+250     & 11 & 1342 \\
+250     & 12 & 732 \\ \bottomrule
+\end{tabular}
+\caption{Bit rates depending on BW, and SF\label{table:bitrate}}
+\end{table}
+
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{@{}lllll@{}}
+\toprule
+CR & BW (kHz) & SF7 (bits/sec) & SF8 (bits/sec) & SF10 (bits/sec) \\ \midrule
+\multirow{2}{*}{$\frac{4}{5}$} & 125000   & 5469           & 3125           & 976             \\
+  & 250000   & 10937          & 6250           & 1953            \\
+\multirow{2}{*}{$\frac{4}{6}$} & 125000   & 4557           & 2604           & 813             \\
+  & 250000   & 9114           & 5208           & 1627            \\
+\multirow{2}{*}{$\frac{4}{8}$} & 125000   & 3417           & 1954           & 660             \\
+  & 250000   & 6835           & 3906           & 1220            \\ \bottomrule
+\end{tabular}
+\caption{Data rates depending on CR, BW, and SF\label{table:datarate}}
+\end{table}
+
 \section{RN2483 Timing Measurements and Predictions}
 
 \begin{table}[H]
 \centering
 \begin{tabular}{|l|l|l|}
 \hline
-\rowcolor[HTML]{C0C0C0} 
+\rowcolor[HTML]{C0C0C0}
   \multicolumn{1}{|c|}{\cellcolor[HTML]{C0C0C0}Bytes} & Time ($\mu s$) & Prediction ($\mu s$) \\ \hline
 1                                                   & 3080      & 3021       \\ \hline
 4                                                   & 3560      & 3528       \\ \hline
@@ -23,7 +63,7 @@
 \centering
 \begin{tabular}{|l|l|l|}
 \hline
-\rowcolor[HTML]{C0C0C0} 
+\rowcolor[HTML]{C0C0C0}
 \multicolumn{1}{|c|}{\cellcolor[HTML]{C0C0C0}Bytes} & Time ($\mu s$) & Prediction ($\mu s$) \\ \hline
 1                                                   & 820       & 898        \\ \hline
 4                                                   & 2350      & 2332       \\ \hline
@@ -40,7 +80,7 @@
 \centering
 \begin{tabular}{|l|l|l|}
 \hline
-\rowcolor[HTML]{C0C0C0} 
+\rowcolor[HTML]{C0C0C0}
 \multicolumn{1}{|c|}{\cellcolor[HTML]{C0C0C0}Bytes} & Time ($\mu s$) & Prediction ($\mu s$) \\ \hline
 1                                                   & 1500      & 1529       \\ \hline
 4                                                   & 3240      & 2963       \\ \hline
@@ -57,7 +97,7 @@
 \centering
 \begin{tabular}{|l|l|l|}
 \hline
-\rowcolor[HTML]{C0C0C0} 
+\rowcolor[HTML]{C0C0C0}
 \multicolumn{1}{|c|}{\cellcolor[HTML]{C0C0C0}Bytes} & Time ($\mu s$) & Prediction ($\mu s$) \\ \hline
 1                                                   & 3160      & 3287       \\ \hline
 4                                                   & 4560      & 4721       \\ \hline
@@ -74,7 +114,7 @@
 \centering
 \begin{tabular}{|l|l|l|}
 \hline
-\rowcolor[HTML]{C0C0C0} 
+\rowcolor[HTML]{C0C0C0}
 \multicolumn{1}{|c|}{\cellcolor[HTML]{C0C0C0}Bytes} & Time ($\mu s$) & Prediction ($\mu s$) \\ \hline
 1                                                   & 6100      & 6235       \\ \hline
 4                                                   & 7400      & 7669       \\ \hline
@@ -100,7 +140,7 @@ rn2483_get_object(radio_param_t param, void *dest, size_t size)
     if(size != sizeof(rtimer_clock_t) || !dest) {
       return RADIO_RESULT_INVALID_VALUE;
     }
-    *(rtimer_clock_t *)dest = RN2483_DEV.packet_timestamp 
+    *(rtimer_clock_t *)dest = RN2483_DEV.packet_timestamp
       - US_TO_RTIMERTICKS_64(
           RX_RECEIVING_DELAY_US(RN2483_DEV.rx_len)
           + t_packet(&(RN2483_DEV.radio), RN2483_DEV.rx_len)
@@ -116,8 +156,8 @@ rn2483_get_object(radio_param_t param, void *dest, size_t size)
 \section{Custom Schedule Code\label{code:customsched}}
 
 \begin{lstlisting}
-static linkaddr_t node_1_address = {{ 
-  0x00, 0x12, 0x4b, 0x00, 0x14, 0xd5, 0x2f, 0x2a 
+static linkaddr_t node_1_address = {{
+  0x00, 0x12, 0x4b, 0x00, 0x14, 0xd5, 0x2f, 0x2a
 }};
 static linkaddr_t node_2_address = {{
   0x00, 0x12, 0x4b, 0x00, 0x14, 0xd5, 0x2d, 0xac
@@ -159,5 +199,3 @@ tsch_schedule_custom(void)
   }
 }
 \end{lstlisting}
-
-
