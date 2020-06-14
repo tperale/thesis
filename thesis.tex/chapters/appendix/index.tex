@@ -1,7 +1,6 @@
 \chapter{Table}
 
-\section{LoRa}
-
+\section{LoRa: Bit rate and data rate}
 
 \begin{table}[h!]
 \centering
@@ -24,7 +23,6 @@ BW (kHz) & SF & bit rate (bits/sec) \\ \midrule
 \caption{Bit rates depending on BW, and SF\label{table:bitrate}}
 \end{table}
 
-
 \begin{table}[h!]
 \centering
 \begin{tabular}{@{}lllll@{}}
@@ -44,90 +42,161 @@ CR & BW (kHz) & SF7 (bits/sec) & SF8 (bits/sec) & SF10 (bits/sec) \\ \midrule
 
 \begin{table}[H]
 \centering
-\begin{tabular}{|l|l|l|}
-\hline
-\rowcolor[HTML]{C0C0C0}
-  \multicolumn{1}{|c|}{\cellcolor[HTML]{C0C0C0}Bytes} & Time ($\mu s$) & Prediction ($\mu s$) \\ \hline
-1                                                   & 3080      & 3021       \\ \hline
-4                                                   & 3560      & 3528       \\ \hline
-8                                                   & 4200      & 4204       \\ \hline
-16                                                  & 5550      & 5556       \\ \hline
-32                                                  & 8280      & 8260       \\ \hline
-64                                                  & 13680     & 13668      \\ \hline
-110                                                 & 21430     & 21442      \\ \hline
+\begin{tabular}{@{}lll@{}}
+\toprule
+\multicolumn{1}{|c|}{\cellcolor[HTML]{C0C0C0}Bytes} & Time ($\mu s$) & Prediction ($\mu s$) \\ \midrule
+1                                                   & 3080      & 3021       \\
+4                                                   & 3560      & 3528       \\
+8                                                   & 4200      & 4204       \\
+16                                                  & 5550      & 5556       \\
+32                                                  & 8280      & 8260       \\
+64                                                  & 13680     & 13668      \\
+110                                                 & 21430     & 21442      \\ \bottomrule
 \end{tabular}
 \caption{Transmission Time\label{table:measurementtx}}
 \end{table}
 
 \begin{table}[H]
 \centering
-\begin{tabular}{|l|l|l|}
-\hline
-\rowcolor[HTML]{C0C0C0}
-\multicolumn{1}{|c|}{\cellcolor[HTML]{C0C0C0}Bytes} & Time ($\mu s$) & Prediction ($\mu s$) \\ \hline
-1                                                   & 820       & 898        \\ \hline
-4                                                   & 2350      & 2332       \\ \hline
-8                                                   & 4240      & 4244       \\ \hline
-16                                                  & 8160      & 8068       \\ \hline
-32                                                  & 15600     & 15716      \\ \hline
-64                                                  & 31100     & 31012      \\ \hline
-110                                                 & 53200     & 53000      \\ \hline
+\begin{tabular}{@{}lll@{}}
+\toprule
+\multicolumn{1}{|c|}{\cellcolor[HTML]{C0C0C0}Bytes} & Time ($\mu s$) & Prediction ($\mu s$) \\ \midrule
+1                                                   & 820       & 898        \\
+4                                                   & 2350      & 2332       \\
+8                                                   & 4240      & 4244       \\
+16                                                  & 8160      & 8068       \\
+32                                                  & 15600     & 15716      \\
+64                                                  & 31100     & 31012      \\
+110                                                 & 53200     & 53000      \\ \bottomrule
 \end{tabular}
 \caption{Reception Spreading Factor 7\label{table:rxsf7}}
 \end{table}
 
 \begin{table}[H]
 \centering
-\begin{tabular}{|l|l|l|}
-\hline
-\rowcolor[HTML]{C0C0C0}
-\multicolumn{1}{|c|}{\cellcolor[HTML]{C0C0C0}Bytes} & Time ($\mu s$) & Prediction ($\mu s$) \\ \hline
-1                                                   & 1500      & 1529       \\ \hline
-4                                                   & 3240      & 2963       \\ \hline
-8                                                   & 5060      & 4875       \\ \hline
-16                                                  & 8840      & 8699       \\ \hline
-32                                                  & 16700     & 16347      \\ \hline
-64                                                  & 31700     & 31643      \\ \hline
-110                                                 & 53300     & 53631      \\ \hline
+\begin{tabular}{@{}lll@{}}
+\toprule
+\multicolumn{1}{|c|}{\cellcolor[HTML]{C0C0C0}Bytes} & Time ($\mu s$) & Prediction ($\mu s$) \\ \midrule
+1                                                   & 1500      & 1529       \\
+4                                                   & 3240      & 2963       \\
+8                                                   & 5060      & 4875       \\
+16                                                  & 8840      & 8699       \\
+32                                                  & 16700     & 16347      \\
+64                                                  & 31700     & 31643      \\
+110                                                 & 53300     & 53631      \\ \bottomrule
 \end{tabular}
 \caption{Reception Spreading Factor 8\label{table:rxsf8}}
 \end{table}
 
 \begin{table}[H]
 \centering
-\begin{tabular}{|l|l|l|}
-\hline
-\rowcolor[HTML]{C0C0C0}
-\multicolumn{1}{|c|}{\cellcolor[HTML]{C0C0C0}Bytes} & Time ($\mu s$) & Prediction ($\mu s$) \\ \hline
-1                                                   & 3160      & 3287       \\ \hline
-4                                                   & 4560      & 4721       \\ \hline
-8                                                   & 6500      & 6633       \\ \hline
-16                                                  & 10120     & 10457      \\ \hline
-32                                                  & 17900     & 18105      \\ \hline
-64                                                  & 33200     & 33401      \\ \hline
-110                                                 & 55200     & 55389      \\ \hline
+\begin{tabular}{@{}lll@{}}
+\toprule
+\multicolumn{1}{|c|}{\cellcolor[HTML]{C0C0C0}Bytes} & Time ($\mu s$) & Prediction ($\mu s$) \\ \midrule
+1                                                   & 3160      & 3287       \\
+4                                                   & 4560      & 4721       \\
+8                                                   & 6500      & 6633       \\
+16                                                  & 10120     & 10457      \\
+32                                                  & 17900     & 18105      \\
+64                                                  & 33200     & 33401      \\
+110                                                 & 55200     & 55389      \\ \bottomrule
 \end{tabular}
 \caption{Reception Spreading Factor 9\label{table:rxsf9}}
 \end{table}
 
 \begin{table}[H]
 \centering
-\begin{tabular}{|l|l|l|}
-\hline
-\rowcolor[HTML]{C0C0C0}
-\multicolumn{1}{|c|}{\cellcolor[HTML]{C0C0C0}Bytes} & Time ($\mu s$) & Prediction ($\mu s$) \\ \hline
-1                                                   & 6100      & 6235       \\ \hline
-4                                                   & 7400      & 7669       \\ \hline
-8                                                   & 9660      & 9581       \\ \hline
-16                                                  & 13560     & 13405      \\ \hline
-32                                                  & 21040     & 21053      \\ \hline
-64                                                  & 36400     & 36349      \\ \hline
-110                                                 & 58400     & 58337      \\ \hline
+\begin{tabular}{@{}lll@{}}
+\toprule
+\multicolumn{1}{|c|}{\cellcolor[HTML]{C0C0C0}Bytes} & Time ($\mu s$) & Prediction ($\mu s$) \\ \midrule
+1                                                   & 6100      & 6235       \\
+4                                                   & 7400      & 7669       \\
+8                                                   & 9660      & 9581       \\
+16                                                  & 13560     & 13405      \\
+32                                                  & 21040     & 21053      \\
+64                                                  & 36400     & 36349      \\
+110                                                 & 58400     & 58337      \\ \bottomrule
 \end{tabular}
 \caption{Reception Spreading Factor 10\label{table:rxsf10}}
 \end{table}
 
-\chapter{Listing}
+\chapter{Code}
+
+\section{Driver implementation structure\label{appendix:driver}}
+
+My implementation structure took inspiration from the work
+in~\cite{8847137} and the \emph{RIOT-OS}
+project\footnote{\url{https://github.com/RIOT-OS/RIOT}}.
+
+Following is a listing of the different files I created and their
+usage. % \improvement{I don't like this phrase}
+
+\begin{description}
+  \item[lora] LoRa radio specific functions declaration, and configuration.
+    This includes functions used to calculate the time-on-air and
+    LoRa PHY configuration structure and parameters.
+  \item[rn2483-include] contains the declaration both needed by
+    \lstinline{rn2483-uart} and \lstinline{rn2483} to avoid cycling inclusion
+    that mess with the compiler.
+  \item[rn2483-uart] Lower level implementation of the function to directly
+    communicate with the module via UART\@.
+    It contains hardware-specific implementation for the UART\@.
+  \item[rn2483-api] Complete coverage of the RN2483 commands. Using functions
+    from this file allows the user of the driver to not write
+    each command by hand and use standard structure instead.
+  \item[rn2483] Implementation of the Contiki radio device driver.
+    It contains the standardized way of Contiki to use and configure radio
+    devices.
+    All the radio drivers in Contiki share this structure.
+\end{description}
+
+\subsection{The RN2483 Shell\label{appendix:shell}}
+
+The \emph{RN2483 shell} available in
+\lstinline{/example/platform-specific/lora/rn2483}
+is a tool to interact directly with the module.
+
+This tool extends the existing shell available in Contiki by writing a set
+of commands to test and interact with the RN2483 via UART\@.
+It was used during the development of the driver as a way to test parameters
+as well as the synchronous communication implementation.
+
+Here is the list of the added commands to the Contiki shell.
+
+\begin{lstlisting}[language=none]
+'> sys': Send a 'system' command to the RN2483 Module.
+'> mac': Send a 'mac' command to the RN2483 Module.
+'> radio': Send a 'radio' command to the RN2483 Module.
+'> tx': Transmit a radio message with the RN2483.
+'> sleep': Put RN2483 into sleep mode.
+'> wakeup': Force wakeup of RN2483.
+'> rn2483_reset': Hardware Reset of the RN2483 Module.
+'> help': Shows this help.
+\end{lstlisting}
+
+Each project is bundled with a \lstinline{project-conf.h}
+configuration file in which we can define the parameters of our project.
+To set my LoRa driver as the physical layer implementation we must add the
+following line to change the NETSTACK configuration.
+
+\begin{lstlisting}
+#define NETSTACK_CONF_RADIO rn2483_radio_driver
+\end{lstlisting}
+
+To compile and upload the project go to the
+\lstinline{/example/platform-specific/lora/rn2483}
+folder and then run.
+
+\begin{lstlisting}
+make TARGET=zoul BOARD=remote-revb PORT=/dev/ttyUSBx test-rn2483.upload
+\end{lstlisting}
+
+And run the following command to access the shell.
+
+\begin{lstlisting}
+make TARGET=zoul BOARD=remote-revb PORT=/dev/ttyUSBx login
+\end{lstlisting}
+
 
 \section{Packet timestamp implementation\label{code:timestampimpl}}
 

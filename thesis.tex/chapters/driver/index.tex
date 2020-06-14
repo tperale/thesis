@@ -1,7 +1,7 @@
 \chapter{Radio Driver for Zolertia with the RN2483 module\label{section:radio}}
 
 To achieve multi-hop routing with LoRa in Contiki, the first step is to write
-a radio driver for Contiki (no official LoRa implementation are available yet),
+a radio driver for Contiki (no support for LoRa is available yet),
 and thus allow LoRa to be used in the Contiki stack.
 This chapter covers the implementation and validation of a RN2483 LoRa radio
 driver working on \emph{Contiki-NG}.
@@ -11,7 +11,7 @@ This driver is made for the \emph{Zolertia RE-Mote REV-B} platform.
 
 \paragraph{}
 
-This chapter will give the reader more informatioin about the inner working of
+This chapter will give the reader more information about the inner working of
 the RN2483 module and how to use the driver in future work.
 It will help understand the inherent issues of the RN2483 module
 described in chapter~\ref{section:tsch}.
@@ -30,8 +30,8 @@ in~\cite{njomgang_2018}, \emph{Serge Sadja Njomgang} did his experimentation wit
 the \emph{LoRaMote} demo platform from \emph{Semtech} using the \emph{SX1272} LoRa
 radio module.
 As analyzed in~\cite{8847137}, the Semtech LoRaMotes turned out to be an issue
-because they were no longer produced,
-new versions were expensive and memory was a bottleneck.
+because they were no longer produced, new versions were expensive and memory was
+a bottleneck.
 The \emph{Zolertia RE-Mote} is already available and well maintained
 in \emph{contiki-ng} (making the transition faster and the code less error-prone)
 and the \emph{ETRO Lab} is already utilizing the platform.
@@ -65,165 +65,19 @@ different functions~\cite{microchip:reference}.
     GPIOs state, \emph{sleep}, EEPROM memory access, \ldots
 \end{itemize}
 
-\section{Testing Setup}
+\section{Contiki Radio Driver Implementation}
 
-My testing setup was the same as~\cite{8847137}. I used the Zolertia RE-Mote
-Rev-B platform, using the CC2538 microcontroller, connected to the
-RN2483 breakout board, as schematized in Fig~\ref{fig:schemaconn}.
+All the files for the driver implementation are available from
+\href{https://github.com/tperale/contiki-ng}{github.com/tperale/contiki-ng}
+in \lstinline{/arch/dev/rn2483} and
+\lstinline{/examples/platform-specific/rn2483} folder.
+The usage of each files is explained in Appendix~\ref{appendix:driver}.
 
-The RE-Mote platform has two UART peripheral, the UART1 peripheral is used
-to communicate with the module because the platform debugger uses UART0.
-
-The \lstinline{PD0} GPIO is wired to the reset pin to allow
-software reset of the module as well as a push-button in case of hard reset.
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[scale=0.70]{thesis.tex/chapters/driver/fig/conn_diag.pdf}
-  \caption{Hardware connection\label{fig:schemaconn}}
-\end{figure}
-
-\section{Implementation}
-
-All the files for the driver implementation are available in
-\lstinline{/arch/dev/rn2483} and the location of the examples are in
-\lstinline{/examples/platform-specific/rn2483}.
-
-\subsection{Structure}
-
-My implementation structure took inspiration from the work
-in~\cite{8847137} and the \emph{RIOT-OS}
-project\footnote{\url{https://github.com/RIOT-OS/RIOT}}.
-
-Following is a listing of the different files I created and their
-usage. % \improvement{I don't like this phrase}
-
-\begin{description}
-  \item[lora] LoRa radio specific functions declaration, and configuration.
-    This includes functions used to calculate the time-on-air and
-    LoRa PHY configuration structure and parameters.
-  \item[rn2483-include] contains the declaration both needed by
-    \lstinline{rn2483-uart} and \lstinline{rn2483} to avoid cycling inclusion
-    that mess with the compiler.
-  \item[rn2483-uart] Lower level implementation of the function to directly
-    communicate with the module via UART\@.
-    It contains hardware-specific implementation for the UART\@.
-  \item[rn2483-api] Complete coverage of the RN2483 commands. Using functions
-    from this file allows the user of the driver to not write
-    each command by hand and use standard structure instead.
-  \item[rn2483] Implementation of the Contiki radio device driver.
-    It contains the standardized way of Contiki to use and configure radio
-    devices.
-    All the radio drivers in Contiki share this structure.
-\end{description}
-
-\subsection{Synchronous communication with the module}
-
-The first design challenge is the
-synchronous UART message mechanism implementation.
-UART communication needs synchronous messaging for every
-transmission, configuration, and reception.
-Acknowledgements from commands avoid
-clashes when trying to use the module at the same time.
-The previous implementation in~\cite{8847137} used fixed time delays to
-wait for the command to full execution on the module. This method
-quickly showed its limitation, each command has its delay, and
-fixed delays slow the global execution.
-
-% TODO Maybe sequence diagram with a clash
-
-The UART driver for the CC2538 in Contiki does not have synchronous
-blocking read function out of the box, it assumes the programmer will compute the
-responses from UART in processes waiting for an event instead.
-Reception works by executing an \emph{input handler} at each interruption
-triggered from UART reception.
-Contiki set the default input handler with the function
-\lstinline{serial_line_input_byte},
-specifically designed for serial communication with terminals.
-The function \lstinline{serial_line_input_byte} pass each character to standalone
-process (\lstinline{serial_line_process}) and broadcast an event on command
-full reception.
-I implemented a custom handler directly treating each message in the
-interrupt instead of using processes.
-
-Working with processes and events is impossible in our use case because Contiki
-does not have any mechanism that allows programmers to wait for an event inside a
-function and only allows it inside processes.
-Doing everything inside a process is not an option for this project.
-The custom handler is designed as a state machine (Fig~\ref{fig:cmdstate}) and
-works with its reception buffer. It takes advantage of the limited response
-format from the RN2483 module to sort each new communication.
-
-\begin{itemize}
-  \item Asynchronous LoRa radio messages start with \lstinline{radio rx  }.
-  \item \lstinline{radio_tx_ok} indicates the end of the radio transmission.
-  \item \lstinline{ok} indicates the acknowledgement of a command.
-\end{itemize}
-
-% Talk about the state machine
-
-I implemented helper functions, to ease the command transmission and
-acknowledgement between the RE-Mote and the RN2483.
-
-\begin{description}
-  \item[rn2483\_receive\_synch] busy-wait on the command states
-    (Fig~\ref{fig:cmdstate}) until reaching the \emph{received} state
-    or the timeout duration has elapsed.
-  \item[rn2483\_send\_cmd] a \emph{printf} style command, automatically
-    waiting for the acknowledgement (with the possibility to add custom timeouts).
-  \item[rn2483\_raw\_cmd] sending the command from a buffer in argument
-    without formatting or waiting for the acknowledgement.
-\end{description}
-
-\input{thesis.tex/chapters/driver/fig/state.tex}
-
-\subsection{Transmission}
-
-The radio transmission command has a different pattern from the other commands
-of the module.
-After the acknowledgement of the radio transmission command (\lstinline{radio tx ...}),
-the module transmits a second message when the radio communication is done.
-
-\input{thesis.tex/chapters/driver/fig/txsequence.tex}
-
-Microchip chose to represent the payload as string formatted hex number to
-facilitate the manual writing of commands, making the message payload twice as
-long as its original content.
-As all the content we will handle is represented as an \emph{8-bit} number array,
-I took the function to convert array to string representation and vice versa
-from the RIOT-OS project.  % TODO REF
-
-\subsection{Asynchronous Reception}
-
-The last component of a complete driver implementation is to receive radio
-messages.
-Reception follows a different scheme from the other commands.
-New message reception can happen at any time, asynchronously, from the moment
-we run the command \lstinline{radio rx 0}.
-I implemented a one message inbox to tackle this issue (see Fig~\ref{fig:rxstate}).
-
-Every message coming from the module is analyzed.
-Radio communication, starting with \lstinline{radio rx }, set a flag to indicate the
-presence of a new message.
-This flag remains until the message is read with the driver.
-Messages are received in a string formatted hex number, that we must convert it to an
-\emph{8-bit integer array}.
-% TODO Talk about packet buf ?
-% We don't store the final result in the same buffer as the one used for
-% reception as reading the result
-% This array is stored in a different place than the received message as command
-% may be executed between the moment we receive the message and the moment we
-% read it.
-Also, a timestamp is saved at the reception to keep track of when the
-message was received.
-
-\input{thesis.tex/chapters/driver/fig/rxstate.tex}
-
-\subsection{Contiki Radio Driver}
+\paragraph{}
 
 The Contiki WIKI did not provide any information about writing our radio driver
 or porting a new radio platform for Contiki.
-I based my implementation on the other radio driver implementation already
+Our implementation is based on the other radio driver implementation already
 available on Contiki to understand the driver structure.
 
 To create a Contiki radio driver we have to implement a \lstinline{radio_driver}
@@ -243,7 +97,7 @@ structure that must implement the following functions.
     \lstinline{transmit}.
   \item[read], on radio message reception, the function copies the
     message to the buffer passed in the argument.
-  \item[channel\_clear]
+  \item[channel\_clear] verify there is no transmission ongoing on the channel.
   \item[receiving\_packet] should theoretically check if the radio module is
     currently getting a new message from a transmission. This is a function we
     can expect from some platforms with an integrated radio module but here the
@@ -254,11 +108,112 @@ structure that must implement the following functions.
   \item[on] wake-up the module and starts listening to radio messages.
   \item[off] stop listening to radio messages and put the module to sleep.
   \item[get\_value, set\_value, get\_object, set\_object] are all the functions used
-    to configure the radio driver for a different network layer.
-    The parameters we need to implement will be discussed in Chapter~\ref{section:tsch}.
+    to configure the radio driver when manipulated by the upper layer.
+    The parameters needed by TSCH will be discussed in Chapter~\ref{section:tsch}.
 \end{description}
 
-% TODO talk about Poll mode
+I will introduce the two main features of any radio driver, the transmit and receive
+function, and how these functions work with the RN2483 module.
+Before that I will introduce the single design challenge of implementing a radio
+driver based on UART communication on Contiki.
+
+\subsection{Synchronous communication with the module}
+
+The design challenge for the radio driver implementation is the
+UART message mechanism implementation.
+UART communication needs synchronous messaging for every
+transmission, configuration, and reception.
+Acknowledgements from commands avoid
+clashes when trying to use the module at the same time.
+The previous implementation in~\cite{8847137} used fixed time delays to
+wait for the command to full execution on the module. This method
+quickly showed its limitation, each command has its delay, and
+fixed delays slow the global execution.
+
+The Contiki UART driver for the processor I used (the CC2538) does not have synchronous
+blocking read function out of the box, it assumes the programmer will compute the
+responses from UART in processes waiting for an event instead.
+Reception works by executing an \emph{input handler} at each interruption
+triggered from UART reception.
+Contiki set the default input handler with the function
+\lstinline{serial_line_input_byte},
+specifically designed for serial communication with terminals.
+The function \lstinline{serial_line_input_byte} pass each character to standalone
+process (\lstinline{serial_line_process}) and broadcast an event on command
+full reception.
+The drawback of Contiki design is his lack of mechanism that allows programmers
+to wait for an event inside a function.
+Because driver implementation in Contiki require the definition of function
+I implemented a custom handler directly treating each message in the
+interrupt instead of using processes.
+The custom handler is designed as a state machine (Fig~\ref{fig:cmdstate}) and
+takes advantage of the limited response
+format from the RN2483 module to sort each new communication.
+When sending a command to the module the program will busy-wait for the
+response. On response an interrupt is triggered and the busy-waiting can stop.
+If no response is received a timeout is triggered.
+
+% \begin{itemize}
+%   \item Asynchronous LoRa radio messages start with \lstinline{radio rx  }.
+%   \item \lstinline{radio_tx_ok} indicates the end of the radio transmission.
+%   \item \lstinline{ok} indicates the acknowledgement of a command.
+% \end{itemize}
+
+% I implemented helper functions, to ease the command transmission and
+% acknowledgement between the RE-Mote and the RN2483.
+%
+% \begin{description}
+%   \item[rn2483\_receive\_synch] busy-wait on the command states
+%     (Fig~\ref{fig:cmdstate}) until reaching the \emph{received} state
+%     or the timeout duration has elapsed.
+%   \item[rn2483\_send\_cmd] a \emph{printf} style command, automatically
+%     waiting for the acknowledgement (with the possibility to add custom timeouts).
+%   \item[rn2483\_raw\_cmd] sending the command from a buffer in argument
+%     without formatting or waiting for the acknowledgement.
+% \end{description}
+
+\input{thesis.tex/chapters/driver/fig/state.tex}
+
+\subsection{Transmit}
+
+The radio transmission command has a different pattern from the other commands
+of the module.
+After the acknowledgement of the radio transmission command (\lstinline{radio tx ...}),
+the module transmits a second message when the radio communication is done.
+
+\input{thesis.tex/chapters/driver/fig/txsequence.tex}
+
+Microchip chose to represent the payload as string formatted hex number to
+facilitate the manual writing of commands, making the message payload twice as
+long as its original content.
+The driver function has to take care of translating the \emph{8-bit} number
+array it receive to the hex number string representation.
+
+\subsection{Receive}
+
+Reception also follows a different scheme from the other commands.
+New message reception can happen at any time, asynchronously, from the moment
+we run the command \lstinline{radio rx 0}.
+Because in TSCH, only one message can get received during a time slot
+I implemented a one message inbox (see Fig~\ref{fig:rxstate}).
+
+Every message coming from the module is analyzed.
+The radio communication that start with \lstinline{radio rx }, set a flag to
+indicate the presence of a new message.
+This flag remains until the message is read from the driver with the
+\lstinline{read} function.
+Messages are received in a string formatted hex number and is converted to an
+\emph{8-bit integer array}.
+% TODO Talk about packet buf ?
+% We don't store the final result in the same buffer as the one used for
+% reception as reading the result
+% This array is stored in a different place than the received message as command
+% may be executed between the moment we receive the message and the moment we
+% read it.
+Also, a timestamp is saved at the reception to keep track of when the
+message was received.
+
+\input{thesis.tex/chapters/driver/fig/rxstate.tex}
 
 \subsection{Device Configuration}
 
@@ -292,53 +247,42 @@ calculations.
 
 \section{Validation test}
 
-To verify the implementation of the radio driver two examples are available.
+To verify the implementation of the radio driver I made
+a \emph{ping-pong} example based on the nullnet example already
+available in \emph{contiki-ng}.
+My example is located in \lstinline{/example/platform-specific/lora/nullnet}
+and demonstrate the driver is correctly working with the upper layers of the
+network stack.
 
-\begin{itemize}
-  \item The \emph{RN2483 shell} available in
-    \lstinline{/example/platform-specific/lora/rn2483} is a tool to interact
-    directly with the module.
-  \item The \emph{ping-pong} example based on the nullnet example already
-    available in \emph{contiki-ng} located in
-    \lstinline{/example/platform-specific/lora/nullnet} demonstrate the driver
-    is correctly working with the upper layers of the network stack.
-\end{itemize}
+I also implemented a shell to interract with the module I described
+in the Appendix~\ref{appendix:shell}.
 
-Each project is bundled with a \lstinline{project-conf.h}
-configuration file in which we can define the parameters of our project.
-To set my LoRa driver as the physical layer implementation we must add the
-following line to change the NETSTACK configuration.
+\subsection{Testing Setup}
 
-\begin{lstlisting}
-#define NETSTACK_CONF_RADIO rn2483_radio_driver
-\end{lstlisting}
+My testing setup was the same as~\cite{8847137}. I used the Zolertia RE-Mote
+Rev-B platform, using the CC2538 microcontroller, connected to the
+RN2483 breakout board, as schematized in Fig~\ref{fig:schemaconn}.
 
-\subsection{Shell}
+The RE-Mote platform has two UART peripheral, the UART1 peripheral is used
+to communicate with the module because the platform debugger uses UART0.
 
-This example extends the existing shell available in Contiki by writing a set
-of commands to test and interact with the RN2483 via UART\@.
+The \lstinline{PD0} GPIO is wired to the reset pin to allow
+software reset of the module as well as a push-button in case of hard reset.
 
-Here is the list of the added commands to the Contiki shell.
-
-\begin{lstlisting}[language=none]
-'> sys': Send a 'system' command to the RN2483 Module.
-'> mac': Send a 'mac' command to the RN2483 Module.
-'> radio': Send a 'radio' command to the RN2483 Module.
-'> tx': Transmit a radio message with the RN2483.
-'> sleep': Put RN2483 into sleep mode.
-'> wakeup': Force wakeup of RN2483.
-'> rn2483_reset': Hardware Reset of the RN2483 Module.
-'> help': Shows this help.
-\end{lstlisting}
-
-This was used during the development of the driver as a way to test parameters
-as well as the synchronous communication implementation.
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.70]{thesis.tex/chapters/driver/fig/conn_diag.pdf}
+  \caption{Hardware connection\label{fig:schemaconn}}
+\end{figure}
 
 \subsection{Ping-Pong\label{section:pingpong}}
 
-I based this example on the \emph{nullnet-broadcast} example to test if two
+This example is based on the \emph{nullnet-broadcast} example to test if two
 nodes could communicate using the LoRa driver I implemented when controlled by
 the \emph{CSMA} MAC layer instead of directly using the driver API\@.
+Using a test with a simpler MAC protocol than TSCH, that do not need adaptation,
+is the first to ensure my driver is correctly working before starting to adapt
+the TSCH protocol.
 
 The example is using the NETSTACK in Fig~\ref{fig:pingpongstack}.
 
@@ -351,32 +295,29 @@ the same payload.
 No other request is sent until the acknowledgement is received.
 This is schematized in Fig~\ref{fig:pingpongsequence}.
 
-The two different implementations to upload on two nodes are available in the
-example folder.
-
-\begin{itemize}
-  \item \lstinline{ping.c} send the request and wait for an acknowledgement.
-  \item \lstinline{pong.c} send the acknowledgement.
-\end{itemize}
-
 \input{thesis.tex/chapters/driver/fig/pingpongsequence.tex}
+
+Running the example shows the LoRa driver works with CSMA and confirms
+it follow correctly the Contiki radio driver specification.
 
 \section{Conclusion}
 
 This chapter detailed the RN2483 driver implementation I made for Contiki OS.
-I went through the steps to write a new radio driver in Contiki but also
-detailed the implementation architecture for future use of the driver.
-I included the explanation of a shell I made to directly interact with the
-RN2483 for testing purposes.
+Implementing a radio driver for LoRa is the first step toward achieving LoRa
+multi-hop network in Contiki.
+We showed the steps to write a radio driver for the RN2483 in Contiki and how
+the architecture of the module integrate with the driver architecture of Contiki.
 I explained how I overcome the design issue of Contiki to achieve
 synchronized UART communication.
-And finally, I used a simple example to prove the driver can work seamlessly
-with the other layers of the network stack.
+Finally, to demonstrate my driver is working I used a simple "ping-pong" example
+using the CSMA MAC protocol, a way simple protocol than TSCH, to handle my
+driver and show my implementation followed correctly the Contiki driver
+specification.
 
 \paragraph{}
 
-This chapter could be the basis of a future driver implementation that would
-also require the use of UART.
+This chapter and the implementation content could be the basis of a future
+driver implementation that would also require the use of UART.
 I made sure to decouple my code and some parts can be potentially used in
 other future LoRa driver implementations.
 This driver will be used in the next chapter where it will be directly

@@ -38,14 +38,14 @@ enum tsch_timeslot_timing_elements {
 };
 \end{lstlisting}
 
-Among these parameters, I did not define \lstinline{tsch_ts_cca_offset} and 
+Among these parameters, I did not define \lstinline{tsch_ts_cca_offset} and
 \lstinline{tsch_ts_cca} because \emph{CCA} is impossible with LoRa.
 Also, \lstinline{tsch_ts_rx_tx} is not used anywhere in the Contiki codebase.
 
 \begin{itemize}
   \item \lstinline{tx_offset} represents the time needed for the packet to get
     prepared before getting transmitted on air. The end of
-    \lstinline{tx_offset} is the moment the packet gets transmitted. 
+    \lstinline{tx_offset} is the moment the packet gets transmitted.
     The parameter is the same as \lstinline{rx_offset}.
     As we saw in~Fig~\ref{fig:sync} the bigger this parameter the bigger the
     clock drift can be between two nodes.
@@ -124,7 +124,7 @@ with this new one.
 \begin{lstlisting}
 #define US_TO_RTIMERTICKS_64(US) ((US) >= 0 ? \
  ((int32_t)(((int64_t)(US)*(RTIMER_ARCH_SECOND)+500000)/1000000L)) : \
- ((int32_t)((int64_t)(US)*(RTIMER_ARCH_SECOND)-500000)/1000000L)) 
+ ((int32_t)((int64_t)(US)*(RTIMER_ARCH_SECOND)-500000)/1000000L))
 \end{lstlisting}
 
 \subsection{Interrupt Priority Clash}
@@ -137,17 +137,17 @@ This is not an issue in the initial implementation of TSCH, which use the
 CC2536, because the radio driver is internal to the processor.
 The radio driver needs to also use interrupts to receive messages from the UART.
 By default, the real-time timer, \lstinline{SMT_IRQn}, has the same priority as
-the UART1 interruption. 
+the UART1 interruption.
 This is why I changed the \lstinline{rtimer_arch_schedule} implementation with
 the following line to set a lower priority.
 
 \begin{lstlisting}
-NVIC_SetPriority(SMT_IRQn, 7); 
+NVIC_SetPriority(SMT_IRQn, 7);
 \end{lstlisting}
 
 \subsection{Watchdog}
 
-The CC2538 watchdog is set to a period of 32,768 ticks or 1 second. 
+The CC2538 watchdog is set to a period of 32,768 ticks or 1 second.
 Because Contiki runs most TSCH operations inside an interrupt
 context, the watchdog timer is not reset inside.
 During long waits or long transmissions, the watchdog is not reset and trigger
@@ -159,11 +159,11 @@ a \lstinline{watchdog_periodic} to reset the watchdog timer.
 \subsection{Drift correction limitations}
 
 When acknowledging the reception of a packet, the receiver can bundle in the
-packet his drift from the transmitter in $\mu s$. 
+packet his drift from the transmitter in $\mu s$.
 This value is limited to a range of $-2047$ to $2047$ because of the structure
 of the packet that only give 12 bits to transmit this info.
 
-Bigger drift can occur in my implementation. 
+Bigger drift can occur in my implementation.
 I have to take into account this limitation to prevent overflows.
 
 \section{Porting TSCH}
@@ -190,7 +190,7 @@ could also be implemented.
   \item 868.5 MHz, 125 kHz BW
 \end{itemize}
 
-Using only three different channels also reduces the time for a node to join the 
+Using only three different channels also reduces the time for a node to join the
 network, making the testing faster.
 
 \subsection{Packet Duration\label{section:transmissiontime}}
@@ -215,7 +215,7 @@ of the time on air.
 
 \subsection{Radio delay}
 
-Radio delays are hardware platform-dependent values. 
+Radio delays are hardware platform-dependent values.
 They get accessed from the radio driver.
 TSCH uses these three values
 
@@ -232,7 +232,7 @@ on the transmission length with the RN2483 module, I made them variable.
 
 \subsubsection{Transmission delay}
 
-It represents the time for the module to get messages on the air. 
+It represents the time for the module to get messages on the air.
 This delay is made of three parts
 
 \begin{enumerate}
@@ -241,7 +241,7 @@ This delay is made of three parts
   \item Module sending back an acknowledgement.
 \end{enumerate}
 
-The program knows the message length and the acknowledgement length is constant. 
+The program knows the message length and the acknowledgement length is constant.
 The parameters $1.$ and $3.$ are then known with equation~\ref{eq:baudrate}.
 
 \begin{equation}
@@ -355,7 +355,7 @@ equation~\ref{eq:transmissiondelay}.
 \end{gather}
 
 The precision of this parameter is essential for synchronized communication
-with TSCH. 
+with TSCH.
 It indicates to TSCH when to start its radio transmission precisely at the
 end of \lstinline{TS_TX_OFFSET}.
 
@@ -491,16 +491,16 @@ The total detection delay is calculated with the following formula.
 
 \subsection{Packet Timestamp}
 
-As we saw in Figure~\ref{fig:sync} each time slot uses the same offset before 
+As we saw in Figure~\ref{fig:sync} each time slot uses the same offset before
 starting the transmission.
 Knowing the packet timestamp precisely allows the receiving mote to learn the
-drift from the transmitter. 
+drift from the transmitter.
 The clock is adjusted when receiving a packet from a time source.
 
 Since there is no way for the RN2483 module to know when the reception started
-precisely so a timestamp is saved when the packet is fully received on 
+precisely so a timestamp is saved when the packet is fully received on
 the platform.
-I calculate the real timestamp (the communication start) with the 
+I calculate the real timestamp (the communication start) with the
 \emph{detection delay} covered in section~\ref{section:detectiondelay} and
 equation~\ref{eq:detectdelay}, as well as the transmission time of
 section~\ref{section:transmissiontime} and equation~\ref{eq:tpacket}.
@@ -595,7 +595,7 @@ One mote from the TSCH network will send UDP messages to the coordinator
 every 30 seconds.
 Meanwhile, the third mote constantly sends messages on the same channel to
 simulate a busy channel of the network.
-This test shows how the protocol can deal with interference by retransmitting 
+This test shows how the protocol can deal with interference by retransmitting
 the message on a different channel.
 
 \paragraph{}
@@ -718,7 +718,7 @@ To run a custom schedule we must first disable the default 6TiSCH minimal schedu
 Custom schedules in Contiki can be done from anywhere with the help of the
 function \lstinline{tsch_schedule_add_link}, the code for the custom schedule
 is available in the appendix (see Appendix~\ref{code:customsched}).
-The schedule I made is schematized in Figure~\ref{fig:customsched}, the $:2f2a$ 
+The schedule I made is schematized in Figure~\ref{fig:customsched}, the $:2f2a$
 node is the network coordinator and it uses a single channel.
 
 \input{thesis.tex/chapters/tsch/fig/schedule.tex}
@@ -741,7 +741,7 @@ reach $:2dbc$ (see Fig~\ref{fig:route}).
 
 The $:2f2a$ node is set as the network coordinator, it will be the first node to be
 run in the network and the other nodes will join him.
-To send a message to another node from $:2f09$ we must first wait it 
+To send a message to another node from $:2f09$ we must first wait it
 knows the root node to send the packet to.
 We can check this with the command \lstinline{routes}.
 
@@ -756,13 +756,13 @@ The root node should also reach the end node.
 \begin{lstlisting}[language=none]
 #0012.4b00.14d5.2f2a> ip-nbr
 Node IPv6 neighbors:
--- fe80::212:4b00:14d5:2dbc, router 0, state Reachable 
--- fe80::212:4b00:14d5:2dac, router 0, state Reachable 
--- fe80::212:4b00:14d5:2f09, router 0, state Reachable 
+-- fe80::212:4b00:14d5:2dbc, router 0, state Reachable
+-- fe80::212:4b00:14d5:2dac, router 0, state Reachable
+-- fe80::212:4b00:14d5:2f09, router 0, state Reachable
 \end{lstlisting}
 
-To send a 'ping' message to another node, I made a custom shell 
-command \lstinline{msg_to} that sends a UDP message to the IPv6 address 
+To send a 'ping' message to another node, I made a custom shell
+command \lstinline{msg_to} that sends a UDP message to the IPv6 address
 passed in argument.
 Each node of the network is running a UDP server on port 8765.
 
@@ -823,7 +823,7 @@ This means the DODAG in Figure~\ref{fig:orchestra} is created by using Orchestra
 
 \input{thesis.tex/chapters/tsch/fig/orchestra.tex}
 
-The node $:2f2a$ has no direct route to $:2dac$. 
+The node $:2f2a$ has no direct route to $:2dac$.
 To prove the multi-hop routing is also correctly working with Orchestra, I will
 send a message between those two nodes.
 
@@ -845,7 +845,7 @@ The module is wasting energy in two places.
 
 \begin{itemize}
   \item The slow UART communication between the platform and the module. For
-    instance a max payload transmission to the module takes $86 ms$.  
+    instance a max payload transmission to the module takes $86 ms$.
     That is $86 ms$ of wasted energy with the module powered on. The same goes
     for every other command used by my driver.
   \item Because we can not receive feedback from the module when it detects a
@@ -863,8 +863,8 @@ The second can be solved by using a module that saves the timestamp at the start
 of the reception or trigger an interruption on reception.
 
 Because I knew I would not be able to measure meaningful data from my
-implementation concerning energy consumption, I did not take time to experiment 
-with the sleep feature of the module and did not proceed to do further energy 
+implementation concerning energy consumption, I did not take time to experiment
+with the sleep feature of the module and did not proceed to do further energy
 consumption analysis.
 
 \section{Conclusion}
