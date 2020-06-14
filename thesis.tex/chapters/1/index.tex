@@ -104,7 +104,7 @@ because of the addition of the following factors.
 The first factor is channel sensing.
 Detecting ongoing communication is impossible in LoRa because the \emph{Channel Activity Detection}
 (CAD) feature can only detect the packet preamble.
-This leads to unavoidable collision when a motes start its transmission
+This leads to unavoidable collision when a mote start its transmission
 when another is already transmitting.
 On collision, packets are retransmitted using a back-off strategy till the
 message has been correctly received or the number of trials has reached its
@@ -162,9 +162,9 @@ conditions.
 
 \paragraph{}
 
-Work to create a multi-hop routing protocol for LoRa multi-hop netowkrs has
+Work to create a multi-hop routing protocol for LoRa multi-hop networks has
 already been done~\cite{8115756, DIAS2018424, 8856256, Abrardo_2019, duong2018},
-but two main problems stand out from this similar work.
+but two main problems stand out from this related work.
 
 First, most studies consider that the motes are always-on and
 neglect the problem of probable energy depletion.
@@ -197,7 +197,7 @@ channel jamming and thus improving the reliability.
 Second, TSCH uses synchronized motes and the notion of time slots to be able to organize
 deterministic medium access, together with a schedule that will be designed to
 minimize collisions and make the nodes sleep in slots in which no communication
-need to take place.
+needs to take place.
 An example of a schedule is Orchestra~\cite{duquennoy2015} that adapts to the
 communication given by the routing protocol.
 Adapting the TSCH protocol for LoRa would allow low power,
@@ -206,8 +206,8 @@ multi-hop routing protocols.
 
 \paragraph{}
 
-This thesis aims to adapt the TSCH MAC protocol for LoRa.
-thus bringing a reliable, long-range, and low power IPv6 multi-hop
+This thesis aims to adapt the TSCH MAC protocol for LoRa,
+thus bringing a reliable, long-range, and low power IPv6 compatible multi-hop
 solution to the LoRa ecosystem.
 
 In order to achieve this, I will adapt the current TSCH implementation of
@@ -219,10 +219,12 @@ needs.
 In the end, I will have a fully working modified version of TSCH running on a
 \emph{Zolertia RE-Mote} development board.
 
-Testing my implementation in conjunction with RPL and the Orchestra schedule
-for TSCH will successfully achieve multi-hop routing and thus demonstrating its
-feasibility with LoRa.
-An additional test ran over a jammed radio channel will show the reliability of
+Preliminary experiments with my implementation of TSCH on LoRa in conjunction
+with RPL and the Orchestra schedule are organized. If successful multi-hop routing
+can be achieved, this will demonstrate the correctness of my design and the functioning
+of my implementation.
+
+Additional tests over a jammed radio channel will show the reliability of
 TSCH with LoRa.
 
 \paragraph{}
@@ -240,6 +242,6 @@ LoRa multi-hop communications.
 Chapter \ref{section:radio} gives the implementation details of realising a driver for the
 RN2483 in Contiki OS and the experimentation with the driver.
 Chapter \ref{section:tsch} gives instructions and guidelines for adapting and
-operating TSCH with LoRa on Contiki OS and reports on the different testing I conducted.
-Chapter \ref{section:conclusion} will conclude the work by summarizing it and
-will suggest possible futur research on the subject.
+operating TSCH with LoRa on Contiki OS and reports on the different experiments I conducted.
+Chapter \ref{section:conclusion} will conclude the work by highlighting its
+achievements will suggest possible future research on the subject.

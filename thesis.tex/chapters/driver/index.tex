@@ -1,20 +1,22 @@
-\chapter{Radio Driver for Zolertia with the RN2483 module\label{section:radio}}
+\chapter{Radio Driver in Contiki-NG running on a Zolertia RE-mote device extended with a LoRa radio module\label{section:radio}}
 
-To achieve multi-hop routing with LoRa in Contiki, the first step is to write
-a radio driver for Contiki (no support for LoRa is available yet),
-and thus allow LoRa to be used in the Contiki stack.
-This chapter covers the implementation and validation of a RN2483 LoRa radio
-driver working on \emph{Contiki-NG}.
+To demonstrate multi-hop routing with LoRa in Contiki, a device able to use
+the LoRa radio and running the Contiki OS must be available.
+We choose to use the Zolertia Re-Mote on which a shield with a LoRa radio was
+added. A shield is a hardware extension.
+Next, my task was to write a radio driver in Contiki (no support for LoRa is available yet)
+for being able to use the Lora radio on the shield from the Contiki OS.
 This driver will be handled by TSCH through the NETSTACK abstraction
-in chapter~\ref{section:tsch} where it will be used to achieve multi-hop routing.
-This driver is made for the \emph{Zolertia RE-Mote REV-B} platform.
+which will be presented in chapter~\ref{section:tsch} that covers the multi-hop routing.
+This chapter will explain the challenges we faced for creating, implementing
+and validating a driver in Contiki-NG running on a Zolertia RE-Mote REV-B
+platform for communicating with the RN2483 LoRa radio.
 
 \paragraph{}
 
-This chapter will give the reader more information about the inner working of
+It will give the reader more information about the inner working of
 the RN2483 module and how to use the driver in future work.
-It will help understand the inherent issues of the RN2483 module
-described in chapter~\ref{section:tsch}.
+It will help to understand the inherent issues of the RN2483 module.
 
 \section{Preliminary work}
 
@@ -25,27 +27,28 @@ For this purpose he made \emph{RN2483 Shields} adapted to the pin
 configuration of the \emph{Zolertia RE-Mote REV-B}. He also started a radio driver
 implementation for Contiki-OS\@.
 
-Previous work to adapt \emph{TSCH} for \emph{LoRa}
+In previous work to adapt \emph{TSCH} for \emph{LoRa}
 in~\cite{njomgang_2018}, \emph{Serge Sadja Njomgang} did his experimentation with
 the \emph{LoRaMote} demo platform from \emph{Semtech} using the \emph{SX1272} LoRa
 radio module.
 As analyzed in~\cite{8847137}, the Semtech LoRaMotes turned out to be an issue
-because they were no longer produced, new versions were expensive and memory was
+because they are no longer produced, new versions are expensive and memory is
 a bottleneck.
-The \emph{Zolertia RE-Mote} is already available and well maintained
-in \emph{contiki-ng} (making the transition faster and the code less error-prone)
-and the \emph{ETRO Lab} is already utilizing the platform.
+The \emph{Zolertia RE-Mote} is readily available and
+Contiki is well maintained for this platform (making the transition faster and
+the code less error-prone) and ETRO Lab is already utilizing the platform.
+Therefore I will also work with this platform and its in house produced Lora shield.
 
-\section{RN2483 Module Structure}
+\section{RN2483 LoRa Radio Module Structure}
 
-Developed by \emph{Microchip} the \emph{RN2483} is a LoRa module operating in
+Developed by \emph{Microchip} the \emph{RN2483} is a LoRa radio module operating in
 the 433 MHz and 868 MHz Frequency Bands~\cite{microchip:rn2483}.
 The module is specifically designed to work with LoRaWAN compatible networks,
 by including a set of commands designed for seamless integration with the
 \emph{LoRaWAN Protocol Stack}
 
 Each communication to and from the module is done via \emph{UART} ASCII command,
-making it easy for a human to interact with the module by handwriting commands
+making it easy for a human to interact with the module by typing commands
 on a terminal and reading the response back in a readable format
 (see~\ref{fig:pcconn}).
 % The module is made for ease of use over performance and power consumption.
@@ -113,9 +116,9 @@ structure that must implement the following functions.
 \end{description}
 
 I will introduce the two main features of any radio driver, the transmit and receive
-function, and how these functions work with the RN2483 module.
+function, and how these functions work with the RN2483 radio module.
 Before that, I will introduce the single design challenge of implementing a radio
-driver based on UART communication on Contiki.
+driver based on Universal asynchronous receiver-transmitter (UART) communication on Contiki.
 
 \subsection{Synchronous communication with the module}
 
@@ -141,14 +144,14 @@ specifically designed for serial communication with terminals.
 The function \lstinline{serial_line_input_byte} pass each character to standalone
 process (\lstinline{serial_line_process}) and broadcast an event on command
 full reception.
-The drawback of Contiki design is his lack of a mechanism that allows programmers
+The drawback of Contiki design is the lack of a mechanism that allows programmers
 to wait for an event inside a function.
 Because driver implementation in Contiki requires the definition of function
-I implemented a custom handler directly treating each message in the
+I implemented a custom handler that directly treats each message in the
 interrupt instead of using processes.
 The custom handler is designed as a state machine (Fig~\ref{fig:cmdstate}) and
 takes advantage of the limited response
-format from the RN2483 module to sort each new communication.
+format from the RN2483 radio module to sort each new communication.
 When sending a command to the module the program will busy-wait for the
 response. On response, an interrupt is triggered and the busy-waiting can stop.
 If no response is received a timeout is triggered.
@@ -242,7 +245,7 @@ This structure has a default definition but can be redefined from anywhere
 by redefining \lstinline{RN2483_DEV_CONF}.
 The currently used parameters are accessed with \lstinline{RN2483_DEV}.
 
-We will see in Chapter~\ref{section:tsch} how those variables are used for
+We will see in Chapter~\ref{section:tsch} how those variables are used in
 calculations.
 
 \section{Validation}
@@ -254,8 +257,8 @@ My example is located in \lstinline{/example/platform-specific/lora/nullnet}
 and demonstrate the driver is correctly working with the upper layers of the
 network stack.
 
-I also implemented a shell to interact with the module I described
-in the Appendix~\ref{appendix:shell}.
+I also implemented a shell to interact with the module that is described
+in Appendix~\ref{appendix:shell}.
 
 \subsection{Testing Setup}
 
@@ -279,16 +282,16 @@ a software reset of the module as well as a push-button in case of hard reset.
 
 This example is based on the \emph{nullnet-broadcast} example to test if two
 nodes could communicate using the LoRa driver I implemented when controlled by
-the \emph{CSMA} MAC layer instead of directly using the driver API\@.
+the \emph{CSMA} MAC layer instead of directly using the driver Application Programming Interface (API)\@.
 Using a test with a simpler MAC protocol than TSCH, that do not need adaptation,
-is the first to ensure my driver is correctly working before starting to adapt
+is the first test done to ensure my driver is correctly working before starting to adapt
 the TSCH protocol.
-
+The MAC protocol used is carrier Sense Multiple Access (CSMA).
 The example is using the NETSTACK in Fig~\ref{fig:pingpongstack}.
 
 \input{thesis.tex/chapters/driver/fig/pingpongstack.tex}
 
-The example is a simple two-way communication between two RE-Motes.
+The example is a simple two-way communication between two motes.
 The first one is sending a request with a number as
 payload and wait for the acknowledgement from the second motes sending back
 the same payload.
@@ -303,22 +306,23 @@ it follows correctly the Contiki radio driver specification.
 \section{Conclusion}
 
 This chapter detailed the RN2483 driver implementation I made for Contiki OS.
-Implementing a radio driver for LoRa is the first step toward achieving LoRa
+Designing and implementing a radio driver for a LoRa radio is the first step towards achieving LoRa
 multi-hop network in Contiki.
-We showed the steps to write a radio driver for the RN2483 in Contiki and how
-the architecture of the module integrates with the driver architecture of Contiki.
-I explained how I overcome the design issue of Contiki to achieve
+We showed the steps to write a radio driver for the RN2483 in Contiki-NG and clarified how
+the architecture of the module integrates with the driver architecture of Contiki-NG.
+I explained how I overcome the design issues related to Contiki to achieve
 synchronized UART communication.
-Finally, to demonstrate my driver is working I used a simple "ping-pong" example
-using the CSMA MAC protocol, a way simple protocol than TSCH, to handle my
-driver and show my implementation followed correctly the Contiki driver
+Finally, to demonstrate the proper functioning of my driver I used a simple "ping-pong" example
+using the CSMA MAC protocol, which is simpler protocol than TSCH.
+This simple protocol enabled to handle my
+driver and allowed to show that my design and implementation had correctly followed the Contiki driver
 specification.
 
 \paragraph{}
 
 This chapter and the implementation content could be the basis of a future
 driver implementation that would also require the use of UART.
-I made sure to decouple my code and some parts can be potentially used in
-other future LoRa driver implementations.
+% I made sure to decouple my code and some parts can be potentially used in
+% other future LoRa driver implementations.
 This driver will be used in the next chapter where it will be directly
 manipulated by the TSCH code.

@@ -26,7 +26,7 @@ The next four characteristics are what constitute an LPWAN.
 To keep the energy consumption of motes as low as possible, LPWAN are typically
 based on a star-of-star topology with one or more always-on internet gateways
 that listens for incoming messages.
-This keeps the radio of the motes off as much as possible where multi-hop routing
+This keeps the radio of the motes off as much as possible whereas multi-hop routing
 would require motes to listen for potentially incoming messages and
 relay them.
 Using such a scheme, considerably increases the power consumption of each
@@ -252,7 +252,7 @@ with the comparison table available in Appendix~\ref{table:bitrate}.
 
 Also, a higher SF improves the Signal-to-noise ratio
 (SNR) and receiver sensitivity~\cite{semtech:modemdesign}.
-This lead to an increase in transmission range.
+This leads to an increase in transmission range.
 
 \paragraph{}
 
@@ -305,7 +305,7 @@ equation~\ref{eq:bitrate} we can know the real data rate of a LoRa transmission.
 
 The CR introduces more overhead which decreases the data-rate but also
 provides more reliable communications.
-Table~\ref{table:datarate} available in the appendix for comparison.
+Table~\ref{table:datarate} is available in the appendix for comparison.
 
 % \begin{table}[h!]
 % \centering
@@ -474,12 +474,12 @@ TSCH is a MAC protocol that can offer a solution for low power and reliable mult
 because it divides time into time slots that allow certain nodes to sleep while
 neighbor is transmitting to a listening node during the same time-slot.
 
-This work, will investigate the feasibility of using TSCH as a MAC protocol for
+This work will investigate the feasibility of using TSCH as a MAC protocol for
 LoRa-based physical layer networks to achieve a low-power and reliable
 multi-hop network.
 It is important to understand the subtleties of the functioning of TSCH to
 understand the realization presented in this work.
-Therefore, TSCH will be presented.
+Therefore, TSCH will be described in detail.
 
 \paragraph{}
 
@@ -538,7 +538,7 @@ reliability.
 
 % TODO Continue and maybe add before TSCH formal intro
 
-\subsection{Time Slots}
+\subsection{Time Slots and slotframes}
 
 Time slots in TSCH are a way to achieve TDMA for the protocol.
 
@@ -548,11 +548,6 @@ layer we are using.
 Time slots should be long enough for the longest frame size to be sent
 between two nodes, together with an acknowledgement~\cite{rfc7554}.
 Every time slot in a TSCH network has the same duration.
-
-For each time slot, a schedule orchestrates what each
-node of the network will use his time-slot for: transmit, receive or sleep
-(see~\ref{section:tschscheduling} for more details)
-
 Each transmitting or receiving time slot is made of the following parts.
 
 \begin{itemize}
@@ -561,75 +556,17 @@ Each transmitting or receiving time slot is made of the following parts.
   \item Acknowledgement reception or transmission.
 \end{itemize}
 
+A set of time slots that repeat over time is known as a slotframe.
+For each time slot in a slotframe, a schedule orchestrates what each
+node of the network will use his time-slot for: transmit, receive or sleep
+(see~\ref{section:tschscheduling} for more details)
+
 \paragraph{}
 
-A set of time slots that repeat over time is known as a slotframe.
 The slotframe length has a direct impact on network capacity.
-Figure~\ref{fig:timeslots} represents how time slots and slotframes are
-organized together.
+Figure~\ref{fig:timeslots} shows the repetition of time slots in slotframes.
 
 \input{thesis.tex/chapters/context/fig/timeslots.tex}
-
-\subsection{Absolute Slot Number (ASN)}
-
-The absolute slot number is a shared counter between all the devices that
-define the number of time slots elapsed since the start of the
-network (see Fig~\ref{fig:asn}).
-ASN increases after each time slot and is calculated with \ref{eq:asn} where $k$
-is the slotframe offset.
-
-\begin{equation}
-  \label{eq:asn}
-  ASN = k SF_{len} + TS_{offset}
-\end{equation}
-
-\input{thesis.tex/chapters/context/fig/asn.tex}
-
-\subsection{Channel Hopping}
-
-\emph{Channel Hopping} increases the network capacity with frequency diversity
-to mitigate external interferences.
-Multiple devices can share time slots to transmit at the same time on different
-channels.
-
-Links are the conjunction of a time slot and a channel~\cite{Chen2013PerformanceAO}.
-
-\begin{equation}
-  \label{eq:links}
-  link = (TimeSlot_{number}, Channel_{offset})
-\end{equation}
-
-Multiple links constitute a time slot and devices can transmit on different
-links during the same time slot.
-This is dependent on the number of channels available.
-
-The channel offset is computed by the transmitter and the receiver with the
-function~\ref{eq:channel}. Both nodes know the $ASN$ and the schedule and can
-compute the same channel offset~\cite{rfc7554}.
-
-\begin{equation}
-  \label{eq:channel}
-  Channel_{offset} = (ASN + Scheduled_{offset}) \% Channel_{number}
-\end{equation}
-
-If the slotframe length is a prime number, even with the static schedule,
-with known channel offset, the time slot will use a different channel every time.
-Figure~\ref{fig:channelhopping} shows how scheduled cells in a TSCH network of
-four time slots and three channels change channel after each slotframe depending
-on the ASN.
-
-\input{thesis.tex/chapters/context/fig/channel_hopping.tex}
-
-\subsection{Scheduling\label{section:tschscheduling}}
-
-The TSCH schedule tells each node what to do during a time slot and defines the
-following parameters for each time slot.
-
-\begin{itemize}
-  \item Receive or transmit or sleep.
-  \item The channel offset in case of transmit or receive.
-  \item Address of the node or nodes to communicate with.
-\end{itemize}
 
 To ensure the synchronization of the slots, each transmission is taken as an opportunity
 for the neighbor to resynchronize its clock.
@@ -650,17 +587,89 @@ the data and then adjusts its time slot length to finish earlier.
   \caption{Synchronization in a TSCH time slot\cite{TELESHERMETO201784}\label{fig:sync}}
 \end{figure}
 
+\subsection{Absolute Slot Number (ASN)}
+
+The absolute slot number is a shared counter between all the devices that
+define the number of time slots elapsed since the start of the
+network (see Fig~\ref{fig:asn}).
+ASN increases after each time slot and is calculated with \ref{eq:asn} where $k$
+is the slotframe offset (or number of the slotframe) and $TS_{offset}$ points
+to the number of the time slot in the slotframe .
+
+\begin{equation}
+  \label{eq:asn}
+  ASN = k SF_{len} + TS_{offset}
+\end{equation}
+
+\input{thesis.tex/chapters/context/fig/asn.tex}
+
+\subsection{Creating a link between nodes with frequency diversity through Channel Hopping}
+
+To allow two motes to communicate, a so called link will be created between
+them by the scheduler.
+This will be done by attributing the same time slot and  same channel offset
+of those motes.
+As such we will make sure they will always use the same channel in the assigned
+time slot, even if the frequency of the channel changes at each slotframe to
+create channel hopping.
+
+Links are the conjunction of a time slot and a channel~\cite{Chen2013PerformanceAO}.
+
+\begin{equation}
+  \label{eq:links}
+  link = (TimeSlot_{number}, Channel_{offset})
+\end{equation}
+
+% Multiple links constitute a time slot and devices can transmit on different
+% links during the same time slot.
+% This is dependent on the number of channels available.
+%
+% The channel offset is computed by the transmitter and the receiver with the
+% function~\ref{eq:channel}. Both nodes know the $ASN$ and the schedule and can
+% compute the same channel offset~\cite{rfc7554}.
+
+The channel used by the link is given by
+
+\begin{equation}
+  \label{eq:channel}
+  Channel_{offset} = (ASN + Scheduled_{offset}) \% Channel_{number}
+\end{equation}
+
+If the slotframe length is a prime number,
+the time slot will use a different channel every time and cycle through all
+available frequency channels.
+Other motes in radio range can communicate in the same time slot on condition
+they use another channel offset.
+Figure~\ref{fig:channelhopping} shows how scheduled cells in a TSCH network of
+four time slots and three channels change channel after each slotframe depending
+on the ASN. It also shows that several communications can take place at the same
+time on condition they use another frequency channel not to disturb each other.
+
+\input{thesis.tex/chapters/context/fig/channel_hopping.tex}
+
+\subsection{Scheduling\label{section:tschscheduling}}
+
+The TSCH schedule tells each node what to do during a time slot and defines the
+following parameters for each time slot.
+
+\begin{itemize}
+  \item Receive or transmit or sleep.
+  \item The channel offset in case of transmit or receive.
+  \item Address of the node or nodes to communicate with.
+\end{itemize}
+
 \section{Routing}
 
 Adapting TSCH is not the only step to achieve low-power
-multi-hop routing.
+multi-hop LoRa networks.
 An appropriate routing protocol is needed to guide packets from source to destination.
 We can use already existing low power multi-hop routing protocols that do not need
 to be re-implemented.
 
-I will use the RPL routing protocols and the Orchestra scheduler for TSCH in
-Chapter~\ref{section:tsch} to test that the adaptation of TSCH I made worked
-with LoRa.
+I will use the Routing Protocol for Low-Power and Lossy Networks (RPL) routing
+protocols and the Orchestra scheduler for TSCH in
+Chapter~\ref{section:tsch} to demonstrate that the adaptation of TSCH that
+I designed and implemented worked with LoRa.
 
 \paragraph{}
 
@@ -673,9 +682,9 @@ of the components of those protocols.
 
 RPL is a routing protocol for constrained device networks.
 RPL is designed to work on networks with high data loss rates, low data rates, and
-instability~\cite{rfc6550}.
+unstable link~\cite{rfc6550}.
 
-The routing in RPL is based on Destination Oriented Directed Acyclic Graphs (DODAG).
+The routing in RPL is based on Destination Oriented Directed Acyclic Graphs (DODAGs).
 All the nodes of the DODAG route toward the \emph{root} node.
 If the root node is connected to the internet it can be used as a \emph{border
 router}.
@@ -771,7 +780,7 @@ LoRaWAN architecture.
 
 \begin{itemize}
   \item There is no coordination between nodes and most of them transmit on the
-    same channel and same SF, this leads to collision and low packet delivery
+    same frequency channel and same SF, this leads to collision and low packet delivery
     rate (PDR) on dense networks. On collision, the packet is retransmitted
     which implies a higher energy consumption for the mote.
   \item Nodes on the edge of the gateway coverage fail most of the time to
@@ -784,7 +793,7 @@ LoRaWAN architecture.
 \end{itemize}
 
 This section will give a state of the art of the research on
-multi-hop routing in LoRa with the aim to address some of the issue
+multi-hop routing in LoRa with the aim to address some of the issues
 aforementioned.
 
 \paragraph{}
@@ -795,8 +804,9 @@ been done in~\cite{uwbtsch} for the Ultra-Wide Band (UWB).
 \paragraph{UWB-TSCH}
 
 Charlier M. in~\cite{uwbtsch} explores the requirements to adapt TSCH for the UWB.
-Similarl to LoRa, UWB does not allow CCA and thus can not use CSMA for its
-communications.
+Similar to LoRa, UWB cannot use channel sensing for checking activity on the 
+channel before sending to avoid collisions.
+
 His work shows what it takes to adapt TSCH for another radio layer.
 It is also an evaluation of the performance of TSCH outside of 802.15.4.
 
@@ -891,7 +901,7 @@ of the network and makes it highly sensitive to interference.
 B. Sartori, S. Thielemans, M. Bezunartea, A. Braeken, and K. Steenhaut~\cite{8115756}
 from the SmartNet research group of VUB, adapted RPL
 to enable multihop communications on top of LoRa.
-The work presents the modifications of the objective function to take into
+The work presents the modifications of the RPL objective function to take into
 account the SF when computing the best routes as well as the creation of a MAC
 protocol, \emph{RLMAC} to manage time slots.
 This work describes a solution for a network of nodes to discover each other.
@@ -912,18 +922,23 @@ Reducing the power consumption was not a concern in this paper.
 \paragraph{TSCH-over-LoRa}
 
 Haubro M., Orfanadis C., Oikonomou G., and Fafoutis X.~\cite{tschoverlora}
-have recently published a work studying the feasibility of porting TSCH to LoRa
+have very recently published a work studying the feasibility of porting TSCH to LoRa
 in Contiki OS using the SX1272 radio module.
 
 The authors have shown it was possible to adapt TSCH for LoRa by testing their
 implementation with a variety of routing protocols and applications.
-Their implementation works on a single SF at a time and tested it using
-SF7 and SF10.
+Their implementation works with a single SF and they tested their design and
+implementation with SF7 and also with SF10.
 
 To demonstrate the resilience of TSCH to interference even with LoRa, the
 authors made a radio jammer that transmits on different channels. Their
 experimentation showed no packets got lost when using channel hopping with
 LoRa.
+
+Our work is very similar to this most recently published research.
+We also adapted TSCH in Contiki for the same purpose.
+
+% TODO Say in which way it is different Radio Driver ? Hardware ?
 
 \section{Conclusion}
 

@@ -687,18 +687,46 @@ demonstrated in section~\ref{section:jamming}. I will demonstrate the resilience
 of LoRa multi-hop network with TSCH to external interference by using a jamming
 device to mimic a busy channel.
 
-\subsection{RPL Custom Schedule\label{section:tschrpl}}
+\subsection{Energy consumption\label{section:energyconsumption}}
 
-For this example, I will create a custom schedule and demonstrate an application
-can work on top of the TSCH and LoRa network.
-For this purpose, I will run a UDP client and server on each node and will try
-to send a message between two nodes to see the packet get routed correctly with
-RPL and the multi-hop topology.
+Because of the design of the RN2483 which gives priority to the ease of use,
+a proper measurement of the energy consumption where we measure the radio
+usage is not relevant because the module is wasting energy in two places.
 
-\paragraph{}
+\begin{itemize}
+  \item The slow UART communication between the platform and the module. For
+    instance a max payload transmission to the module takes $86 ms$.
+    That is $86 ms$ of wasted energy with the module powered on. The same goes
+    for every other command used by my driver.
+  \item Because we can not receive feedback from the module when it detects a
+    preamble each timeslot must wait for the maximum transmission time to be
+    sure there is no ongoing transmission during the timeslot.
+\end{itemize}
 
-I received a multitude of boards from the ETRO Lab, to run my
-implementation on, with the following MAC addresses.
+% TODO There is also a third place: the huge tx_offset i set intentionaly to
+% mitigate the effect of the drift from the module. It's a lot of waster energy
+% that could be avoided.
+
+The first issue could be solved with a module that uses a faster communication
+protocol like SPI and that does not focus on human-readable command format.
+The second can be solved by using a module that include a way to acknowledge
+receptions.
+
+From the result of the validation experiment I will describe in the next section
+we can conclude that it is possible to use TSCH to create a power efficient LoRa
+multi-hop network but not with the RN2483.
+We won't be able to compare the power numbers to other existing solution
+because of this hardware issue.
+
+% Because I knew I would not be able to measure meaningful data from my
+% implementation concerning energy consumption, I did not take time to experiment
+% with the sleep feature of the module and did not proceed to do further energy
+% consumption analysis.
+
+\subsection{Testing setup}
+
+I used four Zolertia RE-Mote Rev-B platform connected to RN2483 breakout board.
+The MAC addresses of the nodes I used are the following
 
 \begin{enumerate}
   \item $:2f2a$
@@ -707,33 +735,38 @@ implementation on, with the following MAC addresses.
   \item $:2dbc$
 \end{enumerate}
 
-To run a custom schedule we must first disable the default 6TiSCH minimal schedule.
+\subsection{RPL Custom Schedule\label{section:tschrpl}}
 
-\begin{lstlisting}
-#define TSCH_SCHEDULE_CONF_WITH_6TISCH_MINIMAL 0
-\end{lstlisting}
+For this example, I will create a custom schedule and demonstrate
+my implementation can achieve multi-hop routing to achieve longer range
+transmission.
+I will also demonstrate participants of the network are synchronized which shows
+that power efficient multi-hop network is achieved.
+
+\paragraph{}
+
+I will run a UDP client and server on each node and
+send a message between two nodes to see the packet get routed correctly with
+RPL and the multi-hop topology.
 
 Custom schedules in Contiki can be done from anywhere with the help of the
 function \lstinline{tsch_schedule_add_link}, the code for the custom schedule
-is available in the appendix (see Appendix~\ref{code:customsched}).
+is available in the Appendix~\ref{code:customsched}.
 The schedule I made is schematized in Figure~\ref{fig:customsched}, the $:2f2a$
-node is the network coordinator and it uses a single channel.
+node is the network coordinator.
 
 \input{thesis.tex/chapters/tsch/fig/schedule.tex}
 
-I used the NETSTACK in Figure~\ref{fig:tschstack} to run this example.
+I used the NETSTACK in Figure~\ref{fig:tschstack} for this example.
 
 \input{thesis.tex/chapters/tsch/fig/stack.tex}
 
-My goal to prove the routing and the multi-hop functionality are working
-correctly is to send a UDP message from $:2f09$ to $:2dbc$.
+I will send a UDP message from $:2f09$ to $:2dbc$ to show the multi-hop routing
+feature.
 The message coming from $:2f09$ will have to go through $:2dac$ and $:2f2a$ to
 reach $:2dbc$ (see Fig~\ref{fig:route}).
 
 \input{thesis.tex/chapters/tsch/fig/route.tex}
-
-% TODO output the 'route' command of the :2f09 command to demonstrate it don't
-% have knowledge of the rest of the network.
 
 % TODO talk about network formation time to join it. Graph ?
 
@@ -779,12 +812,27 @@ request.
 [INFO:MAIN] Received request 'ping' from fd00::212:4b00:14d5:2f09
 \end{lstlisting}
 
-This shows my network can send and receive UDP messages using RPL.
+This shows LoRa multi-hop network using TSCH can send and receive UDP messages
+using RPL to route the message through multiple hops and thus improving the
+range of LoRa by using multi-hop routing.
+Further research needs to be conducted to test this example in a real-world
+setup by spreading the motes hundreds of meters apart.
+The context of this thesis made it impossible to do such a real-world test.
+
+\paragraph{}
+
+The second part of this test is to demonstrate the node keep synchronized
+through time and thus prooving this solution is power efficient.
+I used the same setup where I sent 50 packets between two nodes at a 1 minute
+interval. I counted the number of time the motes gets desynchronized from the
+network as well as the number of retransmission performed to reach the
+destination that could show the potential desynchronized slots.
 
 \subsection{Orchestra\label{section:tschorchestra}}
 
-Similarly to the previous example, in this section, I use Orchestra autonomous
-scheduler on top of my TSCH network.
+Besides validating that LoRa and TSCH can support a IPv6 transport
+layer, I conducted experiments to test that other schedulers can be used on top
+of TSCH. More concretely, I use Orchestra autonomous scheduler on top of my TSCH network.
 Transmitting a message between two nodes by the mean of a hop would again show
 the TSCH implementation for LoRa is compatible with this network stack.
 
@@ -949,38 +997,6 @@ accessible in the context of this thesis
 This experiment shows the resilience of my LoRa multi-hop network to external
 interference or congestionned radio channel with the help of the channel hopping
 mechanism from TSCH.
-
-\section{Energy consumption\label{section:energyconsumption}}
-
-% Because of the missing functionality of the RN2483 module which allows to
-% receive a signal at the start of the reception.
-Because of the design of the RN2483 which gives priority to the ease of use,
-a real-world measurement of the energy consumption is not relevant.
-The module is wasting energy in two places.
-
-\begin{itemize}
-  \item The slow UART communication between the platform and the module. For
-    instance a max payload transmission to the module takes $86 ms$.
-    That is $86 ms$ of wasted energy with the module powered on. The same goes
-    for every other command used by my driver.
-  \item Because we can not receive feedback from the module when it detects a
-    preamble each timeslot must wait for the maximum transmission time to be
-    sure there is no ongoing transmission during the timeslot.
-\end{itemize}
-
-% TODO There is also a third place: the huge tx_offset i set intentionaly to
-% mitigate the effect of the drift from the module. It's a lot of waster energy
-% that could be avoided.
-
-The first issue could be solved with a module that uses a faster communication
-protocol like SPI and that does not focus on human-readable command format.
-The second can be solved by using a module that saves the timestamp at the start
-of the reception or trigger an interruption on reception.
-
-Because I knew I would not be able to measure meaningful data from my
-implementation concerning energy consumption, I did not take time to experiment
-with the sleep feature of the module and did not proceed to do further energy
-consumption analysis.
 
 \section{Conclusion}
 
