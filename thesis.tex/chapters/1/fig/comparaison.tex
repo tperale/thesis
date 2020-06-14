@@ -22,22 +22,38 @@
     \draw[] (-0.1,5)--(0.1,5);
     \node[] at (-1.2, 7) {1 Gbit/sec};
     \draw[] (-0.1,7)--(0.1,7);
-    
-    \node[draw] at (8,1.5) (lora) {LoRa};
-    \node[draw] at (8.7,0.8) (sigfox) {SigFox};
-    \node[draw] at (7.4,2.2) (nb) {NB-IOT};
-    \node[draw,dotted,fit=(lora) (sigfox) (nb), label=above:{LPWAN}] {};
 
-    
-    \node[draw] at (2.2,3.5) (bluetooth) {Bluetooth};
-    \node[draw] at (2.7,2.5) (zigbee) {ZigBee};
-    \node[draw] at (2.0,1.8) (ble) {BLE};
-    \node[draw] at (3,5) (wifi) {WiFi};
-    \node[draw,dotted,fit=(bluetooth) (zigbee) (ble), label=above:{Short-range}] {};
+    \node[draw,fill=white] at (8,1.5) (lora) {LoRa};
+    \node[draw,fill=white] at (8.7,0.8) (sigfox) {SigFox};
+    \node[draw,fill=white] at (7.4,2.2) (nb) {NB-IOT};
+    \begin{scope}[on background layer]
+      \node[draw,fill=blue!30,fit=(lora) (sigfox) (nb), label=above:{LPWAN}] {};
+    \end{scope}
 
-    \node[draw] at (6.8,5) (lte) {LTE};
-    \node[draw] at (5.8,6) (5g) {5G};
-    \node[draw,dotted,fit=(lte) (5g), label=above:{Cellular}] {};
+    \node[draw,fill=white] at (2.2,3.5) (bluetooth) {Bluetooth};
+    \node[draw,fill=white] at (2.7,2.5) (zigbee) {ZigBee};
+    \node[draw,fill=white] at (2.0,1.8) (ble) {BLE};
+    \begin{scope}[on background layer]
+      \node[draw,fill=blue!10,fit=(bluetooth) (zigbee) (ble), label=above:{Short-range}] {};
+    \end{scope}
+
+    \node[draw,fill=white] at (3,5) (wifi) {WiFi};
+    \begin{scope}[on background layer]
+      \node[draw,fill=blue!50,fit=(wifi)] {};
+    \end{scope}
+
+    \node[draw,fill=white] at (6.8,5) (lte) {LTE};
+    \node[draw,fill=white] at (5.8,6) (5g) {5G};
+    \begin{scope}[on background layer]
+      \node[draw,fill=blue!60,fit=(lte) (5g), label=above:{Cellular}] {};
+    \end{scope}
+
+    \node[] at (6.9,8.2) (leg5) {\small Low};
+    \node[draw,fill=blue!10] at (7.5,8.2) (leg1) {};
+    \node[draw,fill=blue!30] at (7.8,8.2) (leg2) {};
+    \node[draw,fill=blue!50] at (8.1,8.2) (leg3) {};
+    \node[draw,fill=blue!60] at (8.4,8.2) (leg4) {};
+    \node[] at (10.7,8.2) (leg5) {\small High Power Consumption};
 \end{tikzpicture}
 \caption{Comparison of the existing IoT wireless technologies by range and data rate}
 \label{fig:commrangegraph}

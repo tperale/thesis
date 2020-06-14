@@ -6,7 +6,6 @@ I will also give an overview of works related to the topic.
 
 \section{Low Power Wide Area Network (LPWAN)\label{section:lpwan}}
 
-% Every IoT project has its requirements.
 My work is based on the LoRa radio protocol which belongs to the LPWAN network
 family.
 Sigfox, NB-IoT are other well known LPWAN radio protocol.
@@ -20,18 +19,18 @@ The next four characteristics are what constitute an LPWAN.
   \item[Long range] Mote should transmit over multiple km without a repeater.
   \item[Low cost devices] No expensive infrastructure requirement and motes
     operate with simple hardware.
-  \item[Limited data rate] Not suited for data intensive applications.
+  \item[Limited data rate] Not suited for data-intensive applications.
 \end{description}
 
 To keep the energy consumption of motes as low as possible, LPWAN are typically
-based on a star topology with a central always-on internet gateway that listens
+based on a star-of-star topology with a central always-on internet gateway that listens
 for incoming messages.
-This keep the radio of the motes off as much as possible where multi-hop routing
-would require motes to listen for potential incoming messages and
+This keeps the radio of the motes off as much as possible where multi-hop routing
+would require motes to listen for potentially incoming messages and
 re-transmit them.
 Using such a scheme, considerably increase the power consumption of each
 participant, this goes against the principles of LPWAN.
-My work explore solution based on a different MAC protocol to keep intact the
+My work explores a solution based on a different MAC protocol to keep intact the
 four characteristics of LPWAN while adding multi-hop routing capability to LoRa.
 
 \paragraph{}
@@ -50,6 +49,12 @@ traffic through an edge router.
 Edge routers are special devices that handle the data exchange between the
 6LoWPAN network and the internet.
 
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{thesis.tex/chapters/context/fig/6lowpan.png}
+  \caption{An example of an IPv6 network with a 6LoWPAN mesh network\cite{olsson20146lowpan}\label{fig:6lowpan}}
+\end{figure}
+
 % \paragraph{6TiSCH}
 % TODO later in TSCH section
 % In the same way as with 6LoWPAN, 6TiSCH defines an adaptation layer for IPv6
@@ -57,8 +62,9 @@ Edge routers are special devices that handle the data exchange between the
 
 \section{LoRa\label{section:lora}}
 
-My whole work is based around using LoRa as a communication I will address in
-this section a proper introduction to the protocol.
+My whole work is based around using LoRa Phy, the radio communication protocol,
+I will address in this section a proper introduction to the protocol and its
+modulation parameters.
 
 \paragraph{}
 
@@ -75,10 +81,10 @@ bytes~\cite{loraalliance:lorawanspecification}.
 \paragraph{}
 
 This section will cover the LoRa physical layer parameters, the packet
-structure and finally I will explain how all these parameters influence the
+structure and finally, I will explain how all these parameters influence the
 Time On Air (ToA).
-The physical layer parameters are what constitutes LoRa and
-and these parameters will be used throughout
+The physical layer parameters are what constitutes LoRa and these parameters
+will be used throughout
 chapters~\ref{section:radio}~and~\ref{section:tsch}.
 understanding how changes in these parameters will impact LoRa's performance
 is important for understanding my work and how LoRa behave.
@@ -86,24 +92,24 @@ is important for understanding my work and how LoRa behave.
 \subsection{Chirp Spread Spectrum (CSS) modulation}
 
 LoRa is based on a modified CSS modulation technique.
-In telecommunication modulation techniques are used to transmit information (bits in digital communication like we are using)
-with a waveform by varying its property (freqency or amplitude for instance).
+In telecommunication, modulation techniques are used to transmit information (bits in digital communication like we are using)
+with a waveform by varying its property (frequency or amplitude for instance).
 Chirp Spread Spectrum modulation, which LoRa is based on, transmit information
 by using sinusoidal signals that increase (up-chirps) or decrease (down-chirps)
 in frequency over time called \emph{chirps}.
 Figure~\ref{fig:downchirp} shows an example of a down-chirp.
-In CSS each chirp represent a symbol where each them can hold a variable number
+In CSS each chirp represents a symbol where each of them can hold a variable number
 of bits depending on the modulation parameters.
-The \emph{chip} rate is the number of time the phase is shifted per second.
-In CSS modulation phase shift is the way information get transmitted so having
-an higher chip rate leads to an higher data rate.
+The \emph{chip} rate is the number of times the phase is shifted per second.
+In CSS modulation, phase shift is the way information gets transmitted so having
+a higher chip rate leads to a higher data rate.
 
-The rules LoRa obey to modify the phase of the chirps to transmit information
+The rules LoRa obeys to modify the phase of the chirps to transmit information
 is the proprietary part of the protocol.
 
 \paragraph{}
 
-Each modulation technique have their own physical advantages and
+Each modulation technique has its own physical advantages and
 CSS has the advantage of offering robustness to channel degradation
 mechanisms like multipath fading, Doppler effect, and in-band jamming
 interference~\cite{semtech:modulationbasics}, partly explaining the great long
@@ -147,7 +153,7 @@ each $8 \mu s$.
   BW = R_c (chips/s)
 \end{equation}
 
-Increasing the BW will then result in an increases in the number of chips sent
+Increasing the BW will then result in an increase in the number of chips sent
 per second, directly increasing the quantity of information sent and thus the
 data-rate.
 
@@ -162,7 +168,7 @@ the range of transmission.
 The spreading factor is a parameter of the LoRa modulation that can range from 7 to 12.
 Spreading factors represents two Things.
 
-First, the $SF$ value is the number of bit of information that get transmitted
+First, the $SF$ value is the number of bit of information that gets transmitted
 per symbols.
 
 \begin{equation}
@@ -170,7 +176,7 @@ per symbols.
   SF = \frac{R_b}{R_s}
 \end{equation}
 
-Second, $2^{SF}$ equals to the number of chips per symbols.
+Second, $2^{SF}$ equals the number of chips per symbol.
 
 \begin{equation}
  \label{eq:sf2}
@@ -179,14 +185,14 @@ Second, $2^{SF}$ equals to the number of chips per symbols.
 
 Because the number of chips transmitted per second is constant depending on the BW,
 as we saw in the previous section, increasing the SF result in an increase of
-time to transmit the a symbol.
+time to transmit a symbol.
 We can see the effect of the SF in Fig~\ref{fig:sfcomp},
-increasing the SF by one double time to send a single chirp because it hold
-twice as much chips.
+increasing the SF by one double the time to send a single chirp because it holds
+twice as many chips.
 
 We can write the following equation that shows how SF and BW affect the
-bit-rate~\cite{semtech:modemdesign} with the comparaison table available in
-Appendix~\ref{table:bitrate}.
+bit-rate~\cite{semtech:modemdesign} as shown graphically in Fig~\ref{fig:sfcomparaison}
+with the comparison table available in Appendix~\ref{table:bitrate}.
 
 \begin{gather}
  \label{eq:bitrate}
@@ -194,6 +200,53 @@ Appendix~\ref{table:bitrate}.
 \end{gather}
 
 % TODO plot graph with equation.
+
+\begin{figure}[H]
+  \centering
+  \begin{tikzpicture}
+  \begin{groupplot}[group style={group size=1 by 2,
+      horizontal sep=0pt,
+      vertical sep=1cm},
+      height=5cm,width=5cm,
+  ]
+  \nextgroupplot[
+    width=0.5\textwidth,
+    height=0.5\textwidth,
+    axis x line=bottom,
+    ymin=0,
+    ymax=15000,
+    ylabel={$bitrate_{bps}$},
+    ylabel near ticks,
+    yticklabel style={/pgf/number format/1000 sep=},
+    axis y line=left,
+    xmin=7,
+    xmax=12,
+    xlabel={SF},
+    xlabel near ticks
+  ]
+    \addplot[color=red,mark=x] coordinates {
+      (7,6836)
+      (8,3906)
+      (9,2197)
+      (10,1220)
+      (11,671)
+      (12,366)
+    };
+    \addlegendentry{BW=125kHz}
+    \addplot[color=blue] coordinates {
+      (7,13671)
+      (8,7812)
+      (9,4394)
+      (10,2441)
+      (11,1342)
+      (12,732)
+    };
+    \addlegendentry{BW=250kHz}
+  \end{groupplot}
+  \end{tikzpicture}
+  \caption{SF and BW effect on the bit-rate\label{fig:sfcomparaison}}
+\end{figure}
+
 
 \paragraph{}
 
@@ -239,10 +292,10 @@ during transmission.
 
 The CR parameter can range from 1 to 4 and stand for the number of correction
 bits added every 4 bits of data.
-For instance the parameter CR1 will add 1 correction bit every 4 bits of data
+For instance, the parameter CR1 will add 1 correction bit every 4 bits of data
 for a total of 5 bits.
 
-Increasing the coding rate will decrease the actual data rate by using the
+Increasing the coding rate will decrease the actual data rate by using
 equation~\ref{eq:bitrate} we can know the real data rate of a LoRa transmission.
 
 \begin{equation}
@@ -250,9 +303,9 @@ equation~\ref{eq:bitrate} we can know the real data rate of a LoRa transmission.
   R_{b} = SF \frac{4}{4 + CR} \frac{BW}{2^{SF}} bits/sec
 \end{equation}
 
-The CR introduces more overhead which decrease the data-rate but also
-provide more reliable communications.
-Table~\ref{table:datarate} available in appendix for comparaison.
+The CR introduces more overhead which decreases the data-rate but also
+provides more reliable communications.
+Table~\ref{table:datarate} available in the appendix for comparison.
 
 % \begin{table}[h!]
 % \centering
@@ -388,7 +441,7 @@ with~\ref{eq:tpacket}.
 \subsection{Channels}
 
 The Things Network~\cite{ttnfrequencyplans} did a summary of the available
-channels available depending on the frequency plan of the country the motes is
+channels available depending on the frequency plan of the country the motes are
 operating in.
 
 Figure~\ref{fig:channels} presents each LoRaWAN channel available in the
@@ -405,25 +458,63 @@ European ISM band (863-870 MHz)~\cite{Polonelli_2019}.
 
 \section{Time-Slotted Channel Hopping (TSCH)}
 
-As I already addressed this issue in section~\ref{section:lpwan}, it can be
-difficult to provide a multi-hop routing protocol that keep the energy
+As I already addressed this issue in section~\ref{section:lpwan},
+traditional star-or-star networks used in LPWAN in which nodes just wake up
+to send their packet to a base station that is always on to listen on all
+
+It can be difficult to provide a multi-hop routing protocol that keeps the energy
 consumption of your LPWAN as low as possible.
-The MAC protocol of the network stack is the key to ensure the lowest energy
-consumption possible as it will regulate the access to the medium of
-communication.
-The aim of TSCH is to provide a low power and reliable MAC layer for
-multi-hop routing protocols that need frequent access to the radio.
-The goal of my work is to achieve a low power and reliable multi-hop networks
-based on LoRa and using TSCH is the missing link to ensure a low power network.
+Indeed, now the motes need to wake up at regular moments to be able to serve
+as a relay station for their neighbors.
+This creates the problem for the mote of knowing \emph{the when} to transmit
+and on which channel to be able to communicate with their neighbor.
+The MAC protocol of the network stack is responsible for those tasks and
+is the key to ensure the lowest energy consumption possible.
+TSCH is a MAC protocol that can offer a solution for low power and reliable multi-hop routing
+because it divides time into time slots that allow certain nodes to sleep while
+neighbor is transmitting to a listening node during the same time-slot.
+
+This work, study the feasibility of using TSCH as a MAC protocol for
+LoRa-based physical layer networks and thus achieving a low-power and reliable
+multi-hop network.
 In the following section, I will present the TSCH protocol building blocks.
 
 \paragraph{}
+
+% TSCH is a link layer protocol, aiming to achieve reliable communication between
+% neighbor nodes and low power operation.
+% It takes care of medium access control, duty cycling and synchronisation between nodes.
+% Once multi hop is aimed at, routing is needed to guide packet from source to destination.
+% It is needed to also study the correct “collaboration” between routing and link layer mechanisms.
+%
+% TSCH over 802.15.4phy at 2,4Ghz is being  thoroughly studied by the scientific
+% community mainly looking at performance parameters such as PDR, power consumption
+% and latency and this in function of the choosen scheduling techniques.
+% A lot of papers study TSCH under RPL based routing and study schedules that
+% adapt to the traffic streams in the RPL tree.
+%
+% In this work we want to study the feasibility of using TSCH as link layer
+% protocol for LoRa-basec physical layer networks.
+% Those networks are traditionally star-or-star networks in which nodes wake up
+% briefly  to send a packet (and receive the ack)  to a base station that is
+% always on to listen on all possible channels.
+% In case of “Lora  multi hop networks” consisting of multiple motes based on
+% LoRa PHY that help each other to carry packets from source to destination, several issues arise.
+% Indeed, now the motes need to wake up at regular moments to be able to serve
+% as relay station for their neighbors.
+% This creates the problem for the mote of knowing  the when to wake up the
+% radio and on which channel to be able to communicate with the neighbor.
+% TSCH is a link layer protocol that can (partly?) offer a solution, because it
+% allow nodes to sleep in some time slots and to wake up in others to listen while
+% a neighbor will be sending in the same slot. The schedule will have arranged
+% this “rendez vous”.
+% The challenge of porting TSCH from 802.15.4 phy consists in….
 
 TSCH is a Medium Access Control (MAC) layer protocol defined by the IEEE
 802.15.4e standard~\cite{rfc7554}.
 The design is inherited from WirelessHART and
 ISA100.11a~\cite{Duquennoy2017TSCHA6}.
-TSCH use the following principles to achieve low power consumption and
+TSCH uses the following principles to achieve low power consumption and
 reliability.
 
 \begin{description}
@@ -435,13 +526,13 @@ reliability.
     throughput.
 \end{description}
 
-\subsection{Multiplexing}
+% \subsection{Multiplexing}
+%
+% To share the same radio communication medium between multiple participants of
+% the network, MAC protocol has to implement a sort of channel access method
+% based on multiplexing
 
-To share the same radio communication medium between multiple participant of
-the network, MAC protocol has to implement a sort of channel access method
-based on multiplexing
-
-% TODO Continue
+% TODO Continue and maybe add before TSCH formal intro
 
 \subsection{Time Slots}
 
@@ -483,7 +574,7 @@ organized together.
 \subsection{Absolute Slot Number (ASN)}
 
 The absolute slot number is a shared counter between all the devices that
-defines the number of time slots elapsed since the start of the
+define the number of time slots elapsed since the start of the
 network (see Fig~\ref{fig:asn}).
 ASN increases after each time slot and is calculated with \ref{eq:asn} where $k$
 is the slotframe offset.
@@ -562,13 +653,19 @@ the data and then adjusts its time slot length to finish earlier.
 
 \section{Routing}
 
-This work is about achieving multi-hop routing with LoRa, in conjunction of a
-working MAC protocol we can use already existing low power multi-hop routing
-protocol that don't need to be implemented.
+Adapting TSCH is not the only step to achieve low-power
+multi-hop routing.
+An appropriate routing protocol is needed to guide packets from source to destination.
+We can use already existing low power multi-hop routing protocols that do not need
+to be re-implemented.
+
 I will use two different existing routing protocols on top of TSCH in
 Chapter~\ref{section:tsch} to test that the adaptation of TSCH I made worked
 with LoRa.
-I will introduce in this section RPL and Orchestra.
+
+\paragraph{}
+
+I will introduce in this section the protocol I used: RPL and Orchestra.
 This section is not meant to be an in-depth explanation of the protocols.
 Giving such details would be out of the scope of my work as I do not modify any
 of the components of those protocols.
@@ -612,11 +709,22 @@ collisions~\cite{duquennoy2015}.
 
 \section{Contiki OS}
 
-Contiki is a free and open-source Real-Time operating system (OS) specifically made
-for IoT applications. Contiki ships with a low-power IPv6 communication stack
-and a variety of routing and MAC protocols making the OS particularly well
-suited for Wireless Sensor Networks (WSNs).
+Embedded operating systems help developers in the process of writing programs
+for embedded systems.
+As a starting point for my work, the Contiki-NG lightweight operating system (OS)
+that contains a full-fledged IPv6 protocol stack for short range 802.15.4 Phy
+TSCH based networks, is taken.
+Re-implementing a whole network stack is out of the scope of this project and
+re-using each network layer available in Contiki to conduct my testing will
+speed up my development.
+Only the existing implementation of TSCH will be modified in
+chapter~\ref{section:tsch} as well as a new radio driver that will be added to
+the OS in chapter~\ref{section:driver}.
 
+\paragraph{}
+
+Contiki is a free and open-source Real-Time operating system (OS) specifically made
+for IoT applications.
 Contiki uses protothreads, a programming abstraction which Contiki is
 built around.
 They allow developers to write event-driven programs with little memory overhead and
@@ -628,7 +736,7 @@ successor named Contiki-NG was created as a fork by the same developers since.
 That fork has been the basis for a lot of LPWAN experimentation, for example
 with the development of the 6TiSCH stack for the OS~\cite{Duquennoy2017TSCHA6}.
 
-\paragraph{}
+\subsection{NETSTACK}
 
 Contiki's Network Protocol stack, also known as \lstinline{NETSTACK}, is a
 feature of the OS.
@@ -647,25 +755,47 @@ in a Contiki project.
   \item \lstinline{NETSTACK_RADIO}
 \end{itemize}
 
+Each layer of the NETSTACK has its own set of functions available.
+NETSTACK will allow us to define our new radio driver in
+chapter~\ref{section:driver} under the \lstinline{NETSTACK_RADIO}
+abstraction layer that prevents us to redefine every part of the upper
+\lstinline{NETSTACK_MAC} layer.
+
 \input{thesis.tex/chapters/driver/fig/netstack.tex}
 
 \section{Related work}
 
 This is not the first attempt to bring multi-hop communication to LoRa.
+Multi-hop communication solves the following issues inherent to the original
+LoRaWAN architecture.
+
+\begin{itemize}
+  \item There is no coordination between nodes and most of them transmit on the
+    same channel and same SF, this leads to collision and low packet delivery
+    rate (PDR) on dense networks. On collision, the packet is retransmitted
+    which implies a higher energy consumption for the mote.
+  \item Nodes on the edge of the gateway coverage fail most of the time to
+    perform a complete transmission to the gateway. Edge nodes are using the
+    highest SF factor to achieve the best range but it also has the worst
+    energy performance. The SF in conjunction with the retransmission leads
+    to bad energy performance.
+  \item There are some use cases where gateways are just impossible to install
+    and using motes to relay messages to gateways is needed.
+\end{itemize}
+
 This section will give a state of the art of the research on
-multi-hop routing in LoRa.
+multi-hop routing in LoRa with the aim to address some of the issue
+aforementioned.
 
 \paragraph{}
 
 Work to port TSCH and the 6LoWPAN stack to a new radio protocol has already
 been done in~\cite{uwbtsch} for the Ultra-Wide Band (UWB).
 
-% \paragraph{BLEach}
-
 \paragraph{UWB-TSCH}
 
 Charlier M. in~\cite{uwbtsch} explores the requirements to adapt TSCH for the UWB.
-Similarly to LoRa, UWB does not allow CCA and can not use CSMA for its
+Similarly to LoRa, UWB does not allow CCA and thus can not use CSMA for its
 communications.
 His work shows what it takes to adapt TSCH for another radio layer.
 It is also an evaluation of the performance of TSCH outside of 802.15.4.
@@ -678,12 +808,11 @@ the current LoRaWAN MAC protocol to allow multi-hop communications.
 \paragraph{Multihop LoRaWAN Extension} Dias J., Grilo A. in \cite{DIAS2018424}
 design a routing protocol that can interoperate with LoRaWAN gateways while
 using multi-hop communications for nodes out of the range of the gateway.
-The extension uses beacons to achieve time synchronization, but no channel
-hopping is used.
-
-% \paragraph{Distributed Queuing (DQ) LoRa}
-
-% The authors of~\cite{8856256} extend LoRaWAN
+The extension uses beacons to achieve time synchronization to achieve low power
+multi-hopping.
+No channel hopping is used though, unique channel congestion is already an issue
+in LoRaWAN and this work makes the matter worst.
+This work focus on resolving the range issue of the bordering nodes.
 
 % \subsection{RS LoRa}
 % [18] in roald similar to lorawan extension
@@ -702,16 +831,19 @@ large scale LoRa network to monitor the underground medieval aqueducts of the ci
 of Sienna, the \emph{Bottini}.
 
 Because of the large deployment cost induced by the large tunnels, the negative
-aesthetic impact of a wired network and the risk of flooding, made the author
-opt for a battery-operated wireless network.
-
-
-They propose a multi-hop routing solution for Linear Sensor Network (LSN) based
-on LoRa by developing their own MAC protocol tailored for their scenario.
+aesthetic impact of a wired network, and the risk of flooding,
+the usual LoRaWAN architecture using gateways was impossible and made the author
+opt for a battery-operated LoRa network.
+To solve this issue, they propose a multi-hop routing solution for Linear Sensor
+Network (LSN) by developing their own MAC protocol tailored for their scenario.
 This custom protocol is built around assigning time slots for each node with
 a common schedule for adjacent nodes.
 This allows neighbors to synchronize their clock and broadcast messages to
 both ends of the aqueducts.
+
+While their solution solves their particular problem all the schedule are hard-coded,
+there is no discovery mechanism in the protocol.
+This solution scales badly and can not suit a non-linear network.
 
 % Their solution allowed the connection of the Bottini
 
@@ -726,8 +858,11 @@ Each node transmits in a different time slot to their parent node, each hop adds
 their information to the packet they are relaying until the gateway is
 reached.
 The clock drift is mitigated by synchronizing on the preamble but the receiver
-does not acknowledge the reception of the packet, making the network sensible to
-interference since it is running on a single channel and SF.
+does not acknowledge the reception of the packet, making the network unreliable
+and sensible to interference and collision since it is running on a
+single channel and SF.
+Also, the initialization period is unique, which makes the network impossible to
+scale once it is running.
 
 \paragraph{}
 
@@ -743,27 +878,31 @@ communication.
 Each node of the network remains in listening mode until a beacon is received.
 Beacons are used for time synchronization of the time slots.
 Each node transmits packets to their parent node that relays it to the gateway.
-There is no scheduling of which node transmits, two nodes may
-transmit at the same time.
+Because the protocol is designed to work on a single channel and
+there is no scheduling of when a node can transmit, packet collision often occur
+which, as the number of device increase in the network, affects a lot the
+performance of the network.
 
-% Every nodes of the network keep track of their distance to the sink
-
-Also, LoRaBlink uses fixed SF, BW, and channel. This decreases the overall throughput
+Also, using a single SF, BW, and channel. It decreases the overall throughput
 of the network and makes it highly sensitive to interference.
 
 \paragraph{RPL+LoRa MAC Protocol}
 
-The Authors of~\cite{8115756} from the SmartNet research group of VUB, adapted RPL
+B. Sartori, S. Thielemans, M. Bezunartea, A. Braeken, and K. Steenhaut~\cite{8115756}
+from the SmartNet research group of VUB, adapted RPL
 to enable multihop communications on top of LoRa.
-The paper presents the modifications of the objective function to take into
-account the SF when computing the best routes.
-The paper describes a solution for a network of nodes to discover each other.
+The work presents the modifications of the objective function to take into
+account the SF when computing the best routes as well as the creation of a MAC
+protocol, \emph{RLMAC} to manage time slots.
+This work describes a solution for a network of nodes to discover each other.
 It uses a router sending packets on different spreading factors while the joining
 node listens on the spreading factors by starting by the lowest, this way it
 picks the fastest spreading factor available.
-It also describes a custom MAC protocol, \emph{RLMAC}, to allow multi-hop
-routing with LoRa. It manages time slots between nodes and allows PHY settings
+The custom MAC protocol, \emph{RLMAC}, built in this paper to allow multi-hop
+routing with LoRa manages time slots between nodes and allows PHY settings
 tuning depending on the links.
+
+% But the discovery made it non power efficient
 
 The protocol proposed focused on having the fastest delivery time with LoRa
 communications while increasing the packet delivery rate (PDR).
@@ -772,11 +911,11 @@ Reducing the power consumption was not a concern in this paper.
 
 \paragraph{TSCH-over-LoRa}
 
-Haubro M., Orfanadis C., Oikonomou G. and Fafoutis X.~\cite{tschoverlora}
+Haubro M., Orfanadis C., Oikonomou G., and Fafoutis X.~\cite{tschoverlora}
 have recently published a work studying the feasibility of porting TSCH to LoRa
 in Contiki OS using the SX1272 radio module.
 
-The authors has shown it was possible to adapt TSCH for LoRa by testing their
+The authors have shown it was possible to adapt TSCH for LoRa by testing their
 implementation with a variety of routing protocols and applications.
 Their implementation works on a single SF at a time and tested it using
 SF7 and SF10.
@@ -788,5 +927,37 @@ LoRa.
 
 \section{Conclusion}
 
-This chapter covered the main concept the reader need to understand for the
-next chapters.
+The typical LPWAN network architecture is based on a star-of-star topology
+with gateways that listen for incoming messages on every possible channel.
+This design keeps the power consumption of the motes as low as possible
+but, as the network grows, lack of coordination between the participant to avoid
+collisions and can suffer from communication range issues.
+
+A LoRa multi-hop network consists of motes based on the LoRa radio protocol
+that helps each other to carry packets from source to destination.
+The concern building a low-power multi-hop network is to keep
+the radio turned-on as low as possible while still being able to relay
+messages between neighbors by turning-on the radio during a synchronized time frame.
+A mote can only send/listen on one channel at the same time.
+This creates the problem for the mote of knowing when to wake up the radio and
+on which channel to be able to communicate with the neighbor.
+TSCH is a MAC protocol that
+can offer a low-power and reliable solution because it synchronizes nodes
+to sleep in time slots to achieve the lowest power consumption possible for the
+radios and use channel hopping to achieve frequency diversity and thus be
+more reliable and less subject to interference.
+To achieve multi-hop, routing is still needed to guide packet from source
+to destination but already existing protocols like RPL that have been studied
+in conjunction with TSCH could be used.
+As a starting point, Contiki OS will be used as it bundle with a
+implementation of TSCH and RPL and a full-fledged IPv6 protocol stack.
+
+There has already been an attempt to create LoRa multi-hop network in the
+literature the issue is most of them designed their routing and MAC protocol
+rather than starting from the existing implementation.
+This lead to protocols that have two main issues.
+First, they don't take into account the frequency diversity by
+not including any channel-hopping mechanisms, making the protocols subject to
+collisions as well as limited data rate as two nodes cannot transmit at the same time.
+Second, they often do not include any joining procedure
+for new nodes to join the running network which prevents the network from growing.

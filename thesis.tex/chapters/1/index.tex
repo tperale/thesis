@@ -1,8 +1,8 @@
 \chapter{Introduction}
 
-With new companies jumping into the Internet of Things (IoT), 
+With new companies jumping into the Internet of Things (IoT),
 major IT actors investing in the development of new
-products~\cite{fortuneiot2019}, and telecoms operator building infrastructure 
+products~\cite{fortuneiot2019}, and telecoms operator building infrastructure
 for the growing
 demand\footnote{\url{https://www.proximus.be/en/id_cl_iot/companies-and-public-sector/it-services/iot/internet-of-things.html}},
 it is fair to say that IoT caught the attention of many people and researchers
@@ -35,7 +35,7 @@ They can be classified by three different characteristics
 \begin{itemize}
     \item Long or Short \emph{communication range}
     \item High or low \emph{data-rate}
-    \item Low or high \emph{power usage} 
+    \item Low or high \emph{power usage}
 \end{itemize}
 
 Figure~\ref{fig:commrangegraph} shows the classification
@@ -59,13 +59,13 @@ This work focuses only on \emph{LoRa}, a proprietary \emph{chirp spread spectrum
 modulation technique owned by \emph{Semtech}, operating in the sub-GHz
 unlicensed \emph{ISM} band\footnote{It is worth noting that Semtech also developed a version of LoRa that
 operates in the 2.4GHz band but will not be covered in this text. When I will talk
-about LoRa I will only talk about the version that operates on the sub-GHz ISM band.}. 
+about LoRa I will only talk about the version that operates on the sub-GHz ISM band.}.
 I will cover LoRa in more detail in Section~\ref{section:lora}.
 The main characteristics of \emph{LoRa} are its low power transmission and the
 fact that it can trade data rate for range by fine-tuning the physical layer
 (PHY) settings.
 The long-range capabilities of the protocol caught the attention of
-many people. 
+many people.
 Hobbyists have succeeded in obtaining a record transmission distance of over 700 km with
 a direct line of sight between the receiver and the
 transmitter~\cite{network_2017}.
@@ -73,8 +73,8 @@ However, this case is not a real-world example. The range in urban areas is
 around \emph{2 to 5 km} and around \emph{15 km} in suburban
 areas~\cite{8030482}.
 
-\emph{LoRa} is often used in conjunction with \emph{LoRaWAN}, an ALOHA 
-based~\cite{loraalliance:lorawanspecification} MAC protocol deployed in a star-of-stars 
+\emph{LoRa} is often used in conjunction with \emph{LoRaWAN}, an ALOHA
+based~\cite{loraalliance:lorawanspecification} MAC protocol deployed in a star-of-stars
 topology.
 LoRaWAN is composed of wireless \emph{motes} sending messages to \emph{gateways} (GWs).
 Those GWs are connected to the internet and will relay messages to central servers
@@ -89,49 +89,49 @@ deployable in contrast to other LPWAN like \emph{Sigfox} or \emph{NB-IoT}.
 
 \section{Problem Statement}
 
-The issue with \emph{LoRaWAN}, as studied 
+The issue with \emph{LoRaWAN}, as studied
 in~\cite{8030482}~\cite{10.1145/2988287.2989163} is its inability to scale
 because of the addition of the following factors.
 
 The first factor is channel sensing.
-Channel sensing is impossible in LoRa because \emph{Channel Activity Detection}
-(CAD) only detects the packet preamble. % TODO reference needed
-This leads to collision when motes transmit at the same time.
-On collision, packet is retransmitted using a back-off strategy till the
+Detecting ongoing communication is impossible in LoRa because the \emph{Channel Activity Detection}
+(CAD) feature can only detects the packet preamble. % TODO reference needed
+This leads to unavoidable collision when motes transmit at the same time.
+On collision, packets are retransmitted using a back-off strategy till the
 message has been correctly received or the number of trials has reached its
 maximum.
-This implies a higher energy consumption for the motes and more radio 
+This implies a higher energy consumption for the motes and more radio
 channel usage.
 As the network gets denser~\cite{8030482}, the effect of collisions gets
 increasingly significant with little to no packets received by gateways.
 
 % TODO Figure from the paper about received packets ?
 
-Second, the European ISM band has set a duty-cycle of \emph{1\%} meaning that 
-each node and gateway can transmit \emph{36 sec/hour} maximum. 
-The duty-cycle regulations in place for the ISM bands on every
-transmitting device (motes and gateways) is also a limiting factor 
+Second, the European ISM band has set a duty cycle of \emph{1\%} meaning that
+each node and gateway can transmit \emph{36 sec/hour} maximum.
+The duty cycle regulations in place for the ISM bands on every
+transmitting device (motes and gateways) is also a limiting factor
 for LoRaWAN (\cite{8030482}).
 
-% TODO {Add some reference to ISM regulations} 
+% TODO {Add some reference to ISM regulations}
 
-Finally, Link quality also influences LoRaWAN's efficiency. 
+Finally, Link quality also influences LoRaWAN's efficiency.
 Environmental factors like temperature,
 humidity~\cite{evaluation_of_the_reliability_of_lora}, and the topology of the
 terrain~\cite{lorajambalaya}, influence the link quality.
-All these factors make network coverage typically not uniform 
+All these factors make network coverage typically not uniform
 as shown in Fig~\ref{fig:coverage}.
 Motes on the border of the gateway coverage area may struggle to
-achieve a full transmission. 
+achieve a full transmission.
 
 Also, gateways could restrain the deployment of LoRa networks.
-They might not be deployed everywhere as they require more demanding infrastructure 
+They might not be deployed everywhere as they require more demanding infrastructure
 than battery-operated motes.
 That is the case for the monitoring of pipelines and tunnels~\cite{Abrardo_2019},
-for which one could prefer to only install motes running on batteries 
+for which one could prefer to only install motes running on batteries
 which organise in a linear topology and can work without the help of gateways.
 They can also be a single point of failure of the network when a single
-gateway covers a portion of the network. 
+gateway covers a portion of the network.
 
 \input{thesis.tex/chapters/1/fig/coverage.tex}
 
@@ -142,22 +142,22 @@ instead, pass messages to their neighboring nodes.
 The use of a multi-hop routing protocol increases the reliability, the coverage
 and allows to adapt to changes in the network (because of moving or failing nodes).
 
-Multi-hop routing protocols are de facto strongs candidates for filling in the
-routing tables for nodes deployed for large area monitoring 
+Multi-hop routing protocols are de facto strong candidates for filling in the
+routing tables for nodes deployed for large area monitoring
 applications where gateways may be hard and costly to deploy and where blind
 spots often arise.
-This solution can potentially decrease the energy consumption of bordering 
+This solution can potentially decrease the energy consumption of bordering
 nodes that usually struggle to achieve successful communication in non-optimal
 conditions.
 
 \paragraph{}
 
 Work to create a multi-hop routing protocol with LoRa has already been
-done~\cite{8115756, DIAS2018424, 8856256, Abrardo_2019, duong2018}, 
+done~\cite{8115756, DIAS2018424, 8856256, Abrardo_2019, duong2018},
 but two main problems stand out from this similar work.
 
 First, most studies consider that the motes are always-on and
-neglect the problem of probable energy depletion. 
+neglect the problem of probable energy depletion.
 LPWAN were designed to be used with battery operated motes that spend most of
 his time sleeping and always-on motes go against that.
 A solution to this first matter would be to use time-slotted channel access.
@@ -165,25 +165,25 @@ Synchronized nodes would know when to wake-up to transmit or receive a packet.
 This will put nodes in sleeping mode the rest of the time and avoid collisions
 on transmission between nodes.
 
-Second, these protocols only use a single channel. 
-This reduces network capacity and increases the risk of 
+Second, these protocols only use a single channel.
+This reduces network capacity and increases the risk of
 interference.
 
 \section{Approach}
 
 Multi-hop routing solution already exists and can work on top of LoRa.
-But until now LoRa lacked of a reliable and power efficient MAC protocol 
-to use in conjunction of routing protocols like RPL or Orchestra.
+But until now LoRa lacked a reliable and power efficient MAC protocol
+to use in conjunction with routing protocols like RPL or Orchestra.
 
 The \emph{IEEE 802.15.4e} standard developed Time-Slotted Channel Hopping
-(TSCH) MAC protocol, but no implementation exist for LoRa.
+(TSCH) MAC protocol, but no implementation exists for LoRa.
 Using TSCH could actually solve the two previous issues aforementioned.
 First, TSCH uses channel hopping, making it resilient to external interference and
-channel jamming making it reliable.
+channel jamming and thus improving the reliability.
 Second, TSCH uses synchronized time slots between the nodes to achieve low
-power communication by diminishing the time the nodes spends with their radio
+power communication by diminishing the time the nodes spend with their radio
 on.
-Adapting the TSCH protocol for LoRa would allows low power, 
+Adapting the TSCH protocol for LoRa would allow low power,
 reliable and collision-free high-density networks, running over standards
 multi-hop routing protocols.
 
@@ -193,24 +193,24 @@ This thesis aims to adapt the TSCH MAC protocol for LoRa.
 thus bringing a reliable, long-range, and low power IPv6 multi-hop
 solution to the LoRa ecosystem.
 
-In order to achieve this I will tweak the current TSCH implementation of
+In order to achieve this, I will tweak the current TSCH implementation of
 the Contiki operating system (OS) (originally developed for 802.15.4 compliant radio protocol)
 to work with the longer delay induced by a low data-rate protocol like LoRa.
 I will also implement a radio driver for the RN2483 in Contiki to have a
 reliable LoRa radio driver working on the platform that I can tweak for my
 needs.
-In the end, I will have a fully working modified version of TSCH running on a 
+In the end, I will have a fully working modified version of TSCH running on a
 \emph{Zolertia RE-Mote} development board.
 
-Testing my implementation in conjunction of RPL and Orchestra will successfully
+Testing my implementation in conjunction with RPL and Orchestra will successfully
 achieve multi-hop routing and thus proving longer ranger can be achieved with
 LoRa.
-And a test ran over a jammed radio channel will show the reliability of 
+And a test ran over a jammed radio channel will show the reliability of
 TSCH with LoRa.
 
 \paragraph{}
 
-Progress toward adapting TSCH for LoRa in~\cite{8847137} and~\cite{njomgang_2018}, 
+Progress toward adapting TSCH for LoRa in~\cite{8847137} and~\cite{njomgang_2018},
 has already been conducted in the previous year at \emph{VUB}.
 This thesis builds on the combined efforts of their previous work.
 
