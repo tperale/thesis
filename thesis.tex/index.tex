@@ -24,6 +24,7 @@
 \usepackage{zi4}            % Nice font
 \usepackage{booktabs}
 \usepackage{multirow}
+\usepackage{hyperref}
 \usepackage[toc,page]{appendix}
 
 \definecolor{bluekeywords}{rgb}{0.13, 0.13, 1}
@@ -188,7 +189,7 @@
             \draw[-latex,fill=white] (\tikzlastnode.\angle)--++(\angle:2.25mm);
           }
         }
-      ] 
+      ]
        at ([xshift=-0.75mm,yshift=-0.5mm]path picture bounding box.center){};
     }
   },
@@ -206,7 +207,7 @@
     xscale=-1,
     path picture={
       \draw[top color=gray!5,bottom color=gray!40]
-      (path picture bounding box.south west) rectangle 
+      (path picture bounding box.south west) rectangle
       (path picture bounding box.north east);
       \coordinate (A-west) at ([xshift=-0.2cm]path picture bounding box.west);
       \coordinate (A-center) at ($(path picture bounding box.center)!0!(path
@@ -216,11 +217,11 @@
           rectangle +(0.1,0.05);
         \draw[ports]([yshift=-0.125cm]$(A-west)!\x!(A-center)$)
           rectangle +(0.1,0.05);
-       } 
+       }
       \coordinate (A-east) at (path picture bounding box.east);
       \foreach \x in {0.085,0.21,0.335,0.455,0.635,0.755,0.875,1}{
         \draw[ports]([yshift=-0.1125cm]$(A-east)!\x!(A-center)$)
-          rectangle +(0.05,0.1);       
+          rectangle +(0.05,0.1);
       }
     }
   },
@@ -234,7 +235,7 @@
     xscale=-1,
     path picture={
       \draw[top color=gray!5,bottom color=gray!40]
-      (path picture bounding box.south west) rectangle 
+      (path picture bounding box.south west) rectangle
       (path picture bounding box.north east);
       \coordinate (A-center) at ($(path picture bounding box.center)!0!(path
         picture bounding box.south)$);
@@ -249,7 +250,7 @@
         rectangle +(0.235,0.0175);
       \fill[black]([yshift=-0.42cm]$(A-west)!-0.1!(A-center)$)
         rectangle +(0.235,0.0175);
-    }  
+    }
   },
 }
 
@@ -311,7 +312,7 @@ Also, motes that are on the edge of the gateway coverage struggle to achieve a
 complete transmission.
 
 To solve these issues this thesis uses the existing multi-hop routing
-protocols with LoRa (like RPL or Orchestra) to increase the reliability 
+protocols with LoRa (like RPL or Orchestra) to increase the reliability
 and range of the network.
 But as of today LoRa still misses power efficient MAC protocol that suits the
 constraints of availability in multi-hop routing communications.
@@ -323,7 +324,7 @@ To do that, I will implement a radio driver for the RN2483 LoRa radio
 module and adapt the current implementation of TSCH in Contiki to work with
 it.
 Based on my work I will show that LoRa and TSCH work seamlessly together
-with the upper-layer protocols available in Contiki. 
+with the upper-layer protocols available in Contiki.
 I will do this by testing my implementation against jammed radio channels and
 by sending packets over multiple hops and thus prooving adapting TSCH enable
 power efficient et reliable multi-hop networks in LoRa.
@@ -338,7 +339,7 @@ the start of the year.
 I am especially grateful for his availability and helpfullness that gave me the
 right tools to achieve this work.
 I would also like to thanks my promotors Prof. Dr. Ir. Kris Steehaut and Prof.
-Dr. Ir. Elisa Gonzalez Boix that provided me with this great subject and helped me 
+Dr. Ir. Elisa Gonzalez Boix that provided me with this great subject and helped me
 during the year.
 
 % I would also like to thanks the Urlab hackerspace that sparked my interest for
@@ -372,41 +373,41 @@ during the year.
 
 \chapter{Conclusion and further work\label{section:conclusion}}
 
-The goal of the thesis aimed to adapt TSCH to work with LoRa and thus achieving 
+The goal of the thesis aimed to adapt TSCH to work with LoRa and thus achieving
 power-efficient and reliable multihop networking with LoRa radio on Contiki OS with
 the RN2483 module.
 
 \paragraph{}
 
-My work was divided into two parts. 
+My work was divided into two parts.
 In the first part, I successfully implemented a working driver for the RN2483
-module that served as a basis for the next part. 
+module that served as a basis for the next part.
 In the second part, I detailed the TSCH timing parameters as well as the driver
 parameters needed by TSCH to successfully adapt TSCH to work with LoRa by
 demonstrating my work integrates into the 6TiSCH networking stack.
 
 \paragraph{}
 
-The evaluation of the reliability of TSCH with LoRa was limited by 
+The evaluation of the reliability of TSCH with LoRa was limited by
 the drifts issues I got.
 I found out those were created by the RN2483 module that did not include any way
 to get the precise packet timestamp at reception.
 Also, measuring the power efficiency of the network turned out to be meaningless
 because of the design of the RN2483 module.
 
-I am confident that measuring those two parameters and achieving a low power 
+I am confident that measuring those two parameters and achieving a low power
 multi-hop network with a radio module like the SX1272 is possible.
 This thesis explained what it takes to adapt TSCH for a new LoRa radio
-module and the possible re-implementation of this project on a new radio module 
-will then be facilitated. 
+module and the possible re-implementation of this project on a new radio module
+will then be facilitated.
 
-Changing the radio driver would create a stable testing device that would allow 
+Changing the radio driver would create a stable testing device that would allow
 us to measure meaningful data for the analysis of power consumption and
 reliability of the network.
 The following tasks could be conducted
 
 \begin{itemize}
-  \item Determining the optimal TSCH parameters for LoRa. 
+  \item Determining the optimal TSCH parameters for LoRa.
   \item Finding the optimal period between EB packets to keep a balance between
     low power usage and maintaining synchronization.
   \item Compare how it performs in regards to LoRaWAN. Is the TSCH overhead
@@ -417,11 +418,11 @@ The following tasks could be conducted
 % Real world testing on the range of the network were not conducted due to the
 % lockdown measure in place during the time I wrote my thesis.
 
-To achieve longer distance transmission, the ideal implementation would adapt 
+To achieve longer distance transmission, the ideal implementation would adapt
 its SF depending on the distance between two hops.
-Even though the different SF are supported in my implementation, only 
-a single SF is used at the same time. 
-A lot of LoRa features are lost by using a single SF. 
+Even though the different SF are supported in my implementation, only
+a single SF is used at the same time.
+A lot of LoRa features are lost by using a single SF.
 Supporting multiple SF at the same time would increase the network throughput
 and increase the transmission range for nodes with low reception.
 The future work on the subject should focus on modifying the protocol to use
@@ -450,4 +451,3 @@ be conducted.
 \end{appendices}
 
 \end{document}
-

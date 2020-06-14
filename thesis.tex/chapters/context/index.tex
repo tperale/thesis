@@ -377,7 +377,7 @@ Three parts constitute packets.
     well as an optional CRC.
 \end{description}
 
-\subsection{Time on Air (ToA)}
+\subsection{Time on Air (ToA)\label{section:toa}}
 
 The Time on Air is the measure for packet transmission time.
 ToA depends on the parameters we introduced previously to count the number of
@@ -635,7 +635,7 @@ To ensure the synchronization of the slots, each transmission is taken as an opp
 for the neighbor to resynchronize its clock.
 Synchronization is important to mitigate each node's internal clock drift.
 
-Time source nodes send Enhanced Beacon (EB) packets to synchronize the receiving
+Time source (or coordinator) nodes send Enhanced Beacon (EB) packets to synchronize the receiving
 nodes of the network. When nodes do not resynchronize for a long period
 a Keep-Alive (KA) is sent and used to adjust the drift at synchronization.
 
