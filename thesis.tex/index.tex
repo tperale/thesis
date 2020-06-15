@@ -304,30 +304,63 @@ also in the event that some conclusions are taken on board.
 
 \section*{Abstract}
 
-LoRa and its inherent MAC protocol LoRaWAN is known to scale badly and suffer
-from range issue.
-Research has shown that in large LoRaWAN network collisions often occur
-because of the congestion on the same spreading factors and the same channel.
-Also, motes that are on the edge of the gateway coverage struggle to achieve a
-complete transmission.
+Long range LoRa-based networks made their entry on the market some years ago.
+Those networks consist of low power motes that communicate with powerful base
+stations in a star of star topology.
+Nodes wake up briefly  to send a packet (and receive the ack)  with base
+stations that are always listening on all possible channels.
+The technical innovation came from the physical layer, incorporated in cheap
+low power radio chips that can trade bandwidth for range.
+The physical layer allows several orthogonal channels to be created.
+At the link layer, contention on a same channel is ruled by a simple random
+access medium access control (MAC) protocol, called LoRaWAN,
+that randomizes the moments of  retransmission  when a collision has taken
+place and an acknowledgement did not arrive.
+Practice showed that insufficient coverage (motes cannot reach any of the
+available base stations) together with external interference and the simple
+MAC protocol for coping with collisions jeopardizes the performance of such a
+network.
 
-To solve these issues this thesis uses the existing multi-hop routing
-protocols with LoRa (like RPL or Orchestra) to increase the reliability
-and range of the network.
-But as of today LoRa still misses power efficient MAC protocol that suits the
-constraints of availability in multi-hop routing communications.
-Time-Slotted Channel Hopping (TSCH) is already used in IEEE802.15.4e already
-prooved its effiency with multi-hop networks but still lack of a port for LoRa.
-This thesis will cover the adaptation of Time-Slotted Channel Hopping (TSCH)
-MAC protocol for LoRa radio.
-To do that, I will implement a radio driver for the RN2483 LoRa radio
-module and adapt the current implementation of TSCH in Contiki to work with
-it.
-Based on my work I will show that LoRa and TSCH work seamlessly together
-with the upper-layer protocols available in Contiki.
-I will do this by testing my implementation against jammed radio channels and
-by sending packets over multiple hops and thus prooving adapting TSCH enable
-power efficient et reliable multi-hop networks in LoRa.
+To solve the blind spot and congestion issues, a  multi-hop Lora
+physical layer (Phy) based network is put forward.
+A “Lora multi-hop network” consist of motes based on Lora Phy that help each
+other to carry packets from source to destination.
+These motes must still sleep as much as possible to save energy but need to
+wake up at regular moments to be able to serve as relay station for their neighbors.
+A mote can only send/listen on one channel at the same time.
+This creates the problem for the mote of knowing when to wake up the radio and
+on which channel to be able to communicate with the neighbor.
+Time Slotted Channel Hopping (TSCH) is a medium access control protocol that
+can offer a solution, because it allows nodes to sleep in some time slots and
+to wake up in others to listen while a neighbor will be sending in the same slot.
+The schedule will have arranged this “rendez vous”.
+TSCH has been introduced in for creating ultra-reliable 802.15.4 (ZIGBEE phy)
+short range Internet of things (IoT) networks.
+Reliability comes from the channel hopping to create frequency diversity and
+from the deterministic medium access control.
+
+Organising multihop not only entails the problem of organizing a suitable
+link-layer to enable a power efficient communication between neighbor nodes,
+it also entails to quest for an appropriate routing protocol to guide packets
+from source to destination.
+This means more memory will be needed in the Lora motes to accommodate the
+protocol stack.
+As a starting point for our work, the Contiki-NG lightweight operating system (OS)
+that contains a full-fledged IPv6 protocol stack for short range 802.15.4 Phy,
+TSCH based networks is taken.
+
+The challenges of porting TSCH from 802.15.4 Phy consists in organizing the
+strict timing needed to keep the notion of time slots as well as coping with
+the resource constraintness of the motes to fit the code. Another challenge
+is to organize the correct interplay between routing and link layer.
+After an in-depth study of the details and particularities of LoRa Phy and TSCH,
+as well as the study of related work,
+I implemented a radio driver for the RN2483 LoRa radio module and adapt
+the current implementation of TSCH for 802.15.4 short range in Contiki-NG to
+work with it.
+I tested the radio driver as well as the adaptation of the protocol I made, by running
+a LoRa multi-hop network based on my changes and demonstrated its power efficiency
+by using synchronized time slots and reliability to external interference.
 
 \newpage
 
@@ -373,18 +406,26 @@ during the year.
 
 \chapter{Conclusion and further work\label{section:conclusion}}
 
-The goal of the thesis aimed to adapt TSCH to work with LoRa and thus achieving
-power-efficient and reliable multihop networking with LoRa radio on Contiki OS with
-the RN2483 module.
+The goal of the thesis aimed to adapt the TSCH implementation of Contiki-NG
+running on a Zolertia RE-Mote REV-B to work with the RN2483 LoRa radio,
+and thus achieving power-efficient, long range, and reliable IPv6 enabled
+multi-hop networks with LoRa radio.
 
 \paragraph{}
 
-My work was divided into two parts.
-In the first part, I successfully implemented a working driver for the RN2483
-module that served as a basis for the next part.
-In the second part, I detailed the TSCH timing parameters as well as the driver
-parameters needed by TSCH to successfully adapt TSCH to work with LoRa by
-demonstrating my work integrates into the 6TiSCH networking stack.
+After implementing a working driver for the RN2483 LoRa radio module to use
+in Contiki, I demonstrated that, by adapting the TSCH MAC protocol to work
+LoRa radio, LoRa multi-hops networks are feasible with TSCH and showed:
+
+\begin{itemize}
+  \item The network range is enhanced, by routing packets through multiple hops to reach
+    its destination.
+  \item The network is power efficient, the participants of the network remain synchronized
+    to achieve low power communication.
+  \item The network is reliable and is resilient to external, by running the network
+    over a jammed channel and achieving complete transmission.
+\end{itemize}
+
 
 \paragraph{}
 
@@ -401,33 +442,6 @@ This thesis explained what it takes to adapt TSCH for a new LoRa radio
 module and the possible re-implementation of this project on a new radio module
 will then be facilitated.
 
-Changing the radio driver would create a stable testing device that would allow
-us to measure meaningful data for the analysis of power consumption and
-reliability of the network.
-The following tasks could be conducted
-
-\begin{itemize}
-  \item Determining the optimal TSCH parameters for LoRa.
-  \item Finding the optimal period between EB packets to keep a balance between
-    low power usage and maintaining synchronization.
-  \item Compare how it performs in regards to LoRaWAN. Is the TSCH overhead
-    worth it ?
-  \item The network capacity and transmission delay.
-\end{itemize}
-
-% Real world testing on the range of the network were not conducted due to the
-% lockdown measure in place during the time I wrote my thesis.
-
-To achieve longer distance transmission, the ideal implementation would adapt
-its SF depending on the distance between two hops.
-Even though the different SF are supported in my implementation, only
-a single SF is used at the same time.
-A lot of LoRa features are lost by using a single SF.
-Supporting multiple SF at the same time would increase the network throughput
-and increase the transmission range for nodes with low reception.
-The future work on the subject should focus on modifying the protocol to use
-different SF.
-
 \paragraph{}
 
 It can be concluded that the objective of the thesis has only been partially
@@ -440,7 +454,43 @@ efficiency of the network, as well as finding a solution to use all the SF
 available shows that further research focussing on those matters should
 be conducted.
 
-\chapter*{Further work\label{section:further}}
+\section*{Further work\label{section:further}}
+
+The first thing future work need to focus on, is changing the radio platform
+used for the tests.
+I am confident that achieving a low power multi-hop network with a radio module
+like the SX1272 is possible.
+This thesis explained what it takes to adapt TSCH for a new LoRa radio
+module and the possible re-implementation of this project on a new radio module
+Changing the radio driver would create a stable testing device that would allow
+us to measure meaningful data for the analysis of power consumption and
+reliability of the network.
+The following tasks could be conducted on this stable testing device
+
+\begin{itemize}
+  \item Determining the optimal TSCH parameters for LoRa.
+  \item Finding the optimal period between EB packets to keep a balance between
+    low power usage and maintaining synchronization.
+  \item Compare how it performs in regards to LoRaWAN. Is the TSCH overhead
+    worth it ?
+  \item The network capacity and transmission delay.
+  \item Running a proper benchmark of the radio usage.
+\end{itemize}
+
+The second challenge for the future is to achieve longer distance transmission.
+The ideal implementation would adapt its SF depending on the distance between two hops.
+Even though the different SF are supported in my implementation, only a single SF is used at the same time.
+A lot of LoRa features are lost by using a single SF.
+Supporting multiple SF at the same time would increase the network throughput by
+allowing parralel communications and increase the transmission range for nodes
+with low reception.
+The future work on the subject should focus on modifying the protocol to use
+different SF.
+
+\paragraph{}
+
+Futur work should conduct a real-world with properly spaced motes to test
+the network.
 
 \newpage
 

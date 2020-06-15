@@ -49,6 +49,9 @@ Each mote of the network can communicate with the Internet by passing its
 traffic through an edge router.
 Edge routers are special devices that handle the data exchange between the
 6LoWPAN network and the internet.
+Figure~\ref{fig:6lowpan} shows an example of a 6LoWPAN network, each mote
+can reach internet connected servers by routing their packet to the edge
+router before reaching the internet.
 
 \begin{figure}[H]
   \centering
@@ -617,7 +620,7 @@ Links are the conjunction of a time slot and a channel~\cite{Chen2013Performance
 
 \begin{equation}
   \label{eq:links}
-  link = (TimeSlot_{number}, Channel_{offset})
+  link~determined~by = (TimeSlot_{number}, Channel_{offset})
 \end{equation}
 
 % Multiple links constitute a time slot and devices can transmit on different
@@ -632,7 +635,7 @@ The channel used by the link is given by
 
 \begin{equation}
   \label{eq:channel}
-  Channel_{offset} = (ASN + Scheduled_{offset}) \% Channel_{number}
+  Channel_{used} = (ASN + Channel_{offset}) \% Channel_{number}
 \end{equation}
 
 If the slotframe length is a prime number,
@@ -804,7 +807,7 @@ been done in~\cite{uwbtsch} for the Ultra-Wide Band (UWB).
 \paragraph{UWB-TSCH}
 
 Charlier M. in~\cite{uwbtsch} explores the requirements to adapt TSCH for the UWB.
-Similar to LoRa, UWB cannot use channel sensing for checking activity on the 
+Similar to LoRa, UWB cannot use channel sensing for checking activity on the
 channel before sending to avoid collisions.
 
 His work shows what it takes to adapt TSCH for another radio layer.
@@ -967,11 +970,11 @@ in conjunction with TSCH could be used.
 As a starting point, Contiki OS will be used as it bundle with a
 implementation of TSCH and RPL and a full-fledged IPv6 protocol stack.
 
-There has already been an attempt to create LoRa multi-hop network in the
-literature the issue is most of them designed their routing and MAC protocol
+There has already been an attempt to create LoRa multi-hop networks in the
+literature. The issue is most of them designed their routing and MAC protocol
 rather than starting from the existing implementation.
-This lead to protocols that have two main issues.
-First, they don't take into account the frequency diversity by
+This led to protocols that have two main issues.
+First, they do not take into account the frequency diversity by
 not including any channel-hopping mechanisms, making the protocols subject to
 collisions as well as limited data rate as two nodes cannot transmit at the same time.
 Second, they often do not include any joining procedure

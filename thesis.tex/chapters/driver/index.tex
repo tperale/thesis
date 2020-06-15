@@ -47,7 +47,7 @@ The module is specifically designed to work with LoRaWAN compatible networks,
 by including a set of commands designed for seamless integration with the
 \emph{LoRaWAN Protocol Stack}
 
-Each communication to and from the module is done via \emph{UART} ASCII command,
+Each communication to and from the module is done via Universal asynchronous receiver-transmitter (UART) ASCII command,
 making it easy for a human to interact with the module by typing commands
 on a terminal and reading the response back in a readable format
 (see~\ref{fig:pcconn}).
@@ -118,7 +118,7 @@ structure that must implement the following functions.
 I will introduce the two main features of any radio driver, the transmit and receive
 function, and how these functions work with the RN2483 radio module.
 Before that, I will introduce the single design challenge of implementing a radio
-driver based on Universal asynchronous receiver-transmitter (UART) communication on Contiki.
+driver based on UART communication on Contiki.
 
 \subsection{Synchronous communication with the module}
 
@@ -183,6 +183,8 @@ The radio transmission command has a different pattern from the other commands
 of the module.
 After the acknowledgement of the radio transmission command (\lstinline{radio tx ...}),
 the module transmits a second message when the radio communication is done.
+Figure~\ref{fig:txsequence} shows how the command sequence between the RN2483
+and Contiki through the UART.
 
 \input{thesis.tex/chapters/driver/fig/txsequence.tex}
 
@@ -198,21 +200,18 @@ The reception also follows a different scheme from the other commands.
 New message reception can happen at any time, asynchronously, from the moment
 we run the command \lstinline{radio rx 0}.
 Because in TSCH, only one message can get received during a time slot
-I implemented a one message inbox (see Fig~\ref{fig:rxstate}).
+I implemented a one message inbox as we can see in Fig~\ref{fig:rxstate},
+on new message the state is set in \emph{received} which notify the presence
+of a message until its read.
 
 Every message coming from the module is analyzed.
 The radio communication that starts with \lstinline{radio rx }, set a flag to
-indicate the presence of a new message.
+indicate the presence of a new message, and thus switching to the \emph{received}
+state.
 This flag remains until the message is read from the driver with the
-\lstinline{read} function.
+\lstinline{read} function where the state fallback into \emph{empty} state.
 Messages are received in a string formatted hex number and are converted to an
 \emph{8-bit integer array}.
-% TODO Talk about packet buf ?
-% We don't store the final result in the same buffer as the one used for
-% reception as reading the result
-% This array is stored in a different place than the received message as command
-% may be executed between the moment we receive the message and the moment we
-% read it.
 Also, a timestamp is saved at the reception to keep track of when the
 message was received.
 
