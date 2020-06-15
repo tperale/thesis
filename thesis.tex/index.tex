@@ -289,8 +289,8 @@
 \begin{center}
 \begin{minipage}{.6\textwidth}
 This master's thesis came about (in part) during the period in which higher
-education was subjected to  a  lockdown  and  protective  measures  to  prevent
-the  spread  of  the  COVID-19  virus.  The  process  of formatting, data
+education was subjected to a lockdown and protective measures to prevent
+the spread of the COVID-19 virus. The process of formatting, data
 collection, the research method and/or other scientific work the thesis
 involved could therefore not always be carried out in the usual manner. The
 reader should bear this context in mind when reading this Master's thesis, and
@@ -307,23 +307,21 @@ also in the event that some conclusions are taken on board.
 Long range LoRa-based networks made their entry on the market some years ago.
 Those networks consist of low power motes that communicate with powerful base
 stations in a star of star topology.
-Nodes wake up briefly  to send a packet (and receive the ack)  with base
+Nodes wake up briefly  to send a packet (and receive the ack) with base
 stations that are always listening on all possible channels.
 The technical innovation came from the physical layer, incorporated in cheap
 low power radio chips that can trade bandwidth for range.
 The physical layer allows several orthogonal channels to be created.
 At the link layer, contention on a same channel is ruled by a simple random
-access medium access control (MAC) protocol, called LoRaWAN,
-that randomizes the moments of  retransmission  when a collision has taken
-place and an acknowledgement did not arrive.
-Practice showed that insufficient coverage (motes cannot reach any of the
-available base stations) together with external interference and the simple
-MAC protocol for coping with collisions jeopardizes the performance of such a
-network.
+access medium access control (MAC) protocol: LoRaWAN,
+that randomizes the retransmission on collision.
+Practice showed that insufficient base station coverage together with external
+interference and the simple MAC protocol for coping with collisions
+jeopardizes the performance of such a network.
 
-To solve the blind spot and congestion issues, a  multi-hop Lora
+To solve the blind spot and congestion issues, a multi-hop LoRa
 physical layer (Phy) based network is put forward.
-A “Lora multi-hop network” consist of motes based on Lora Phy that help each
+A “LoRa multi-hop network” consist of motes based on LoRa Phy that help each
 other to carry packets from source to destination.
 These motes must still sleep as much as possible to save energy but need to
 wake up at regular moments to be able to serve as relay station for their neighbors.
@@ -333,17 +331,14 @@ on which channel to be able to communicate with the neighbor.
 Time Slotted Channel Hopping (TSCH) is a medium access control protocol that
 can offer a solution, because it allows nodes to sleep in some time slots and
 to wake up in others to listen while a neighbor will be sending in the same slot.
-The schedule will have arranged this “rendez vous”.
-TSCH has been introduced in for creating ultra-reliable 802.15.4 (ZIGBEE phy)
-short range Internet of things (IoT) networks.
+by following a schedule.
+TSCH has been introduced in for creating reliable 802.15.4 short range Internet of things (IoT) networks.
 Reliability comes from the channel hopping to create frequency diversity and
 from the deterministic medium access control.
 
-Organising multihop not only entails the problem of organizing a suitable
-link-layer to enable a power efficient communication between neighbor nodes,
-it also entails to quest for an appropriate routing protocol to guide packets
-from source to destination.
-This means more memory will be needed in the Lora motes to accommodate the
+Organising multihop also entails to quest for an appropriate routing protocol
+to guide packets from source to destination.
+This means more memory will be needed in the LoRa motes to accommodate the
 protocol stack.
 As a starting point for our work, the Contiki-NG lightweight operating system (OS)
 that contains a full-fledged IPv6 protocol stack for short range 802.15.4 Phy,
@@ -411,8 +406,6 @@ running on a Zolertia RE-Mote REV-B to work with the RN2483 LoRa radio,
 and thus achieving power-efficient, long range, and reliable IPv6 enabled
 multi-hop networks with LoRa radio.
 
-\paragraph{}
-
 After implementing a working driver for the RN2483 LoRa radio module to use
 in Contiki, I demonstrated that, by adapting the TSCH MAC protocol to work
 LoRa radio, LoRa multi-hops networks are feasible with TSCH and showed:
@@ -426,44 +419,38 @@ LoRa radio, LoRa multi-hops networks are feasible with TSCH and showed:
     over a jammed channel and achieving complete transmission.
 \end{itemize}
 
-
-\paragraph{}
-
 The evaluation of the reliability of TSCH with LoRa was limited by
-the drifts issues I got.
-I found out those were created by the RN2483 module that did not include any way
-to get the precise packet timestamp at reception.
-Also, measuring the power efficiency of the network turned out to be meaningless
+the drifts issues created by the RN2483 I stumbled upon.
+Measuring the radio usage of the network turned out to be meaningless
 because of the design of the RN2483 module.
-
-I am confident that measuring those two parameters and achieving a low power
-multi-hop network with a radio module like the SX1272 is possible.
-This thesis explained what it takes to adapt TSCH for a new LoRa radio
-module and the possible re-implementation of this project on a new radio module
-will then be facilitated.
+I am confident that further research on those two parameters
+is possible by using a radio module like the SX1272 instead.
 
 \paragraph{}
 
-It can be concluded that the objective of the thesis has only been partially
-reached because inadequate hardware was used.
-Porting TSCH, an already well studied MAC protocol,
-and prooving it can work with the existing multi-hop routing solutions,
-represents a step forward in the LoRa multi-hop networking research.
-But the lack of reliable measurement on the reliability and the power
-efficiency of the network, as well as finding a solution to use all the SF
-available shows that further research focussing on those matters should
-be conducted.
+It can be concluded that the objective of the thesis has been reached.
+I ported TSCH to a new radio platform and thus achieved long range, power
+efficient, and reliable multi-hop network with LoRa.
+The existing research on LoRa multi-hop network lacked of reliability mechanism
+using TSCH to achieve reliable multi-hop communication
+represents a step forward in the research domain.
+However, the lack of proper measurement on the reliability and the radio usage
+of the network, that were due to the inadequate hardware radio platform I used,
+shows that further research focussing on those matters should
+be conducted to get better information on the network efficiency.
 
-\section*{Further work\label{section:further}}
+\newpage
 
-The first thing future work need to focus on, is changing the radio platform
+\section*{Further Research\label{section:further}}
+
+The first thing future work needs to focus on is changing the radio platform
 used for the tests.
 I am confident that achieving a low power multi-hop network with a radio module
 like the SX1272 is possible.
-This thesis explained what it takes to adapt TSCH for a new LoRa radio
-module and the possible re-implementation of this project on a new radio module
+The re-implementation is facilitated because every step are already detailed in
+this work.
 Changing the radio driver would create a stable testing device that would allow
-us to measure meaningful data for the analysis of power consumption and
+us to measure meaningful data for the analysis of radio usage and
 reliability of the network.
 The following tasks could be conducted on this stable testing device
 
@@ -482,15 +469,15 @@ The ideal implementation would adapt its SF depending on the distance between tw
 Even though the different SF are supported in my implementation, only a single SF is used at the same time.
 A lot of LoRa features are lost by using a single SF.
 Supporting multiple SF at the same time would increase the network throughput by
-allowing parralel communications and increase the transmission range for nodes
+allowing parallel communications and increase the transmission range for nodes
 with low reception.
 The future work on the subject should focus on modifying the protocol to use
 different SF.
 
 \paragraph{}
 
-Futur work should conduct a real-world with properly spaced motes to test
-the network.
+Also, future work should conduct a real-world test of the multi-hop network
+with properly spaced motes to test the network and its multi-hop ability.
 
 \newpage
 

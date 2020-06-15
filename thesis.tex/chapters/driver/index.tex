@@ -23,7 +23,7 @@ It will help to understand the inherent issues of the RN2483 module.
 Last year \emph{Roald Van Glabbeek}, in the course of his master thesis~\cite{8847137},
 aiming at doing further research on \emph{energy efficient LoRa multihop networks},
 started working on the \emph{RN2483} module.
-For this purpose he made \emph{RN2483 Shields} adapted to the pin
+For this purpose he made \emph{RN2483 Shields} (see Fig~\ref{fig:rn2483pic}) adapted to the pin
 configuration of the \emph{Zolertia RE-Mote REV-B}. He also started a radio driver
 implementation for Contiki-OS\@.
 
@@ -34,10 +34,25 @@ radio module.
 As analyzed in~\cite{8847137}, the Semtech LoRaMotes turned out to be an issue
 because they are no longer produced, new versions are expensive and memory is
 a bottleneck.
-The \emph{Zolertia RE-Mote} is readily available and
+The \emph{Zolertia RE-Mote} (see Fig~\ref{fig:zolpic}) is readily available and
 Contiki is well maintained for this platform (making the transition faster and
 the code less error-prone) and ETRO Lab is already utilizing the platform.
 Therefore I will also work with this platform and its in house produced Lora shield.
+
+\begin{figure}[H]
+\begin{subfigure}[b]{.5\textwidth}
+    \centering
+    \includegraphics[width=0.6\textwidth]{thesis.tex/chapters/driver/fig/rn2483.jpg}
+    \caption{The RN2483 LoRa radio shield\label{fig:rn2483pic}}
+\end{subfigure}
+\hfill
+\begin{subfigure}[b]{.5\textwidth}
+    \centering
+    \includegraphics[width=0.6\textwidth]{thesis.tex/chapters/driver/fig/zolertia.jpg}
+    \caption{The Zolertia RE-Mote with the shield\label{fig:zolpic}}
+\end{subfigure}
+\caption{The harware component I used\label{fig:hardused}}
+\end{figure}
 
 \section{RN2483 LoRa Radio Module Structure}
 
@@ -321,7 +336,5 @@ specification.
 
 This chapter and the implementation content could be the basis of a future
 driver implementation that would also require the use of UART.
-% I made sure to decouple my code and some parts can be potentially used in
-% other future LoRa driver implementations.
 This driver will be used in the next chapter where it will be directly
 manipulated by the TSCH code.

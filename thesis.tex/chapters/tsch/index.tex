@@ -829,8 +829,6 @@ interval. I counted the number of times the motes gets desynchronized from the
 network as well as the number of retransmissions performed to reach the
 destination that could reveil the potential desynchronized slots.
 
-% TODO
-
 \subsection{Orchestra\label{section:tschorchestra}}
 
 Besides validating that LoRa and TSCH can support a IPv6 transport
@@ -1023,8 +1021,7 @@ I could not achieve optimal timing parameters and did not detailed the ones
 I used because of the clock drift I encountered in my implementation.
 I attributed this issue to the lack of precise timestamp when the reception of a communication start.
 Also, because of the inherent issues of the RN2483 module,
-I did not conduct a proper power analysis on my work that would give radio usage
-details.
+I did not conduct a proper radio usage analysis on my work.
 
 Nevertheless, the lessons learned from the investigation is this chapter will
 allow to quickly re-implement a solution for a new radio hardware platform.
