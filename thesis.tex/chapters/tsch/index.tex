@@ -829,6 +829,15 @@ interval. I counted the number of times the motes gets desynchronized from the
 network as well as the number of retransmissions performed to reach the
 destination that could reveil the potential desynchronized slots.
 
+It showed that after 50 packets sent the network the motes
+stayed in the network throughout the test and all the packet reached
+their destination.
+However some packet did have to be sent again because the time slots were
+desynchronized.
+These concerns were minor and should be expected in any implementation and
+I attribute partial responsibility to the drift issues I covered in
+section~\ref{section:driftissues}.
+
 \subsection{Orchestra\label{section:tschorchestra}}
 
 Besides validating that LoRa and TSCH can support a IPv6 transport

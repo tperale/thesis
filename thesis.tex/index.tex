@@ -366,7 +366,7 @@ to the subject and allowed me to catch up with the missing knowledge I had at
 the start of the year.
 I am especially grateful for his availability and helpfulness that gave me the
 right tools to achieve this work.
-I would also like to thanks my promotors Prof. Dr. Ir. Kris Steenhaut and Prof.
+I would also like to thank my promotors Prof. Dr. Ir. Kris Steenhaut and Prof.
 Dr. Ir. Elisa Gonzalez Boix that provided me with this great subject and helped me
 during the year.
 
@@ -401,14 +401,18 @@ during the year.
 
 \chapter{Conclusion and further work\label{section:conclusion}}
 
-The goal of the thesis aimed to adapt the TSCH implementation of Contiki-NG
-running on a Zolertia RE-Mote REV-B to work with the RN2483 LoRa radio,
+The goal of the thesis was to adapt the TSCH MAC protocol implementation of Contiki-NG
+to work with the Zolertia RE-Mote REV-B and the RN2483 LoRa radio,
 and thus achieving power-efficient, long range, and reliable IPv6 enabled
 multi-hop networks with LoRa radio.
+To reach this goal, a deep understanding of the timing of TSCH was needed, as
+well as the radio parameter needed by the protocol.
+The subtleties involved in the adaptation of TSCH for LoRa have been
+thoroughly studied and presented in this work.
 
-After implementing a working driver for the RN2483 LoRa radio module to use
-in Contiki, I demonstrated that, by adapting the TSCH MAC protocol to work
-LoRa radio, LoRa multi-hops networks are feasible with TSCH and showed:
+After designing, implementing, and validating a working driver for the RN2483 LoRa radio module to use
+in Contiki-NG, I demonstrated that, by adapting the TSCH MAC protocol to work
+with LoRa radio, LoRa multi-hops networks are feasible with TSCH and showed:
 
 \begin{itemize}
   \item The network range is enhanced, by routing packets through multiple hops to reach
@@ -420,35 +424,32 @@ LoRa radio, LoRa multi-hops networks are feasible with TSCH and showed:
 \end{itemize}
 
 The evaluation of the reliability of TSCH with LoRa was limited by
-the drifts issues created by the RN2483 I stumbled upon.
+the drifts issues I stumbled upon that were created by the RN2483 radio module.
 Measuring the radio usage of the network turned out to be meaningless
 because of the design of the RN2483 module.
-I am confident that further research on those two parameters
-is possible by using a radio module like the SX1272 instead.
 
 \paragraph{}
 
 It can be concluded that the objective of the thesis has been reached.
-I ported TSCH to a new radio platform and thus achieved long range, power
-efficient, and reliable multi-hop network with LoRa.
-The existing research on LoRa multi-hop network lacked of reliability mechanism
-using TSCH to achieve reliable multi-hop communication
+I ported TSCH to a new radio platform  as an important step to achieve long
+range, power efficient, and reliable multi-hop network with LoRa.
+The existing research on LoRa multi-hop network lacked a reliability mechanism.
+Using TSCH to achieve reliable multi-hop communication
 represents a step forward in the research domain.
 However, the lack of proper measurement on the reliability and the radio usage
 of the network, that were due to the inadequate hardware radio platform I used,
 shows that further research focussing on those matters should
 be conducted to get better information on the network efficiency.
 
-\newpage
-
 \section*{Further Research\label{section:further}}
 
 The first thing future work needs to focus on is changing the radio platform
 used for the tests.
 I am confident that achieving a low power multi-hop network with a radio module
-like the SX1272 is possible.
-The re-implementation is facilitated because every step are already detailed in
-this work.
+like the SX1272 is possible with its faster communication with the module
+and the interruption on packet reception.
+The re-implementation is facilitated because every step is already detailed in
+this work and possible pittfalls have been identified and a solution has been given.
 Changing the radio driver would create a stable testing device that would allow
 us to measure meaningful data for the analysis of radio usage and
 reliability of the network.
@@ -458,7 +459,7 @@ The following tasks could be conducted on this stable testing device
   \item Determining the optimal TSCH parameters for LoRa.
   \item Finding the optimal period between EB packets to keep a balance between
     low power usage and maintaining synchronization.
-  \item Compare how it performs in regards to LoRaWAN. Is the TSCH overhead
+  \item Compare how it performs compared to LoRaWAN. Is the TSCH overhead
     worth it ?
   \item The network capacity and transmission delay.
   \item Running a proper benchmark of the radio usage.
